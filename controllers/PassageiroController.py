@@ -14,32 +14,26 @@ passageiroRepository = PassageiroRepository()
 def verificarInfo(nome, nascimento, rg, telefone):
     if nome == "" or nascimento == "" or rg == "" or telefone == "":
         
-        flash('Todos os campos são obrigatórios.')
+        flash('Todos os campos são obrigatórios.', 'error')
         return False
 
-    elif len(nome) < 3 or len(nome.strip().split(' ')) <= 2 or nome.endswith(' '):
-        print('Coloque seu nome completo.')
-        flash('Coloque seu nome completo.')
+    elif len(nome) < 3 or len(nome.strip().split(' ')) < 2 or nome.endswith(' '):
+        flash('Coloque seu nome completo.', 'error')
         return False
-    elif len(rg) != 9:
-        print('RG deve ter 9 caracteres.')
-        flash('RG deve ter 9 caracteres.')
+    elif len(rg) != 12:
+        flash('RG deve ter 9 caracteres.', 'error')
         return False
     elif re.match(r'[a-wA-W]', rg):
-        print('Verique novamente o RG.')
-        flash('Verique novamente o RG.')
+        flash('Verique novamente o RG.', 'error')
         return False
-    elif len(telefone) != 11:
-        print('Telefone deve ter 11 caracteres.')
-        flash('Telefone deve ter 11 caracteres.')
+    elif len(telefone) != 15:
+        flash('Telefone deve ter 11 caracteres.', 'error')
         return False
     elif telefone.isalpha():
-        print('Telefone deve conter apenas números.')
-        flash('Telefone deve conter apenas números.')
+        flash('Telefone deve conter apenas números.', 'error')
         return False
     elif any(char.isdigit() for char in nome):
-        print('Nome não pode conter números.')
-        flash('Nome não pode conter números.')
+        flash('Nome não pode conter números.', 'error')
         return False
 
     return True
@@ -50,7 +44,7 @@ def validar_rg(rg):
     rg = ''.join(filter(str.isdigit, rg))
 
     # Verifica se o RG possui 9 dígitos
-    if len(rg) != 9:
+    if len(rg) != 12:
         return False
 
     # Calcula o dígito verificador
@@ -104,20 +98,19 @@ def cadastrar_passageiro():
         try:
             nascimento = datetime.strptime(nascimento, '%Y-%m-%d').date()
         except ValueError:
-            flash('Data de Nascimento inválida.')
+            flash('Data de Nascimento inválida.', 'error')
 
         # Check if RG already exists
         existing_passageiro = passageiroRepository.getPassageiroByRg(rg)
         if existing_passageiro:
-            print('RG já cadastrado.')
+            print('RG já cadastrado.', 'error')
             return redirect(url_for('passageiros_controller.cadastrar_passageiro'))
         
         if verificarInfo(nome, nascimento, rg, telefone):
-            print('cehgeuei aq')
             passageiroRepository.createPassageiro(nome, nascimento, rg, telefone, status)
-            print('passageiro registrado')
-            return redirect(url_for('index_controller.index'))
-    return redirect(url_for('index_controller.index'))
+            flash('passageiro registrado', 'success')
+            return redirect(url_for('passageiro_controller.index'))
+    return redirect(url_for('passageiro_controller.index'))
 
 #@passageiros_controller.route('/login', methods=['GET', 'POST'])
 #def login():

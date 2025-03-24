@@ -339,8 +339,11 @@
             event.preventDefault();
             let name = event.dataTransfer.getData("text");
             if (event.target.classList.contains("nome")) {
+                document.getElementsByClassName('assento')[event.target.id].style.backgroundColor = "red";
+                document.getElementsByClassName('assento')[event.target.id].style.color = "white";
                 event.target.innerText = name;
-                alert(event.target.id)
+                event.target.style.backgroundColor = "red";
+                event.target.style.color = "white";
             }
         }
     </script>

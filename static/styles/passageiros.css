@@ -23,7 +23,6 @@ h1 {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  border-bottom: 1px solid rgb(163, 163, 163);
   padding: 16px 0 16px 0;
 }
 
@@ -58,6 +57,20 @@ h1 {
   color: white;
 }
 
+.opcoes-passageiros button.fechar-inputs {
+  cursor: pointer;
+  display: none;
+  background-color: rgba(255, 0, 0, 0.801);
+  color: rgb(255, 255, 255);
+  border: 1px solid rgb(110, 0, 0);
+}
+
+.opcoes-passageiros button.fechar-inputs:hover {
+  background-color: rgb(255, 179, 179);
+  color: rgb(0, 0, 0);
+}
+
+
 .opcoes-passageiros button:hover {
   background-color: rgb(117, 117, 117);
   color: white;
@@ -86,7 +99,7 @@ h1 {
   margin-bottom: 16px;
   padding: 0 12px 0 12px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
   transition: 1s;
@@ -94,31 +107,9 @@ h1 {
 }
 
 .cadastrar-passageiro.active{
-  height: 400px;
+  height: 420px;
   padding: 12px;
   border: 1px solid rgb(39, 53, 25);
-}
-
-.cadastrar-passageiro .left{
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  width: 48%;
-  height: auto;
-}
-
-.cadastrar-passageiro .left .dates{
-  justify-content: space-between;
-  display: flex;
-  flex-direction: row;
-}
-
-.cadastrar-passageiro .right{
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  width: 48%;
-  height: auto;
 }
 
 .cadastrar-passageiro input, textarea, select{
