@@ -16,8 +16,8 @@ class PassageiroRepository:
     def createPassageiro(self, nome, nascimento, rg, telefone, status):
         return self.passageiroDao.addPassageiro(nome, nascimento, rg, telefone, status)
 
-    def updatePassageiro(self, nome, nascimento, rg, telefone, status):
-        return self.passageiroDao.attPassageiro(nome, nascimento, rg, telefone, status)
+    def updatePassageiro(self, id, nome, nascimento, rg, telefone, status):
+        return self.passageiroDao.attPassageiro(id, nome, nascimento, rg, telefone, status)
     
     def updateStatus(self, rg, status):
         return self.passageiroDao.attStatus(rg, status)

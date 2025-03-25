@@ -18,7 +18,7 @@ h1 {
   box-shadow: 0px 4px 19px rgba(0, 0, 0, .5);
 }
 
-.opcoes-passageiros {
+.pesquisar-passageiros {
   width: auto;
   display: flex;
   flex-direction: row;
@@ -26,7 +26,7 @@ h1 {
   padding: 16px 0 16px 0;
 }
 
-.opcoes-passageiros input {
+.pesquisar-passageiros input {
   width: 60%;
   height: 30px;
   border-radius: 8px;
@@ -34,7 +34,7 @@ h1 {
   padding: 10px;
 }
 
-.opcoes-passageiros button {
+.pesquisar-passageiros button {
   width: 30%;
   height: 50px;
   border-radius: 8px;
@@ -45,19 +45,19 @@ h1 {
   text-overflow: ellipsis;
 }
 
-.opcoes-passageiros button.adicionar-passageiro {
+.pesquisar-passageiros button.adicionar-passageiro {
   cursor: pointer;
   background-color: rgb(186, 255, 203);
   color: rgb(0, 0, 0);
   border: 1px solid green;
 }
 
-.opcoes-passageiros button.adicionar-passageiro:hover {
+.pesquisar-passageiros button.adicionar-passageiro:hover {
   background-color: rgb(38, 139, 64);
   color: white;
 }
 
-.opcoes-passageiros button.fechar-inputs {
+.pesquisar-passageiros button.fechar-inputs {
   cursor: pointer;
   display: none;
   background-color: rgba(255, 0, 0, 0.801);
@@ -65,13 +65,13 @@ h1 {
   border: 1px solid rgb(110, 0, 0);
 }
 
-.opcoes-passageiros button.fechar-inputs:hover {
+.pesquisar-passageiros button.fechar-inputs:hover {
   background-color: rgb(255, 179, 179);
   color: rgb(0, 0, 0);
 }
 
 
-.opcoes-passageiros button:hover {
+.pesquisar-passageiros button:hover {
   background-color: rgb(117, 117, 117);
   color: white;
 }

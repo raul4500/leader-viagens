@@ -34,7 +34,7 @@
 
       <div class="passageiros">
         <h1>Passageiros</h1>
-        <div class="opcoes-passageiros">
+        <div class="pesquisar-passageiros">
           <input type="text" id="searchInputNome" placeholder="Nome" onkeyup="searchClient('Nome', 1)">
           <input type="text" id="searchInputRg" maxlength="10" placeholder="RG" onkeyup="searchClient('Rg', 2)">
           <input type="text" id="searchInputTelefone" maxlength="12" placeholder="Telefone" onkeyup="searchClient('Telefone', 3)">
@@ -63,10 +63,10 @@
             <input type="text" id="rg" name="rg" maxlength="12" required placeholder="99.999.999-9">
 
             <label for="nascimento">Data de Nascimento:</label>
-            <input type="date" id="nascimento" name="nascimento" min="1925-01-01" required>
+            <input type="date" id="nascimento" name="nascimento" min="1925-01-01">
 
             <label for="telefone">Telefone:</label>
-            <input type="text" id="telefone" name="telefone" maxlength="15" placeholder="(99) 99999-9999">
+            <input type="text" id="telefone" name="telefone" maxlength="15" placeholder="(99) 99999-9999" required>
 
             
             <label for="status">Status:</label>
@@ -77,7 +77,7 @@
               <option value=""></option>
             </select>
 
-            <button type="submit">Confirmar</button>
+            <button id="confirmar" type="submit">Confirmar</button>
 
 
         </form>
@@ -89,8 +89,9 @@
               <th>Nome</th>
               <th>RG</th>
               <th>Telefone</th>
-              <th>Status</th>
-              <th>Data-Registro</th>
+              <th><center>Data_Nascimento</center></th>
+              <th><center>Status</center></th>
+              <th><center>Data-Registro</center></th>
               </tr>
               {% for p in passageiros %}
             <tbody id="clientTableBody">
@@ -98,8 +99,8 @@
                 <button onclick="toggleBlock(this)"><i class='bi bi-three-dots-vertical'></i></button>
                 <div class="action-block" style="display: none;">
                   <ul>
-                    <li><a href="">Editar</a></li>
-                    <li><a href="">Excluir</a></li>
+                    <li><button class="opcoes-passageiros" onclick="editarPassageiro('{{ p.id }}', '{{ p.nome }}', '{{ p.rg }}', '{{ p.nascimento }}', '{{ p.telefone }}', '{{ p.status }}')">Editar</button></li>
+                    <li><button class="opcoes-passageiros" onclick="deletarPassageiro('{{ p.id }}')">Excluir</button></li>
                   </ul>
                 </div>
               </td>
@@ -108,8 +109,13 @@
               </td>
               <td>{{ p.rg }}</td>
               <td>{{ p.telefone }}</td>
-              <td>{{ p.status }}</td>
-              <td>{{ p.created_at }}</td>
+              {% if p.nascimento %}
+              <td><center>{{ p.nascimento }}</center></td>
+              {% else %}
+              <td><center></center></td>
+              {% endif %}
+              <td><center>{{ p.status }}</center></td>
+              <td><center>{{ formatar_data_registro(p.created_at)[0] }}</center></td>
             </tbody>
             {% endfor %}
           </table>
@@ -210,6 +216,27 @@
       document.getElementById("fechar-inputs").style.display = "none";
       if (inputs) {
           inputs.classList.remove('active'); // Remove a classe 'active'
+      }
+  }
+
+  function editarPassageiro(id, nome, rg, nascimento, telefone, status) {
+    let x = document.getElementById("cadastrar-passageiro").action = `/editar_passageiro/${id}`;
+    document.getElementById("fechar-inputs").onclick = function () {
+      location.reload();
+    }
+    document.getElementById("confirmar").innerHTML = `<i class="bi bi-pencil-fill"></i> Confirmar Edição`;
+    document.getElementById("status").value = status;
+    document.getElementById("nome").value = nome;
+    document.getElementById("rg").value = rg;
+    document.getElementById("nascimento").value = nascimento;
+    document.getElementById("telefone").value = telefone;
+    abrirInputs();
+
+  }
+
+  function deletarPassageiro(id) {
+      if (confirm("Deseja realmente excluir este passageiro?")) {
+          window.location.href = `/deletar_passageiro/${id}`;
       }
   }
 

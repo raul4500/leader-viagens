@@ -7,7 +7,7 @@ from datetime import datetime
 class Passageiro(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
-    nascimento = db.Column(db.Date, nullable=True)
+    nascimento = db.Column(db.String(10), nullable=True)
     rg = db.Column(db.String(9), unique=True, nullable=False)
     telefone = db.Column(db.String(11), nullable=False)
     status = db.Column(db.String(30), nullable=False)

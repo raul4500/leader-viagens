@@ -11,8 +11,26 @@ passageiro_controller = Blueprint('passageiro_controller', __name__)
 
 passageiroRepository = PassageiroRepository()
 
+def formatar_data(data_americana):
+    return datetime.strptime(data_americana, "%Y-%m-%d").strftime("%d-%m-%Y")
+
+
+def formatar_data_registro(data_hora):
+    # Verifica se a entrada é do tipo datetime
+    if isinstance(data_hora, datetime):
+        # Formatar a data no formato brasileiro (DD/MM/AAAA)
+        data_formatada = data_hora.strftime('%d/%m/%Y')
+        
+        # Formatar a hora no formato (HH:MM:SS)
+        hora_formatada = data_hora.strftime('%H:%M:%S')
+        
+        return [data_formatada, hora_formatada]
+    else:
+        raise ValueError("O valor fornecido não é do tipo datetime.")
+        
+
 def verificarInfo(nome, nascimento, rg, telefone):
-    if nome == "" or nascimento == "" or rg == "" or telefone == "":
+    if nome == "" or rg == "" or telefone == "":
         
         flash('Todos os campos são obrigatórios.', 'error')
         return False
@@ -84,21 +102,19 @@ def editarInfo(nome,nascimento, telefone):
 @passageiro_controller.route('/passageiros')
 def index():
     passageiros = passageiroRepository.getAllPassageiros()
-    return render_template('passageiros.html', passageiros=passageiros)
+    return render_template('passageiros.html', passageiros=passageiros, formatar_data=formatar_data, formatar_data_registro=formatar_data_registro, str=str)
 
 @passageiro_controller.route('/cadastrar_passageiro', methods=['GET', 'POST'])
 def cadastrar_passageiro():
     if request.method == 'POST':
         nome = request.form['nome']
         nascimento = request.form['nascimento']
+        if nascimento!='':
+            nascimento = formatar_data(nascimento)
         rg = request.form['rg']
         telefone = request.form['telefone']
         status = request.form['status']
         # Convert nascimento to a date object
-        try:
-            nascimento = datetime.strptime(nascimento, '%Y-%m-%d').date()
-        except ValueError:
-            flash('Data de Nascimento inválida.', 'error')
 
         # Check if RG already exists
         existing_passageiro = passageiroRepository.getPassageiroByRg(rg)
@@ -111,6 +127,29 @@ def cadastrar_passageiro():
             flash('passageiro registrado', 'success')
             return redirect(url_for('passageiro_controller.index'))
     return redirect(url_for('passageiro_controller.index'))
+
+@passageiro_controller.route('/editar_passageiro/<int:id>', methods=['GET', 'POST'])
+def editar_passageiro(id):
+    if request.method == 'POST':
+        nome = request.form['nome']
+        nascimento = request.form['nascimento']
+        rg = request.form['rg']
+        if nascimento!='':
+            nascimento = formatar_data(nascimento)
+        telefone = request.form['telefone']
+        status = request.form['status']
+        if verificarInfo(nome, nascimento, rg, telefone):  
+            passageiroRepository.updatePassageiro(id, nome, nascimento, rg, telefone, status)
+            flash('passageiro atualizado', 'success')
+            return redirect(url_for('passageiro_controller.index'))
+    return redirect(url_for('passageiro_controller.index'))
+
+@passageiro_controller.route('/deletar_passageiro/<int:id>')
+def deletar_passageiro(id):
+    passageiroRepository.deletePassageiro(id)
+    flash('passageiro deletado', 'success')
+    return redirect(url_for('passageiro_controller.index'))
+
 
 #@passageiros_controller.route('/login', methods=['GET', 'POST'])
 #def login():
@@ -131,42 +170,6 @@ def cadastrar_passageiro():
 #            flash('Email não cadastrado')
 #            return redirect(url_for('passageiros_controller.login'))
 #    return render_template('login.html')
-
-#@passageiros_controller.route('/perfil', methods=['GET','POST'])
-#def perfil():
-#    nome = request.args.get('nome', None, type=str)
-#    rg = request.args.get('rg', None, type=str)
-#    nascimento = request.args.get('nascimento', None, type=str)
-#    novo_email = request.args.get('email', None, type=str)
-#    telefone = request.args.get('telefone', None, type=str)
-#    #print(nome)
-#    #print(rg)
-#    #print(nascimento)
-#    #print(novo_email)
-#    #print(telefone)
-#    email = cookies_session['usuario_email']
-#    if nome and rg and nascimento and novo_email and telefone:
-#        c = passageiroRepository.getpassageiroByRg(rg)
-#        if c:
-#            if c.email != email:
-#                print('Outra pessoa já possui esse RG')
-#                return redirect(url_for('passageiros_controller.perfil'))
-#        if email != novo_email:
-#            if passageiroRepository.getpassageiroByEmail(novo_email):
-#                print('Outra pessoa já possui esse Email')
-#                return redirect(url_for('passageiros_controller.perfil'))
-#        try:
-#            nascimento = datetime.strptime(nascimento, '%Y-%m-%d').date()
-#        except ValueError:
-#            flash('Data de Nascimento inválida.')
-#        if editarInfo(nome, novo_email, nascimento,telefone) and validar_rg(rg):
-#            passageiroRepository.updatepassageiro(email, nome, novo_email, nascimento, rg, telefone)
-#            email = novo_email
-#        else:
-#            flash('Há informações inválidas')   
-#            return redirect(url_for('passageiros_controller.perfil'))
-#    passageiro = passageiroRepository.getpassageiroByEmail(email)
-#    return render_template('perfil.html', passageiro=passageiro, rg=list(passageiro.rg), len=len(list(passageiro.rg)))
 
 #@passageiros_controller.route('/logout')
 #def logout():
