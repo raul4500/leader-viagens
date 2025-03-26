@@ -146,18 +146,19 @@
         <div class="container">
 
             <div class="header">
-                <div class="block">
+                <button class="block" onclick="mapa()">
                     <i class="bi bi-border-all"></i>
                     <p>Mapa</p>
-                </div>
-                <div class="block">
+                </button>
+                <button class="block" onclick="dados()">
                     <i class="bi bi-table"></i>
                     <p>Dados</p>
-                </div>
+                </button>
             </div>
             <button class="toggle-btn-right" onclick="toggleSidebar(event)">☰</button>
 
-            <table id="mapa-onibus" class="mapa-onibus">
+
+            <table id="mapa-onibus" class="mapa-onibus" style="display: none;">
                 <tbody>
                     <tr>
                         <td colspan="7" style="height: 50px; font-size: 2.5vw;">
@@ -269,7 +270,54 @@
                 </tbody>
             </table>
 
-            <button id="baixar">Baixar PDF</button>
+            <div class="tabela-dados">
+                <table>
+                    <tr>
+                        <th>NOME</th>
+                        <th>RG</th>
+                        <th>DT-NASCTO</th>
+                        <th>TELEFONE</th>
+                        <th>PAGAMENTO</th>
+                        <th>OBSERVAÇÃO</th>
+                    </tr>
+                    {% for i in range (0, 36, 1) %}
+                    {% for p in passageiros %}
+                    {% if p.id == i %}
+                    <tr>
+                        <td>{{ p.nome }}</td>
+                        <td>{{ p.rg }}</td>
+                        <td>{{ p.nascimento }}</td>
+                        <td>{{ p.telefone }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+                    {% for i in range (37, 46, 1) %}
+                    {% if passageiros[i] %}
+                    <tr>
+                        <td>{{ passageiros[i].nome }}</td>
+                        <td>{{ passageiros[i].rg }}</td>
+                        <td>{{ passageiros[i].nascimento }}</td>
+                        <td>{{ passageiros[i].telefone }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+
         </div>
 
     </div>

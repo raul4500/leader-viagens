@@ -29,7 +29,7 @@ def formatar_data_registro(data_hora):
         raise ValueError("O valor fornecido não é do tipo datetime.")
         
 
-def verificarInfo(nome, nascimento, rg, telefone):
+def verificarInfo(nome, rg, telefone):
     if nome == "" or rg == "" or telefone == "":
         
         flash('Todos os campos são obrigatórios.', 'error')
@@ -38,17 +38,14 @@ def verificarInfo(nome, nascimento, rg, telefone):
     elif len(nome) < 3 or len(nome.strip().split(' ')) < 2 or nome.endswith(' '):
         flash('Coloque seu nome completo.', 'error')
         return False
-    elif len(rg) != 12:
-        flash('RG deve ter 9 caracteres.', 'error')
+    elif len(rg) > 12:
+        flash('RG não parece certo.', 'error')
         return False
     elif re.match(r'[a-wA-W]', rg):
         flash('Verique novamente o RG.', 'error')
         return False
     elif len(telefone) != 15:
         flash('Telefone deve ter 11 caracteres.', 'error')
-        return False
-    elif telefone.isalpha():
-        flash('Telefone deve conter apenas números.', 'error')
         return False
     elif any(char.isdigit() for char in nome):
         flash('Nome não pode conter números.', 'error')
@@ -81,31 +78,13 @@ def validar_rg(rg):
 
     return str(digito_verificador) == rg[8]
 
-def editarInfo(nome,nascimento, telefone):
-    if nome == "" or nascimento == "" or telefone == "":
-        flash('Todos os campos são obrigatórios.')
-        return False
-    elif len(nome) < 3 or len(nome.strip().split(' ')) >= 2 or nome.endswith(' '):
-        flash('Coloque seu nome completo.')
-        return False
-    elif len(telefone) != 11:
-        flash('Telefone deve ter 11 caracteres.')
-        return False
-    elif telefone.isalpha():
-        flash('Telefone deve conter apenas números.')
-        return False
-    elif any(char.isdigit() for char in nome):
-        flash('Nome não pode conter números.')
-        return False
-    return True
-
 @passageiro_controller.route('/passageiros')
 def index():
     passageiros = passageiroRepository.getAllPassageiros()
     return render_template('passageiros.html', passageiros=passageiros, formatar_data=formatar_data, formatar_data_registro=formatar_data_registro, str=str)
 
-@passageiro_controller.route('/cadastrar_passageiro', methods=['GET', 'POST'])
-def cadastrar_passageiro():
+@passageiro_controller.route('/cadastrar_passageiro/<url>', methods=['GET', 'POST'])
+def cadastrar_passageiro(url):
     if request.method == 'POST':
         nome = request.form['nome']
         nascimento = request.form['nascimento']
@@ -119,14 +98,14 @@ def cadastrar_passageiro():
         # Check if RG already exists
         existing_passageiro = passageiroRepository.getPassageiroByRg(rg)
         if existing_passageiro:
-            print('RG já cadastrado.', 'error')
-            return redirect(url_for('passageiros_controller.cadastrar_passageiro'))
+            flash('RG já cadastrado.', 'error')
+            return redirect(url_for('passageiro_controller.cadastrar_passageiro'))
         
-        if verificarInfo(nome, nascimento, rg, telefone):
+        if verificarInfo(nome, rg, telefone):
             passageiroRepository.createPassageiro(nome, nascimento, rg, telefone, status)
             flash('passageiro registrado', 'success')
-            return redirect(url_for('passageiro_controller.index'))
-    return redirect(url_for('passageiro_controller.index'))
+            return redirect(url_for(f'{url}.index'))
+    return redirect(url_for(f'{url}.index'))
 
 @passageiro_controller.route('/editar_passageiro/<int:id>', methods=['GET', 'POST'])
 def editar_passageiro(id):

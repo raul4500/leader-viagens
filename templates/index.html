@@ -8,9 +8,11 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/index.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/sidebar-main.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/modal.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/barra-rolagem.css') }}">
     <title>Financeiro-Leader</title>
 
 </head>
+
 
 <body>
 
@@ -68,12 +70,18 @@
                             </tr>
                 {% for p in passageiros %}
                 <tbody id="clientTableBody">
-                        <td>
-                            <button><i class='bi bi-three-dots-vertical'></i></button>
-                        </td>
+                    <td>
+                        <button onclick="toggleBlock(this)"><i class='bi bi-three-dots-vertical'></i></button>
+                        <div class="action-block" id="action-block" style="display: none;">
+                          <ul>
+                            <li><button class="opcoes-passageiros" onclick="editarPassageiro('{{ p.id }}', '{{ p.nome }}', '{{ p.rg }}', '{{ p.nascimento }}', '{{ p.telefone }}', '{{ p.status }}')">Editar</button></li>
+                            <li><button class="opcoes-passageiros" onclick="deletarPassageiro('{{ p.id }}')">Excluir</button></li>
+                          </ul>
+                        </div>
+                      </td>
                         <td><div class="nome">{{ p.nome }}</div></td>
                         <td>{{ p.telefone }}</td>
-                        <td></td>
+                        <td>{{ p.status }}</td>
                 </tbody>
                 {% endfor %}
 
@@ -107,19 +115,19 @@
                 <div class="modal-header">
                     <h2>Adicionar Dados de Pessoa</h2>
                 </div>
-                <form id="formPessoa" action="/cadastrar_passageiro" method="POST">
+                <form id="formPessoa" action="/cadastrar_passageiro/index_controller" method="POST">
                     <div class="modal-body">
                         <label for="nome">Nome:</label>
                         <input type="text" id="nome" name="nome" required placeholder="Digite o nome">
 
                         <label for="rg">RG:</label>
-                        <input type="text" id="rg" name="rg" maxlength="9" required placeholder="Digite o RG">
+                        <input type="text" id="rg" name="rg" maxlength="12" required placeholder="Digite o RG">
 
                         <label for="nascimento">Data de Nascimento:</label>
                         <input type="date" id="nascimento" name="nascimento">
 
                         <label for="telefone">Telefone:</label>
-                        <input type="tel" id="telefone" name="telefone" maxlength="11" required placeholder="Digite o telefone">
+                        <input type="tel" id="telefone" name="telefone" maxlength="15" required placeholder="Digite o telefone">
 
                         <label for="status">Status:</label>
                         <select id="status" name="status" required>
@@ -176,11 +184,40 @@ function searchClient(i, cell) {
             modal.style.display = "none";
         }
     }
-
-    const minhaDiv = document.querySelector('.container');
-
-    // Aplica a posição aleatória e altura até o final da tela
-
 </script>
+
+<script>
+    function toggleBlock(button) {
+      // Seleciona o bloco de ações relacionado ao botão clicado
+      const actionBlock = button.nextElementSibling;
+  
+      // Fecha todos os outros blocos abertos
+      document.querySelectorAll('.action-block').forEach(block => {
+        if (block !== actionBlock) {
+          block.style.display = 'none';
+        }
+      });
+  
+      // Alterna a exibição do bloco
+      if (actionBlock.style.display === 'none' || actionBlock.style.display === '') {
+        // Posiciona o bloco ao lado do botão
+        const rect = button.getBoundingClientRect();
+        actionBlock.style.display = 'block';
+        actionBlock.style.top = `${rect.top + window.scrollY}px`;
+        actionBlock.style.left = `${rect.right + 10}px`;
+      } else {
+        actionBlock.style.display = 'none';
+      }
+    }
+  
+    // Fecha o bloco se clicar fora dele
+    document.addEventListener('click', function (event) {
+      if (!event.target.closest('td')) {
+        document.querySelectorAll('.action-block').forEach(block => {
+          block.style.display = 'none';
+        });
+      }
+    });
+  </script>
 
 </html>
