@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/sidebar-main.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/modal.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/barra-rolagem.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/flash-messages.css') }}">
     <title>Financeiro-Leader</title>
 
 </head>
@@ -39,17 +40,30 @@
             <div class="caixa-de-lembretes">
                 <form class="left" action="/add_lembrete" method="POST">
                     <h2>Lembretes</h2>
-                    <textarea name="mensagem" placeholder="Adicione um lembrete..." id="adicionar-lembretes" required></textarea>
+                    <textarea name="mensagem" placeholder="Adicione um lembrete..." id="adicionar-lembretes"
+                        required></textarea>
                     <button type="submit" class="adicionar-lembrete">Adicionar lembrete</button>
                 </form>
                 <div class="right">
-         {% for a in lembretes %}
-        <div class="lembrete">
-            <p>{{ a.mensagem }}</p><button onclick="deleteLembrete('{{ a.id }}')"><i class="bi bi-trash-fill" style="color: red;"></i></button>
-        </div>
-         {% endfor %}
+                    {% for a in lembretes %}
+                    <div class="lembrete">
+                        <p>{{ a.mensagem }}</p><button onclick="deleteLembrete('{{ a.id }}')"><i
+                                class="bi bi-trash-fill" style="color: red;"></i></button>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class=flashes>
+                {% for category, message in messages %}
+                <div class="{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
             <div class="content">
                 <div class="passageiros">
                     <h2>PASSAGEIROS</h2>
@@ -68,28 +82,43 @@
                                 <th>Telefone</th>
                                 <th>Status</th>
                             </tr>
-                {% for p in passageiros %}
-                <tbody id="clientTableBody">
-                    <td>
-                        <button onclick="toggleBlock(this)"><i class='bi bi-three-dots-vertical'></i></button>
-                        <div class="action-block" id="action-block" style="display: none;">
-                          <ul>
-                            <li><button class="opcoes-passageiros" onclick="editarPassageiro('{{ p.id }}', '{{ p.nome }}', '{{ p.rg }}', '{{ p.nascimento }}', '{{ p.telefone }}', '{{ p.status }}')">Editar</button></li>
-                            <li><button class="opcoes-passageiros" onclick="deletarPassageiro('{{ p.id }}')">Excluir</button></li>
-                          </ul>
-                        </div>
-                      </td>
-                        <td><div class="nome">{{ p.nome }}</div></td>
-                        <td>{{ p.telefone }}</td>
-                        <td>{{ p.status }}</td>
-                </tbody>
-                {% endfor %}
+                            {% for p in passageiros %}
+                            <tbody id="clientTableBody">
+                                <td>
+                                    <button onclick="toggleBlock(this)"><i
+                                            class='bi bi-three-dots-vertical'></i></button>
+                                    <div class="action-block" id="action-block" style="display: none;">
+                                        <ul>
+                                            <li><button class="opcoes-passageiros"
+                                                    onclick="editarPassageiro('{{ p.id }}', '{{ p.nome }}', '{{ p.rg }}', '{{ p.nascimento }}', '{{ p.telefone }}', '{{ p.status }}')">Editar</button>
+                                            </li>
+                                            <li><button class="opcoes-passageiros"
+                                                    onclick="deletarPassageiro('{{ p.id }}')">Excluir</button></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="nome">{{ p.nome }}</div>
+                                </td>
+                                <td>{{ p.telefone }}</td>
+                                <td>
+                                    <select name="status" id="status" onchange=" editarStatus('{{ p.id }}', this.value)">
+                                        <option value="{{ p.status }}" style="background-color: rgb(173, 255, 173);" selected disabled>{{ p.status }}</option>
+                                        <option value="ativo">ativo</option>
+                                        <option value="pendente">pendente</option>
+                                        <option value=""></option>
+                                        <option value=""></option>
+                                    </select>
+                                </td>
+                            </tbody>
+                            {% endfor %}
 
                         </table>
                     </div>
 
                     <div class="todos-passageiros">
-                        <button class="ver-todos-passageiros" onclick="window.location.href='/passageiros'">Ver Tudo</button>
+                        <button class="ver-todos-passageiros" onclick="window.location.href='/passageiros'">Ver
+                            Tudo</button>
                     </div>
 
                 </div>
@@ -98,11 +127,14 @@
                     <h2>VIAGENS</h2>
                     <div class="pesquisa-viagens">
                         <input type="text" placeholder="Destino da viagem">
-                        <button class="gerenciar-viagens-btn" onclick="window.location.href='/viagens'">Gerenciar Viagens</button>
+                        <button class="gerenciar-viagens-btn" onclick="window.location.href='/viagens'">Gerenciar
+                            Viagens</button>
                     </div>
                     <div class="viagens-blocks">
                         {% for v in viagens %}
-                        <a href=""><div class="block">{{ v.destino }}</div></a>
+                        <a href="">
+                            <div class="block">{{ v.destino }}</div>
+                        </a>
                         {% endfor %}
                     </div>
                 </div>
@@ -127,7 +159,8 @@
                         <input type="date" id="nascimento" name="nascimento">
 
                         <label for="telefone">Telefone:</label>
-                        <input type="tel" id="telefone" name="telefone" maxlength="15" required placeholder="Digite o telefone">
+                        <input type="tel" id="telefone" name="telefone" maxlength="15" required
+                            placeholder="Digite o telefone">
 
                         <label for="status">Status:</label>
                         <select id="status" name="status" required>
@@ -149,18 +182,22 @@
 
 <script>
 
-function searchClient(i, cell) {
-    let input = document.getElementById(`searchInput${i}`).value.toLowerCase();
-    let rows = document.querySelectorAll("#clientTableBody tr");
+    function searchClient(i, cell) {
+        let input = document.getElementById(`searchInput${i}`).value.toLowerCase();
+        let rows = document.querySelectorAll("#clientTableBody tr");
 
-    rows.forEach(row => {
-      let name = row.cells[cell].textContent.toLowerCase();
-      row.style.display = name.includes(input) ? "" : "none";
-    });
-  }
+        rows.forEach(row => {
+            let name = row.cells[cell].textContent.toLowerCase();
+            row.style.display = name.includes(input) ? "" : "none";
+        });
+    }
 
-    function deleteLembrete(id){
+    function deleteLembrete(id) {
         window.location.href = `/deletar_lembrete/${id}`
+    }
+
+    function editarStatus(id, status) {
+        window.location.href = `/passageiro/atualizar_status/${id}/${status}`
     }
 
     // Obtendo elementos
@@ -188,36 +225,36 @@ function searchClient(i, cell) {
 
 <script>
     function toggleBlock(button) {
-      // Seleciona o bloco de ações relacionado ao botão clicado
-      const actionBlock = button.nextElementSibling;
-  
-      // Fecha todos os outros blocos abertos
-      document.querySelectorAll('.action-block').forEach(block => {
-        if (block !== actionBlock) {
-          block.style.display = 'none';
+        // Seleciona o bloco de ações relacionado ao botão clicado
+        const actionBlock = button.nextElementSibling;
+
+        // Fecha todos os outros blocos abertos
+        document.querySelectorAll('.action-block').forEach(block => {
+            if (block !== actionBlock) {
+                block.style.display = 'none';
+            }
+        });
+
+        // Alterna a exibição do bloco
+        if (actionBlock.style.display === 'none' || actionBlock.style.display === '') {
+            // Posiciona o bloco ao lado do botão
+            const rect = button.getBoundingClientRect();
+            actionBlock.style.display = 'block';
+            actionBlock.style.top = `${rect.top + window.scrollY}px`;
+            actionBlock.style.left = `${rect.right + 10}px`;
+        } else {
+            actionBlock.style.display = 'none';
         }
-      });
-  
-      // Alterna a exibição do bloco
-      if (actionBlock.style.display === 'none' || actionBlock.style.display === '') {
-        // Posiciona o bloco ao lado do botão
-        const rect = button.getBoundingClientRect();
-        actionBlock.style.display = 'block';
-        actionBlock.style.top = `${rect.top + window.scrollY}px`;
-        actionBlock.style.left = `${rect.right + 10}px`;
-      } else {
-        actionBlock.style.display = 'none';
-      }
     }
-  
+
     // Fecha o bloco se clicar fora dele
     document.addEventListener('click', function (event) {
-      if (!event.target.closest('td')) {
-        document.querySelectorAll('.action-block').forEach(block => {
-          block.style.display = 'none';
-        });
-      }
+        if (!event.target.closest('td')) {
+            document.querySelectorAll('.action-block').forEach(block => {
+                block.style.display = 'none';
+            });
+        }
     });
-  </script>
+</script>
 
 </html>

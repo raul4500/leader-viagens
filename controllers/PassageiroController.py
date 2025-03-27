@@ -117,11 +117,17 @@ def editar_passageiro(id):
             nascimento = formatar_data(nascimento)
         telefone = request.form['telefone']
         status = request.form['status']
-        if verificarInfo(nome, nascimento, rg, telefone):  
+        if verificarInfo(nome, rg, telefone):  
             passageiroRepository.updatePassageiro(id, nome, nascimento, rg, telefone, status)
             flash('passageiro atualizado', 'success')
             return redirect(url_for('passageiro_controller.index'))
     return redirect(url_for('passageiro_controller.index'))
+
+@passageiro_controller.route('/passageiro/atualizar_status/<int:id>/<status>')
+def atualizar_status(id, status):
+    passageiroRepository.updateStatus(id, status)
+    flash(f'Status de atualizado', 'success')
+    return redirect(url_for('index_controller.index'))
 
 @passageiro_controller.route('/deletar_passageiro/<int:id>')
 def deletar_passageiro(id):
