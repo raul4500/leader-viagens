@@ -76,8 +76,6 @@
             <select name="status" id="status" required>
               <option value="ativo">ativo</option>
               <option value="pendente">pendente</option>
-              <option value=""></option>
-              <option value=""></option>
             </select>
 
             <button id="confirmar" type="submit">Confirmar</button>
@@ -141,9 +139,7 @@
 
       e.target.value = rg;
   });
-</script>
 
-<script>
   document.getElementById("telefone").addEventListener("input", function (e) {
       let telefone = e.target.value.replace(/\D/g, ""); // Remove tudo que não for número
 
@@ -156,6 +152,7 @@
       e.target.value = telefone;
   });
 </script>
+
 
 <script>
   function searchClient(i, cell) {
@@ -243,7 +240,7 @@
 
   function deletarPassageiro(id) {
       if (confirm("Deseja realmente excluir este passageiro?")) {
-          window.location.href = `/deletar_passageiro/${id}`;
+          window.location.href = `/deletar_passageiro/${id}/passageiro_controller`;
       }
   }
 

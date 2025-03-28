@@ -22,8 +22,8 @@ class ViagemRepository:
     def createViagem(self, destino, data_inicio, data_fim, preco, qtd_assentos, assentos_indisponiveis, tipo_onibus, descricao, inclusos):
         return self.viagemDao.addViagem(destino, data_inicio, data_fim, preco, qtd_assentos, assentos_indisponiveis, tipo_onibus, descricao, inclusos)
 
-    def updateViagem(self, id, destino, data_inicio, data_fim, preco, qtd_assentos, assentos_indisponiveis, tipo_onibus, descricao, inclusos):
-        return self.viagemDao.attViagem(id, destino, data_inicio, data_fim, preco, qtd_assentos, assentos_indisponiveis, tipo_onibus, descricao, inclusos)
+    def updateViagem(self, id, destino, data_inicio, data_fim, preco, qtd_assentos,  tipo_onibus, descricao, inclusos):
+        return self.viagemDao.attViagem(id, destino, data_inicio, data_fim, preco, qtd_assentos, tipo_onibus, descricao, inclusos)
 
     def deleteViagem(self, id):
         return self.viagemDao.delViagem(id)

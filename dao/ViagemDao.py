@@ -36,7 +36,7 @@ class ViagemDao:
         return viagem.toJson()
 
     @staticmethod
-    def attViagem(id, destino, data_inicio, data_fim, preco, qtd_assentos, assentos_indisponiveis, tipo_onibus, descricao, inclusos):
+    def attViagem(id, destino, data_inicio, data_fim, preco, qtd_assentos, tipo_onibus, descricao, inclusos):
         viagem = ViagemDao.getViagem(id)
         if viagem:
             viagem.destino = destino
@@ -44,7 +44,6 @@ class ViagemDao:
             viagem.data_fim = data_fim
             viagem.preco = preco
             viagem.aqt_assentos = qtd_assentos
-            viagem.assentos_indisponiveis = assentos_indisponiveis
             viagem.tipo_onibus = tipo_onibus
             viagem.descricao = descricao
             viagem.inclusos = inclusos

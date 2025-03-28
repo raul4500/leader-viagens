@@ -69,7 +69,7 @@
                     <h2>PASSAGEIROS</h2>
                     <div class="opcoes-passageiros">
                         <input type="text" id="searchInputNome" placeholder="Nome" onkeyup="searchClient('Nome', 1)">
-                        <button class="adicionar-passageiro" id="openModalBtn">
+                        <button class="adicionar-passageiro" id="openModalBtn" onclick="abrirModal('cadastrar')">
                             <i class="bi bi-plus"></i>
                         </button>
                     </div>
@@ -102,8 +102,10 @@
                                 </td>
                                 <td>{{ p.telefone }}</td>
                                 <td>
-                                    <select name="status" id="status" onchange=" editarStatus('{{ p.id }}', this.value)">
-                                        <option value="{{ p.status }}" style="background-color: rgb(173, 255, 173);" selected disabled>{{ p.status }}</option>
+                                    <select name="status" id="status"
+                                        onchange=" editarStatus('{{ p.id }}', this.value)">
+                                        <option value="{{ p.status }}" style="background-color: rgb(173, 255, 173);"
+                                            selected disabled>{{ p.status }}</option>
                                         <option value="ativo">ativo</option>
                                         <option value="pendente">pendente</option>
                                         <option value=""></option>
@@ -143,34 +145,35 @@
         <!-- O Modal -->
         <div id="myModal" class="modal">
             <div class="modal-content">
-                <span class="close" id="closeModalBtn">&times;</span>
+                <span class="close" id="closeModalBtn" onclick="fecharModal()">&times;</span>
                 <div class="modal-header">
                     <h2>Adicionar Dados de Pessoa</h2>
                 </div>
                 <form id="formPessoa" action="/cadastrar_passageiro/index_controller" method="POST">
                     <div class="modal-body">
-                        <label for="nome">Nome:</label>
-                        <input type="text" id="nome" name="nome" required placeholder="Digite o nome">
+                        <label for="index-nome">Nome:</label>
+                        <input type="text" id="index-nome" name="nome" required
+                            placeholder="Digite o nome do passageiro...">
 
-                        <label for="rg">RG:</label>
-                        <input type="text" id="rg" name="rg" maxlength="12" required placeholder="Digite o RG">
+                        <label for="index-rg">RG:</label>
+                        <input type="text" id="index-rg" name="rg" maxlength="12" required placeholder="99.999.999-9">
 
-                        <label for="nascimento">Data de Nascimento:</label>
-                        <input type="date" id="nascimento" name="nascimento">
+                        <label for="index-nascimento">Data de Nascimento:</label>
+                        <input type="date" id="index-nascimento" name="nascimento" min="1925-01-01">
 
-                        <label for="telefone">Telefone:</label>
-                        <input type="tel" id="telefone" name="telefone" maxlength="15" required
-                            placeholder="Digite o telefone">
+                        <label for="index-telefone">Telefone:</label>
+                        <input type="text" id="index-telefone" name="telefone" maxlength="15"
+                            placeholder="(99) 99999-9999" required>
 
-                        <label for="status">Status:</label>
-                        <select id="status" name="status" required>
-                            <option value="ativo">Ativo</option>
-                            <option value="inativo">Inativo</option>
-                            <option value="pendente">Pendente</option>
+
+                        <label for="index-status">Status:</label>
+                        <select name="status" id="index-status" required>
+                            <option value="ativo">ativo</option>
+                            <option value="pendente">pendente</option>
                         </select>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit">Adicionar</button>
+                        <button type="submit" id="index-confirmar">Adicionar</button>
                     </div>
                 </form>
             </div>
@@ -179,6 +182,29 @@
     </div>
 
 </body>
+
+<script>
+    document.getElementById("index-rg").addEventListener("input", function (e) {
+        let rg = e.target.value.replace(/\D/g, ""); // Remove tudo que não for número
+
+        // Aplica a máscara no formato 99.999.999-9
+        rg = rg.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,1}).*/, "$1.$2.$3-$4");
+
+        e.target.value = rg;
+    });
+
+    document.getElementById("index-telefone").addEventListener("input", function (e) {
+        let telefone = e.target.value.replace(/\D/g, ""); // Remove tudo que não for número
+
+        if (telefone.length > 10) {
+            telefone = telefone.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+        } else {
+            telefone = telefone.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+        }
+
+        e.target.value = telefone;
+    });
+</script>
 
 <script>
 
@@ -200,25 +226,59 @@
         window.location.href = `/passageiro/atualizar_status/${id}/${status}`
     }
 
-    // Obtendo elementos
+</script>
+
+<script>
+
     const modal = document.getElementById("myModal");
-    const openModalBtn = document.getElementById("openModalBtn");
-    const closeModalBtn = document.getElementById("closeModalBtn");
+    function abrirModal(tipo) {
+        if (tipo == 'editar') {
+            modal.style.display = "block";
+        } else {
+            document.getElementById("formPessoa").action = "/cadastrar_passageiro/index_controller";
+            document.getElementById("index-confirmar").innerHTML = `Confirmar`;
+            document.getElementById("index-status").value = 'ativo';
+            document.getElementById("index-nome").value = '';
+            document.getElementById("index-rg").value = '';
+            document.getElementById("index-nascimento").value = '';
+            document.getElementById("index-telefone").value = '';
 
-    // Função para abrir o modal
-    openModalBtn.onclick = function () {
-        modal.style.display = "block";
+            modal.style.display = "block";
+        }
     }
 
-    // Função para fechar o modal
-    closeModalBtn.onclick = function () {
+    function fecharModal() {
         modal.style.display = "none";
-    }
 
+    }
     // Fechar o modal quando clicar fora dele
     window.onclick = function (event) {
         if (event.target == modal) {
             modal.style.display = "none";
+        }
+    }
+
+
+
+    function editarPassageiro(id, nome, rg, nascimento, telefone, status) {
+        let x = document.getElementById("formPessoa").action = `/editar_passageiro/${id}`;
+        //alert(nascimento)
+        document.getElementById("index-confirmar").innerHTML = `<i class="bi bi-pencil-fill"></i> Confirmar Edição`;
+        document.getElementById("index-status").value = status;
+        document.getElementById("index-nome").value = nome;
+        document.getElementById("index-rg").value = rg;
+        document.getElementById("index-nascimento").value = nascimento;
+        document.getElementById("index-telefone").value = telefone;
+        abrirModal('editar');
+
+        document.getElementById('action-block').style.display = 'none'
+
+
+    }
+
+    function deletarPassageiro(id) {
+        if (confirm("Deseja realmente excluir este passageiro?")) {
+            window.location.href = `/deletar_passageiro/${id}/index_controller`;
         }
     }
 </script>

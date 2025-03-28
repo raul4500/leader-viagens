@@ -99,7 +99,7 @@ def cadastrar_passageiro(url):
         existing_passageiro = passageiroRepository.getPassageiroByRg(rg)
         if existing_passageiro:
             flash('RG já cadastrado.', 'error')
-            return redirect(url_for('passageiro_controller.cadastrar_passageiro'))
+            return redirect(url_for(f'passageiro_controller.cadastrar_passageiro', url=url))
         
         if verificarInfo(nome, rg, telefone):
             passageiroRepository.createPassageiro(nome, nascimento, rg, telefone, status)
@@ -129,11 +129,11 @@ def atualizar_status(id, status):
     flash(f'Status de atualizado', 'success')
     return redirect(url_for('index_controller.index'))
 
-@passageiro_controller.route('/deletar_passageiro/<int:id>')
-def deletar_passageiro(id):
+@passageiro_controller.route('/deletar_passageiro/<int:id>/<url>')
+def deletar_passageiro(id, url):
     passageiroRepository.deletePassageiro(id)
     flash('passageiro deletado', 'success')
-    return redirect(url_for('passageiro_controller.index'))
+    return redirect(url_for(f'{url}.index'))
 
 
 #@passageiros_controller.route('/login', methods=['GET', 'POST'])

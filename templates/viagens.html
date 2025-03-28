@@ -108,16 +108,19 @@
                         </tr>
 
                         {% for v in viagens %}
-                        <tr onclick="window.location.href='/viagem/{{ v.id }}';">
-                            <td>
+                        <tr>
+                            <td onclick="window.location.href='/viagem/{{ v.id }}';">
                                 <i class='bi bi-bus-front-fill'></i>
                             </td>
-                            <td>
-                                <div class="nome"><a href="/viagem/{{ v.id }}">{{ v.data_inicio }} - {{ v.destino }}</a>
+                            <td onclick="window.location.href='/viagem/{{ v.id }}';">
+                                <div class="nome">{{ v.data_inicio }} - {{ v.destino }}
                                 </div>
                             </td>
-                            <td><button><i class="bi bi-pencil-fill"></i></button></td>
-                            <td></td>
+                            <td><button
+                                    onclick="editarViagem('{{v.id}}', '{{v.destino}}', '{{v.data_inicio}}', '{{v.data_fim}}', '{{v.preco}}', '{{v.qtd_assentos}}', '{{v.tipo_onibus}}', '{{v.descricao}}', '{{v.inclusos}}')"><i
+                                        class="bi bi-pencil-fill"></i></button></td>
+                            <td><button onclick="alert('{{v.id}}')"><i class="bi bi-trash-fill"
+                                        style="color: red;"></i></button></td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -148,6 +151,23 @@
         if (inputs) {
             inputs.classList.remove('active'); // Remove a classe 'active'
         }
+    }
+
+    function editarViagem(id, destino, data_inicio, data_fim, preco, qtd_assentos, tipo_onibus, descricao, inclusos) {
+        document.getElementById("cadastrar-viagem").action = "/editar_viagem/" + id;
+        document.getElementById("fechar-inputs").onclick = function () {
+            location.reload();
+        }
+        document.getElementById("destino").value = destino;
+        document.getElementById("data_inicio").value = data_inicio;
+        document.getElementById("data_fim").value = data_fim;
+        document.getElementById("preco").value = preco;
+        document.getElementById("qtd_assentos").value = qtd_assentos;
+        document.getElementById("tipo_onibus").value = tipo_onibus;
+        document.getElementById("descricao").value = descricao;
+        document.getElementById("inclusos").value = inclusos;
+        abrirInputs();
+
     }
 
 </script>

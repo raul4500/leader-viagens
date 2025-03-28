@@ -47,26 +47,31 @@ def delete_viagem(viagem_id):
     viagemRepository.deleteViagem(viagem_id)
     return redirect(url_for('viagem_controller.index'))
 
-@viagem_controller.route('/update_viagem/<int:viagem_id>', methods=['GET', 'POST'])
-def update_viagem(viagem_id):
-    viagem = viagemRepository.getViagem(viagem_id)
+@viagem_controller.route('/editar_viagem/<int:id>', methods=['GET', 'POST'])
+def editar_viagem(id):
     if request.method == 'POST':
         destino = request.form['destino']
         data_inicio = request.form['data_inicio']
         data_fim = request.form['data_fim']
         preco = request.form['preco']
         qtd_assentos = request.form['qtd_assentos']
-        viagem_url = request.form['viagem_url']
+        tipo_onibus = request.form.get('tipo_onibus')
+        descricao = request.form['descricao']
+        inclusos = request.form['inclusos']
         try:
-            preco = float(preco)
-            data = datetime.strptime(data, '%Y-%m-%d')
+            data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d')
         except ValueError:
-            flash('Preço deve ser um número e data deve estar no formato YYYY-MM-DD.')
-            return redirect(url_for('viagem_controller.cadastrar_viagem'))
-        viagemRepository.updateViagem(viagem, destino, data_inicio, data_fim, preco, qtd_assentos, assentos_indisponiveis=None) #viagem_url)
-        flash('Viagem atualizada com sucesso.')
+            flash('Data inválida.', 'error')
+            return redirect(url_for('viagem_controller.index'))
+        try:
+            data_fim = datetime.strptime(data_fim, '%Y-%m-%d')
+        except ValueError:
+            flash('Data inválida.', 'error')
+            return redirect(url_for('viagem_controller.index'))
+        viagemRepository.updateViagem(id, destino, data_inicio, data_fim, preco, qtd_assentos, tipo_onibus, descricao, inclusos)
+        flash('Viagem editada com sucesso.', 'success')
         return redirect(url_for('viagem_controller.index'))
-    return render_template('update_viagem.html', viagem=viagem)
+    return redirect(url_for('viagem_controller.index'))
 
 @viagem_controller.route('/viagem/<int:viagem_id>')
 def teste(viagem_id):
