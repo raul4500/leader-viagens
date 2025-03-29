@@ -14,7 +14,6 @@ passageiroRepository = PassageiroRepository()
 def formatar_data(data_americana):
     return datetime.strptime(data_americana, "%Y-%m-%d").strftime("%d-%m-%Y")
 
-
 def formatar_data_registro(data_hora):
     # Verifica se a entrada é do tipo datetime
     if isinstance(data_hora, datetime):
@@ -27,8 +26,7 @@ def formatar_data_registro(data_hora):
         return [data_formatada, hora_formatada]
     else:
         raise ValueError("O valor fornecido não é do tipo datetime.")
-        
-
+    
 def verificarInfo(nome, rg, telefone):
     if nome == "" or rg == "" or telefone == "":
         
@@ -88,8 +86,6 @@ def cadastrar_passageiro(url):
     if request.method == 'POST':
         nome = request.form['nome']
         nascimento = request.form['nascimento']
-        if nascimento!='':
-            nascimento = formatar_data(nascimento)
         rg = request.form['rg']
         telefone = request.form['telefone']
         status = request.form['status']
@@ -107,8 +103,8 @@ def cadastrar_passageiro(url):
             return redirect(url_for(f'{url}.index'))
     return redirect(url_for(f'{url}.index'))
 
-@passageiro_controller.route('/editar_passageiro/<int:id>', methods=['GET', 'POST'])
-def editar_passageiro(id):
+@passageiro_controller.route('/editar_passageiro/<int:id>/<url>', methods=['GET', 'POST'])
+def editar_passageiro(id, url):
     if request.method == 'POST':
         nome = request.form['nome']
         nascimento = request.form['nascimento']
@@ -120,7 +116,7 @@ def editar_passageiro(id):
         if verificarInfo(nome, rg, telefone):  
             passageiroRepository.updatePassageiro(id, nome, nascimento, rg, telefone, status)
             flash('passageiro atualizado', 'success')
-            return redirect(url_for('passageiro_controller.index'))
+            return redirect(url_for(f'{url}.index'))
     return redirect(url_for('passageiro_controller.index'))
 
 @passageiro_controller.route('/passageiro/atualizar_status/<int:id>/<status>')

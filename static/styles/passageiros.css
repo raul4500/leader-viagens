@@ -90,6 +90,23 @@ h1 {
   border: 1px solid rgb(160, 160, 160);
 }
 
+.cadastrar-passageiro .identificacao {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.cadastrar-passageiro .identificacao .left, .right {
+  width: 50%;
+  background-color: turquoise;
+}
+
+.cadastrar-passageiro .identificacao .right {
+  width: 50%;
+  background-color: turquoise;
+}
+
 .cadastrar-passageiro.active{
   height: 420px;
   padding: 12px;

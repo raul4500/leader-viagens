@@ -261,7 +261,7 @@
 
 
     function editarPassageiro(id, nome, rg, nascimento, telefone, status) {
-        let x = document.getElementById("formPessoa").action = `/editar_passageiro/${id}`;
+        let x = document.getElementById("formPessoa").action = `/editar_passageiro/${id}/index_controller`;
         //alert(nascimento)
         document.getElementById("index-confirmar").innerHTML = `<i class="bi bi-pencil-fill"></i> Confirmar Edição`;
         document.getElementById("index-status").value = status;

@@ -62,8 +62,16 @@
             <label for="nome">Nome:</label>
             <input type="text" id="nome" name="nome" required placeholder="Digite o nome do passageiro...">
 
+            <div class="identificacao">
+              <div class="left">
             <label for="rg">RG:</label>
             <input type="text" id="rg" name="rg" maxlength="12" required placeholder="99.999.999-9">
+          </div>
+          <div class="right">
+            <label for="cpf">cpf:</label>
+            <input type="text" id="cpf" name="cpf" maxlength="12" required placeholder="99.999.999-9">
+          </div>
+        </div>
 
             <label for="nascimento">Data de Nascimento:</label>
             <input type="date" id="nascimento" name="nascimento" min="1925-01-01">
@@ -111,7 +119,7 @@
               <td>{{ p.rg }}</td>
               <td>{{ p.telefone }}</td>
               {% if p.nascimento %}
-              <td><center>{{ p.nascimento }}</center></td>
+              <td><center>{{ formatar_data(p.nascimento) }}</center></td>
               {% else %}
               <td><center></center></td>
               {% endif %}
@@ -220,7 +228,7 @@
   }
 
   function editarPassageiro(id, nome, rg, nascimento, telefone, status) {
-    let x = document.getElementById("cadastrar-passageiro").action = `/editar_passageiro/${id}`;
+    let x = document.getElementById("cadastrar-passageiro").action = `/editar_passageiro/${id}/passageiro_controller`;
     document.getElementById("fechar-inputs").onclick = function () {
       location.reload();
     }

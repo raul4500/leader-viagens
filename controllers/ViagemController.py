@@ -10,10 +10,17 @@ viagemRepository = ViagemRepository()
 clienteRepository = PassageiroRepository()
 passageiroRepository = PassageiroRepository()
 
+def formatar_data(data):
+    try:
+        date_obj = datetime.strptime(data, "%Y-%m-%d")
+        return date_obj.strftime("%d/%m")
+    except ValueError:
+        return "Data inválida"
+
 @viagem_controller.route('/viagens')
 def index():
     viagens = viagemRepository.getAllViagens()
-    return render_template('viagens.html', viagens=viagens)
+    return render_template('viagens.html', viagens=viagens, formatar_data=formatar_data)
 
 @viagem_controller.route('/cadastrar_viagem', methods=['GET','POST'])
 def cadastrar_viagem():
@@ -27,16 +34,6 @@ def cadastrar_viagem():
         tipo_onibus = request.form.get('tipo_onibus')
         descricao = request.form['descricao']
         inclusos = request.form['inclusos']
-        try:
-            data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d')
-        except ValueError:
-            flash('Data inválida.', 'error')
-            return redirect(url_for('viagem_controller.index'))
-        try:
-            data_fim = datetime.strptime(data_fim, '%Y-%m-%d')
-        except ValueError:
-            flash('Data inválida.', 'error')
-            return redirect(url_for('viagem_controller.index'))
         viagemRepository.createViagem(destino, data_inicio, data_fim, preco, qtd_assentos, assentos_indisponiveis, tipo_onibus, descricao, inclusos)
         flash('Viagem adicionada com sucesso.', 'success')
         return redirect(url_for('viagem_controller.index'))

@@ -113,7 +113,7 @@
                                 <i class='bi bi-bus-front-fill'></i>
                             </td>
                             <td onclick="window.location.href='/viagem/{{ v.id }}';">
-                                <div class="nome">{{ v.data_inicio }} - {{ v.destino }}
+                                <div class="nome">{{ formatar_data(v.data_inicio) }} - {{ v.destino }}
                                 </div>
                             </td>
                             <td><button

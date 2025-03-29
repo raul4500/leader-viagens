@@ -5,8 +5,8 @@ from sqlalchemy.orm import relationship
 class Viagem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     destino = db.Column(db.String(100), nullable=False)
-    data_inicio = db.Column(db.Date, nullable=False)
-    data_fim = db.Column(db.Date, nullable=False)
+    data_inicio = db.Column(db.String(10), nullable=False)
+    data_fim = db.Column(db.String(10), nullable=False)
     preco = db.Column(db.Float, nullable=False)
     qtd_assentos = db.Column(db.Integer, nullable=False)
     tipo_onibus = db.Column(db.String(12), nullable=False)
@@ -23,8 +23,8 @@ class Viagem(db.Model):
         return {
             "id": self.id,
             "destino": self.destino,
-            "data_inicio": self.data_inicio.strftime('%Y-%m-%d'),
-            "data_fim": self.data_fim.strftime('%Y-%m-%d'),
+            "data_inicio": self.data_inicio,
+            "data_fim": self.data_fim,
             "preco": self.preco,
             "qtd_assentos": self.qtd_assentos,
             "tipo_onibus": self.tipo_onibus,
