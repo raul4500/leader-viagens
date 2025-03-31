@@ -10,11 +10,11 @@ class ReservaRepository:
     def getReserva(self, id):
         return self.reservaDao.getReserva(id)
 
-    def createReserva(self, cliente_id, viagem_id):
-        return self.reservaDao.addReserva(cliente_id, viagem_id)
+    def createReserva(self, assento, passageiro_id, viagem_id):
+        return self.reservaDao.addReserva (assento, passageiro_id, viagem_id)
 
-    def updateReserva(self, id, cliente_id, viagem_id):
-        return self.reservaDao.attReserva(id, cliente_id, viagem_id)
+    def updateReserva(self, id, assento, passageiro_id, viagem_id):
+        return self.reservaDao.attReserva(id, assento, passageiro_id, viagem_id)
 
     def deleteReserva(self, id):
         return self.reservaDao.delReserva(id)

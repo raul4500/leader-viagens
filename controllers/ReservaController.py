@@ -10,10 +10,13 @@ reservaRepository = ReservaRepository()
 viagemRepository = ViagemRepository()
 passageiroRepository = PassageiroRepository()
 
-@reserva_controller.route('/reservar/<int:viagem_id>/<int:passageiro_id>', methods=['GET', 'POST'])
-def index(viagem_id, passageiro_id):
+@reserva_controller.route('/reservar/<int:assento>/<int:viagem_id>/<int:passageiro_id>', methods=['GET', 'POST'])
+def index(assento, viagem_id, passageiro_id):
     passageiro = passageiroRepository.getPassageiro(passageiro_id)
     viagem = viagemRepository.getViagem(viagem_id)
     if passageiro and viagem:
-        reservaRepository.createReserva(passageiro_id, viagem_id)
-    return redirect(url_for('viagem_controller.teste'))
+        reservaRepository.createReserva(assento, passageiro_id, viagem_id)
+        flash('Reserva criada com sucesso!', 'success')
+    else:
+        flash('Erro ao criar reserva.', 'error')
+    return redirect(url_for('index_controller.index'))

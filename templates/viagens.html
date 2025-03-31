@@ -42,7 +42,7 @@
                     <button class="fechar-inputs" id="fechar-inputs" onclick="fecharInputs()" style="display: none;">X
                         Cancelar</button>
                 </div>
-
+                
                 {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                 <div class=flashes>
@@ -119,8 +119,7 @@
                             <td><button
                                     onclick="editarViagem('{{v.id}}', '{{v.destino}}', '{{v.data_inicio}}', '{{v.data_fim}}', '{{v.preco}}', '{{v.qtd_assentos}}', '{{v.tipo_onibus}}', '{{v.descricao}}', '{{v.inclusos}}')"><i
                                         class="bi bi-pencil-fill"></i></button></td>
-                            <td><button onclick="alert('{{v.id}}')"><i class="bi bi-trash-fill"
-                                        style="color: red;"></i></button></td>
+                            <td><button onclick="deletarViagem('{{v.id}}')"><i class="bi bi-trash-fill" style="color: red;"></i></button></td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -168,6 +167,12 @@
         document.getElementById("inclusos").value = inclusos;
         abrirInputs();
 
+    }
+
+    function deletarViagem(id) {
+        if (confirm("Tem certeza que deseja deletar essa viagem?")) {
+            window.location.href = "/deletar_viagem/" + id;
+        }
     }
 
 </script>

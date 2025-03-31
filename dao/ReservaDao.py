@@ -10,17 +10,18 @@ class ReservaDao:
         return Reserva.query.all()
 
     @staticmethod
-    def addReserva(cliente_id, viagem_id):
-        reserva = Reserva(cliente_id=cliente_id, viagem_id=viagem_id)
+    def addReserva(assento, passageiro_id, viagem_id):
+        reserva = Reserva(assento=assento, passageiro_id=passageiro_id, viagem_id=viagem_id)
         db.session.add(reserva)
         db.session.commit()
         return reserva.toJson()
 
     @staticmethod
-    def attReserva(id, cliente_id, viagem_id):
+    def attReserva(id, assento, passageiro_id, viagem_id):
         reserva = ReservaDao.getReserva(id)
         if reserva:
-            reserva.cliente_id = cliente_id
+            reserva.assento = assento
+            reserva.passageiro_id = passageiro_id
             reserva.viagem_id = viagem_id
             db.session.commit()
         return reserva.toJson()

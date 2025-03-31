@@ -9,6 +9,7 @@ viagem_controller = Blueprint('viagem_controller', __name__)
 viagemRepository = ViagemRepository()
 clienteRepository = PassageiroRepository()
 passageiroRepository = PassageiroRepository()
+reservaRepository = ReservaRepository()
 
 def formatar_data(data):
     try:
@@ -39,9 +40,10 @@ def cadastrar_viagem():
         return redirect(url_for('viagem_controller.index'))
     return redirect(url_for('viagem_controller.index'))
 
-@viagem_controller.route('/delete_viagem/<int:viagem_id>', methods=['GET'])
+@viagem_controller.route('/deletar_viagem/<int:viagem_id>', methods=['GET'])
 def delete_viagem(viagem_id):
     viagemRepository.deleteViagem(viagem_id)
+    flash('Viagem deletada com sucesso.', 'success')
     return redirect(url_for('viagem_controller.index'))
 
 @viagem_controller.route('/editar_viagem/<int:id>', methods=['GET', 'POST'])
@@ -74,7 +76,79 @@ def editar_viagem(id):
 def teste(viagem_id):
     passageiros = passageiroRepository.getAllPassageiros()
     viagem = viagemRepository.getViagem(viagem_id)
-    return render_template('tesste.html', passageiros=passageiros, viagem=viagem)
+    reservas = reservaRepository.getAllReservas()
+    passageiros_reservados = []
+    for reserva in reservas:
+        for passageiro in passageiros:
+            if passageiro.id == reserva.passageiro_id:
+                passageiros_reservados.append(passageiro)
+        if not viagem:
+            flash('Viagem não encontrada.', 'error')
+            return redirect(url_for('viagem_controller.index'))
+    return render_template('tesste.html', passageiros_reservados=passageiros_reservados, viagem=viagem, passageiros=passageiros, reservas=reservas)
+
+
+
+#def dados(reservas, passageiros):
+    # Inicia o código HTML
+    html = '''
+    <div class="tabela-dados" style="display: none;">
+        <table>
+            <tr>
+                <th>NOME</th>
+                <th>RG</th>
+                <th>DT-NASCTO</th>
+                <th>TELEFONE</th>
+                <th>PAGAMENTO</th>
+                <th>OBSERVAÇÃO</th>
+            </tr>
+    '''
+
+    # Itera para gerar a tabela com base nas reservas
+    for i in range(36):  # Loop de 0 a 35
+        # Flag para verificar se houve alguma reserva
+        encontrou_reserva = False
+
+        for r in reservas:
+            if r['assento'] == i:
+                # Encontra o passageiro relacionado à reserva
+                p = passageiros.get(r['passageiro_id'])
+                
+                if p:  # Verifica se o passageiro existe
+                    encontrou_reserva = True
+                    # Adiciona a linha de dados para a reserva
+                    html += f'''
+                    <tr>
+                        <td>{p['nome']}</td>
+                        <td>{p['rg']}</td>
+                        <td>{p['nascimento']}</td>
+                        <td>{p['telefone']}</td>
+                        <td>{p['id']}</td>
+                        <td></td>
+                    </tr>
+                    '''
+                    break
+        
+        # Caso não tenha encontrado a reserva para esse assento, adiciona uma linha vazia
+        if not encontrou_reserva:
+            html += f'''
+            <tr>
+                <td>{i}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            '''
+
+    # Fecha a tabela e a div
+    html += '''
+        </table>
+    </div>
+    '''
+
+    return html
 
 
 #    min_price = request.args.get('min_price', 0, type=int)
