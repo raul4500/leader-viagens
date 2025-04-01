@@ -55,7 +55,8 @@
         }
 
         table {
-            width: 100%;
+            margin: 24px;
+            width: 50%;
             border-collapse: collapse;
         }
 
@@ -157,162 +158,9 @@
             </div>
             <button class="toggle-btn-right" onclick="toggleSidebar(event)">☰</button>
 
+            {{mapa|safe}}
 
-            <table id="mapa-onibus" class="mapa-onibus" style="display: block;">
-                <tbody>
-                    <tr>
-                        <td colspan="7" style="height: 50px; font-size: 2.5vw;">
-                            <center>
-                                <h3>{{ viagem.destino }}</h3>
-                            </center>
-                        </td>
-                        <td colspan="2" style="background-color: rgb(115, 187, 67);">
-                            <center>
-                                <h2>Saída: {{ viagem.data_inicio }}</h2>
-                            </center>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="7">
-                            <center>
-                                <h2>Mapa de viagem</h2>
-                            </center>
-                        </td>
-                        <td colspan="2" style="background-color: rgb(115, 187, 67);">
-                            <center>
-                                <h2>Dezembro</h2>
-                            </center>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="7">
-                            <h2 style="text-align: right; color: red;">R$ {{ viagem.preco }}</h2>
-                        </td>
-                        <td colspan="2">
-                            <p style="font-size: 14px; color: red;">(PARA MEMBROS DO GRUPO)</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="9">
-                            <center>
-                                <h2 style="font-size: 16px; color: red;">OU 6X DE R$ {{ (viagem.preco)/6 }}</h2>
-                            </center>
-                        </td>
-                    </tr>
-
-                    {% set count = 0 %}
-                    {% if viagem.qtd_assentos == 49 or viagem.qtd_assentos > 49 and count == 0 %}
-                    <tr class="piso">
-                        <td colspan="9">Piso Superior</td>
-                    </tr>
-                    {% endif %}
-                    {% for i in range(1, viagem.qtd_assentos + 1, 4) %}
-                    {% if i == 49 and count == 0 %}
-                    <tr class="piso">
-                        <td colspan="9">Piso Inferior</td>
-                    </tr>
-                    {% set count = 1 %}
-                    {% endif %}
-                    <tr>
-                        {% if i % 2 != 0 %}
-                        {% if i == viagem.qtd_assentos %}
-                        <td class="assento" id="assento_{{ i }}" style="opacity: 0; border: none"></td>
-                        <td class="assento" id="assento_{{ i }}">{{ i }}</td>
-                        <td class="nome" id="assento_{{ i }}" name="assento_{{ i }}" onclick="highlightSeat('{{ i }}')"
-                            ondragover="allowDrop(event)" ondrop="drop(event)"></td>
-                        <td class="nome" id="assento_{{ i }}" name="assento_{{ i }}" style="opacity: 0; border: none">
-                        </td>
-                        {% elif i + 1 == viagem.qtd_assentos %}
-                        <td class="assento" id="assento_{{ i }}">{{ i }}</td>
-                        <td class="assento" id="assento_{{ i + 1 }}">{{ i + 1 }}</td>
-                        <td class="nome" id="assento_{{ i }}" name="assento_{{ i }}" onclick="highlightSeat('{{ i }}')"
-                            ondragover="allowDrop(event)" ondrop="drop(event)"></td>
-                        <td class="nome" id="assento_{{ i+1 }}" name="assento_{{ i+1 }}"
-                            onclick="highlightSeat('{{ i + 1 }}')" ondragover="allowDrop(event)" ondrop="drop(event)">
-                        </td>
-                        {% elif i + 2 == viagem.qtd_assentos %}
-                        <td class="assento" id="assento_{{ i }}">{{ i }}</td>
-                        <td class="assento" id="assento_{{ i + 1 }}">{{ i + 1 }}</td>
-                        <td class="nome" id="assento_{{ i }}" name="assento_{{ i }}" onclick="highlightSeat('{{ i }}')"
-                            ondragover="allowDrop(event)" ondrop="drop(event)"></td>
-                        <td class="nome" id="assento_{{ i + 1 }}" name="assento_{{ i + 1 }}"
-                            onclick="highlightSeat('{{ i + 1 }}')" ondragover="allowDrop(event)" ondrop="drop(event)">
-                        </td>
-                        <td class="space"></td>
-                        <td class="assento" id="assento_{{ i }}" style="opacity: 0; border: none"></td>
-                        <td class="assento" id="assento_{{ i + 2 }}">{{ i + 2 }}</td>
-                        <td class="nome" id="assento_{{ i + 2 }}" name="assento_{{ i + 2 }}"
-                            onclick="highlightSeat('{{ i + 2 }}')" ondragover="allowDrop(event)" ondrop="drop(event)">
-                        </td>
-                        <td class="nome" id="assento_{{ i }}" name="assento_{{ i }}" style="opacity: 0; border: none">
-                        </td>
-                        {% else %}
-                        <td class="assento" id="assento_{{ i }}">{{ i }}</td>
-                        <td class="assento" id="assento_{{ i + 1 }}">{{ i + 1 }}</td>
-                        <td class="nome" id="assento_{{ i }}" name="assento_{{ i }}" onclick="highlightSeat('{{ i }}')"
-                            ondragover="allowDrop(event)" ondrop="drop(event)"></td>
-                        <td class="nome" id="assento_{{ i + 1 }}" name="assento_{{ i + 1 }}"
-                            onclick="highlightSeat('{{ i + 1 }}')" ondragover="allowDrop(event)" ondrop="drop(event)">
-                        </td>
-                        <td class="space"></td>
-                        <td class="assento" id="assento_{{ i + 3 }}">{{ i + 3 }}</td>
-                        <td class="assento" id="assento_{{ i + 2 }}">{{ i + 2 }}</td>
-                        <td class="nome" id="assento_{{ i + 3 }}" name="assento_{{ i + 3 }}"
-                            onclick="highlightSeat('{{ i + 3 }}')" ondragover="allowDrop(event)" ondrop="drop(event)">
-                        </td>
-                        <td class="nome" id="assento_{{ i + 2 }}" name="assento_{{ i + 2 }}"
-                            onclick="highlightSeat('{{ i + 2 }}')" ondragover="allowDrop(event)" ondrop="drop(event)">
-                        </td>
-                        {% endif %}
-                        {% endif %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-            <div class="tabela-dados" style="display: none;">
-                <table>
-                    <tr>
-                        <th>NOME</th>
-                        <th>RG</th>
-                        <th>DT-NASCTO</th>
-                        <th>TELEFONE</th>
-                        <th>PAGAMENTO</th>
-                        <th>OBSERVAÇÃO</th>
-                    </tr>
-                
-                    
-                    {% for i in range(36) %} {# Simula um loop 'while i < 36' #}
-                    {% set p = None %}
-                        {% for r in reservas %}
-                            {% if r.assento == i %}
-                                {% set p = passageiros[r.passageiro_id] %}
-                            {% endif %}
-                        {% endfor %}
-                        {% if p %}
-                            <tr>
-                                <td>{{ p.nome }}</td>
-                                <td>{{ p.rg }}</td>
-                                <td>{{ p.nascimento }}</td>
-                                <td>{{ p.telefone }}</td>
-                                <td>{{ p.id }}</td>
-                                <td></td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td>{{ i }}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        {% endif %}
-                       
-                        
-                    {% endfor %}
-                </table>
-            </div>
+            {{dados|safe}}
 
         </div>
 

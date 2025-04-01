@@ -77,19 +77,14 @@ def teste(viagem_id):
     passageiros = passageiroRepository.getAllPassageiros()
     viagem = viagemRepository.getViagem(viagem_id)
     reservas = reservaRepository.getAllReservas()
-    passageiros_reservados = []
-    for reserva in reservas:
-        for passageiro in passageiros:
-            if passageiro.id == reserva.passageiro_id:
-                passageiros_reservados.append(passageiro)
-        if not viagem:
-            flash('Viagem não encontrada.', 'error')
-            return redirect(url_for('viagem_controller.index'))
-    return render_template('tesste.html', passageiros_reservados=passageiros_reservados, viagem=viagem, passageiros=passageiros, reservas=reservas)
+    if not viagem:
+        flash('Viagem não encontrada.', 'error')
+        return redirect(url_for('viagem_controller.index'))
+    return render_template('tesste.html', viagem=viagem, passageiros=passageiros, reservas=reservas, dados=dados(reservas, passageiros), mapa=mapa(viagem, reservas, passageiros), formatar_data=formatar_data)
 
 
 
-#def dados(reservas, passageiros):
+def dados(reservas, passageiros):
     # Inicia o código HTML
     html = '''
     <div class="tabela-dados" style="display: none;">
@@ -106,29 +101,32 @@ def teste(viagem_id):
 
     # Itera para gerar a tabela com base nas reservas
     for i in range(36):  # Loop de 0 a 35
+        print(i)
         # Flag para verificar se houve alguma reserva
         encontrou_reserva = False
-
+        p = None  # Inicializa a variável do passageiro como None
         for r in reservas:
-            if r['assento'] == i:
+            if r.assento == i:
                 # Encontra o passageiro relacionado à reserva
-                p = passageiros.get(r['passageiro_id'])
-                
-                if p:  # Verifica se o passageiro existe
-                    encontrou_reserva = True
-                    # Adiciona a linha de dados para a reserva
-                    html += f'''
-                    <tr>
-                        <td>{p['nome']}</td>
-                        <td>{p['rg']}</td>
-                        <td>{p['nascimento']}</td>
-                        <td>{p['telefone']}</td>
-                        <td>{p['id']}</td>
-                        <td></td>
-                    </tr>
-                    '''
-                    break
-        
+                for passageiro in passageiros:
+                    if passageiro.id == r.passageiro_id:
+                        # Adiciona o passageiro à lista de passageiros reservados
+                        p = passageiro
+        if p:  # Verifica se o passageiro existe
+            encontrou_reserva = True
+            # Adiciona a linha de dados para a reserva
+            html += f'''
+            <tr>
+                <td>{p.nome}</td>
+                <td>{p.rg}</td>
+                <td>{p.nascimento}</td>
+                <td>{p.telefone}</td>
+                <td>{p.id}</td>
+                <td></td>
+            </tr>
+            '''
+
+
         # Caso não tenha encontrado a reserva para esse assento, adiciona uma linha vazia
         if not encontrou_reserva:
             html += f'''
@@ -150,37 +148,204 @@ def teste(viagem_id):
 
     return html
 
+def mapa(viagem, reservas, passageiros):
+    class P:
+        def __init__(self, nome=''):
+            self.nome = nome
+    # Início do código HTML
+    html = f"""
+    <table id="mapa-onibus" class="mapa-onibus" style="display: block;">
+        <tbody>
+            <tr>
+                <td colspan="7" style="height: 50px; font-size: 2.5vw;">
+                    <center>
+                        <h3>{viagem.destino}</h3>
+                    </center>
+                </td>
+                <td colspan="2" style="background-color: rgb(115, 187, 67);">
+                    <center>
+                        <h2>Saída: {viagem.data_inicio}</h2>
+                    </center>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="7">
+                    <center>
+                        <h2>Mapa de viagem</h2>
+                    </center>
+                </td>
+                <td colspan="2" style="background-color: rgb(115, 187, 67);">
+                    <center>
+                        <h2>Dezembro</h2>
+                    </center>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="7">
+                    <h2 style="text-align: right; color: red;">R$ {viagem.preco}</h2>
+                </td>
+                <td colspan="2">
+                    <p style="font-size: 14px; color: red;">(PARA MEMBROS DO GRUPO)</p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="9">
+                    <center>
+                        <h2 style="font-size: 16px; color: red;">OU 6X DE R$ {viagem.preco / 6}</h2>
+                    </center>
+                </td>
+            </tr>
+    """
+    
+    # Condição para verificar assentos
+    count = 0
+    if viagem.qtd_assentos == 49 or viagem.qtd_assentos > 49 and count == 0:
+        html += """
+            <tr class="piso">
+                <td colspan="9">Piso Superior</td>
+            </tr>
+        """
+    
+    for i in range(1, viagem.qtd_assentos + 1, 4):
+        if i == 49 and count == 0:
+            html += """
+            <tr class="piso">
+                <td colspan="9">Piso Inferior</td>
+            </tr>
+            """
+            count = 1
 
-#    min_price = request.args.get('min_price', 0, type=int)
-#    max_price = request.args.get('max_price', float('inf'), type=int)
-#    month = request.args.get('month', None, type=int)
-#    destination = request.args.get('destination', None, type=str)
-#    viagens = get_viagens(min_price, max_price, month, destination)
-#    usuario = cookies_session.get('usuario_email')
-#    cliente = clienteRepository.getClienteByEmail(usuario)
-#    #if usuario:
-#    #    print(usuario)
-#    itens = []
-#    for viagem in viagens:
-#        itens.append(viagem.destino)
-#    return render_template('index.html', viagens=viagens, usuario=usuario, cliente=cliente, lista=itens)
-#
-#def get_viagens(min_price, max_price, month=None, destination=None):
-#    if destination:
-#        destination_words = destination.split()
-#    if destination and month:
-#        viagens = viagemRepository.getViagemByDestinationAndMonth(destination, month)
-#        return [viagem for viagem in viagens if min_price <= viagem.preco <= max_price and any(word.lower() in viagem.destino.lower() for word in destination_words)]
-#    if destination:
-#        viagens = viagemRepository.getAllViagens()
-#        return [viagem for viagem in viagens if min_price <= viagem.preco <= max_price and any(word.lower() in viagem.destino.lower() for word in destination_words)]
-#    if month:
-#        viagens = viagemRepository.getViagemByMonth(month)
-#        return [viagem for viagem in viagens if min_price <= viagem.preco <= max_price]
-#    else:
-#        viagens = viagemRepository.getAllViagens()
-#        return [viagem for viagem in viagens if min_price <= viagem.preco <= max_price]
-#
+        html += "<tr>"
+        
+        if i % 2 != 0:
+            if i == viagem.qtd_assentos:
+                p = P()  # Inicializa a variável do passageiro como None
+                for r in reservas:
+                    if r.assento == i:
+                # Encontra o passageiro relacionado à reserva
+                        for passageiro in passageiros:
+                            if passageiro.id == r.passageiro_id:
+                        # Adiciona o passageiro à lista de passageiros reservados
+                                p = passageiro
+                html += f"""
+                <td class="assento" id="assento_{i}" style="opacity: 0; border: none"></td>
+                <td class="assento" id="assento_{i}">{i}</td>
+                <td class="nome" id="assento_{i}" name="assento_{i}" onclick="highlightSeat('{i}')"
+                    ondragover="allowDrop(event)" ondrop="drop(event)">{p.nome}</td>
+                <td class="nome" id="assento_{i}" name="assento_{i}" style="opacity: 0; border: none">
+                </td>
+                """
+            elif i + 1 == viagem.qtd_assentos:
+                p1 = P()  # Inicializa a variável do passageiro como None
+                p2 = P()
+                for r in reservas:
+                    if r.assento == i:
+                # Encontra o passageiro relacionado à reserva
+                        for passageiro in passageiros:
+                            if passageiro.id == r.passageiro_id:
+                        # Adiciona o passageiro à lista de passageiros reservados
+                                p1 = passageiro
+                for r in reservas:
+                    if r.assento == i+1:
+                # Encontra o passageiro relacionado à reserva
+                        for passageiro in passageiros:
+                            if passageiro.id == r.passageiro_id:
+                        # Adiciona o passageiro à lista de passageiros reservados
+                                p2 = passageiro
+                html += f"""
+                <td class="assento" id="assento_{i}">{i}</td>
+                <td class="assento" id="assento_{i+1}">{i+1}</td>
+                <td class="nome" id="assento_{i}" name="assento_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p1.nome}</td>
+                <td class="nome" id="assento_{i+1}" name="assento_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p2.nome}</td>
+                """
+            elif i + 2 == viagem.qtd_assentos:
+                p1 = P()  # Inicializa a variável do passageiro como None
+                p2 = P()
+                p3 = P()
+                for r in reservas:
+                    if r.assento == i:
+                # Encontra o passageiro relacionado à reserva
+                        for passageiro in passageiros:
+                            if passageiro.id == r.passageiro_id:
+                        # Adiciona o passageiro à lista de passageiros reservados
+                                p1 = passageiro
+                for r in reservas:
+                    if r.assento == i+1:
+                # Encontra o passageiro relacionado à reserva
+                        for passageiro in passageiros:
+                            if passageiro.id == r.passageiro_id:
+                        # Adiciona o passageiro à lista de passageiros reservados
+                                p2 = passageiro
+                for r in reservas:
+                    if r.assento == i+2:
+                # Encontra o passageiro relacionado à reserva
+                        for passageiro in passageiros:
+                            if passageiro.id == r.passageiro_id:
+                        # Adiciona o passageiro à lista de passageiros reservados
+                                p3 = passageiro
+                html += f"""
+                <td class="assento" id="assento_{i}">{i}</td>
+                <td class="assento" id="assento_{i+1}">{i+1}</td>
+                <td class="nome" id="assento_{i}" name="assento_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p1.nome}</td>
+                <td class="nome" id="assento_{i+1}" name="assento_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p2.nome}</td>
+                <td class="space"></td>
+                <td class="assento" id="assento_{i}" style="opacity: 0; border: none"></td>
+                <td class="assento" id="assento_{i+2}">{i+2}</td>
+                <td class="nome" id="assento_{i+2}" name="assento_{i+2}" onclick="highlightSeat('{i + 2}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p3.nome}</td>
+                <td class="nome" id="assento_{i}" name="assento_{i}" style="opacity: 0; border: none">
+                </td>
+                """
+            else:
+                p1 = P()  # Inicializa a variável do passageiro como None
+                p2 = P()
+                p3 = P()
+                p4 = P()
+                for r in reservas:
+                    if r.assento == i:
+                # Encontra o passageiro relacionado à reserva
+                        for passageiro in passageiros:
+                            if passageiro.id == r.passageiro_id:
+                        # Adiciona o passageiro à lista de passageiros reservados
+                                p1 = passageiro
+                for r in reservas:
+                    if r.assento == i+1:
+                # Encontra o passageiro relacionado à reserva
+                        for passageiro in passageiros:
+                            if passageiro.id == r.passageiro_id:
+                        # Adiciona o passageiro à lista de passageiros reservados
+                                p2 = passageiro
+                for r in reservas:
+                    if r.assento == i+2:
+                # Encontra o passageiro relacionado à reserva
+                        for passageiro in passageiros:
+                            if passageiro.id == r.passageiro_id:
+                        # Adiciona o passageiro à lista de passageiros reservados
+                                p3 = passageiro
+                for r in reservas:
+                    if r.assento == i+3:
+                # Encontra o passageiro relacionado à reserva
+                        for passageiro in passageiros:
+                            if passageiro.id == r.passageiro_id:
+                        # Adiciona o passageiro à lista de passageiros reservados
+                                p4 = passageiro                
+                html += f"""
+                <td class="assento" id="assento_{i}">{i}</td>
+                <td class="assento" id="assento_{i+1}">{i+1}</td>
+                <td class="nome" id="assento_{i}" name="assento_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p1.nome}</td>
+                <td class="nome" id="assento_{i+1}" name="assento_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p2.nome}</td>
+                <td class="space"></td>
+                <td class="assento" id="assento_{i+3}">{i+3}</td>
+                <td class="assento" id="assento_{i+2}">{i+2}</td>
+                <td class="nome" id="assento_{i+3}" name="assento_{i+3}" onclick="highlightSeat('{i + 3}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p3.nome}</td>
+                <td class="nome" id="assento_{i+2}" name="assento_{i+2}" onclick="highlightSeat('{i + 2}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p4.nome}</td>
+                """
+        
+        html += "</tr>"
+
+    html += "</tbody></table>"
+
+    return html
+
 #@viagem_controller.route('/add_assento/<int:viagem_id>', methods=['GET', 'POST'])
 #def add_assento(viagem_id):
 #    if request.method == 'POST':

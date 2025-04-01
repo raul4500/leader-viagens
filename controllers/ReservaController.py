@@ -20,3 +20,13 @@ def index(assento, viagem_id, passageiro_id):
     else:
         flash('Erro ao criar reserva.', 'error')
     return redirect(url_for('index_controller.index'))
+
+@reserva_controller.route('/deletar_reserva/<int:reserva_id>', methods=['GET', 'POST'])
+def deletar_reserva(reserva_id):
+    reserva = reservaRepository.getReserva(reserva_id)
+    if reserva:
+        reservaRepository.deleteReserva(reserva_id)
+        flash('Reserva deletada com sucesso!', 'success')
+    else:
+        flash('Erro ao deletar reserva.', 'error')
+    return redirect(url_for('index_controller.index'))
