@@ -80,7 +80,7 @@ def teste(viagem_id):
     if not viagem:
         flash('Viagem não encontrada.', 'error')
         return redirect(url_for('viagem_controller.index'))
-    return render_template('tesste.html', viagem=viagem, passageiros=passageiros, reservas=reservas, dados=dados(reservas, passageiros), mapa=mapa(viagem, reservas, passageiros), formatar_data=formatar_data)
+    return render_template('mapa-onibus.html', viagem=viagem, passageiros=passageiros, reservas=reservas, dados=dados(reservas, passageiros), mapa=mapa(viagem, reservas, passageiros), formatar_data=formatar_data)
 
 
 
@@ -230,9 +230,8 @@ def mapa(viagem, reservas, passageiros):
                 html += f"""
                 <td class="assento" id="assento_{i}" style="opacity: 0; border: none"></td>
                 <td class="assento" id="assento_{i}">{i}</td>
-                <td class="nome" id="assento_{i}" name="assento_{i}" onclick="highlightSeat('{i}')"
-                    ondragover="allowDrop(event)" ondrop="drop(event)">{p.nome}</td>
-                <td class="nome" id="assento_{i}" name="assento_{i}" style="opacity: 0; border: none">
+                <td class="nome" id="{i}" name="nome_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p.nome}</td>
+                <td class="nome" id="{i}" name="nome_{i}" style="opacity: 0; border: none">
                 </td>
                 """
             elif i + 1 == viagem.qtd_assentos:
@@ -255,8 +254,8 @@ def mapa(viagem, reservas, passageiros):
                 html += f"""
                 <td class="assento" id="assento_{i}">{i}</td>
                 <td class="assento" id="assento_{i+1}">{i+1}</td>
-                <td class="nome" id="assento_{i}" name="assento_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p1.nome}</td>
-                <td class="nome" id="assento_{i+1}" name="assento_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p2.nome}</td>
+                <td class="nome" id="{i}" name="nome_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p1.nome}</td>
+                <td class="nome" id="{i+1}" name="nome_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p2.nome}</td>
                 """
             elif i + 2 == viagem.qtd_assentos:
                 p1 = P()  # Inicializa a variável do passageiro como None
@@ -286,13 +285,13 @@ def mapa(viagem, reservas, passageiros):
                 html += f"""
                 <td class="assento" id="assento_{i}">{i}</td>
                 <td class="assento" id="assento_{i+1}">{i+1}</td>
-                <td class="nome" id="assento_{i}" name="assento_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p1.nome}</td>
-                <td class="nome" id="assento_{i+1}" name="assento_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p2.nome}</td>
+                <td class="nome" id="{i}" name="nome_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p1.nome}</td>
+                <td class="nome" id="{i+1}" name="nome_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p2.nome}</td>
                 <td class="space"></td>
                 <td class="assento" id="assento_{i}" style="opacity: 0; border: none"></td>
                 <td class="assento" id="assento_{i+2}">{i+2}</td>
-                <td class="nome" id="assento_{i+2}" name="assento_{i+2}" onclick="highlightSeat('{i + 2}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p3.nome}</td>
-                <td class="nome" id="assento_{i}" name="assento_{i}" style="opacity: 0; border: none">
+                <td class="nome" id="{i+2}" name="nome_{i+2}" onclick="highlightSeat('{i + 2}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p3.nome}</td>
+                <td class="nome" id="{i}" name="nome_{i}" style="opacity: 0; border: none">
                 </td>
                 """
             else:
@@ -331,13 +330,13 @@ def mapa(viagem, reservas, passageiros):
                 html += f"""
                 <td class="assento" id="assento_{i}">{i}</td>
                 <td class="assento" id="assento_{i+1}">{i+1}</td>
-                <td class="nome" id="assento_{i}" name="assento_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p1.nome}</td>
-                <td class="nome" id="assento_{i+1}" name="assento_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p2.nome}</td>
+                <td class="nome" id="{i}" name="nome_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p1.nome}</td>
+                <td class="nome" id="{i+1}" name="nome_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p2.nome}</td>
                 <td class="space"></td>
                 <td class="assento" id="assento_{i+3}">{i+3}</td>
                 <td class="assento" id="assento_{i+2}">{i+2}</td>
-                <td class="nome" id="assento_{i+3}" name="assento_{i+3}" onclick="highlightSeat('{i + 3}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p3.nome}</td>
-                <td class="nome" id="assento_{i+2}" name="assento_{i+2}" onclick="highlightSeat('{i + 2}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p4.nome}</td>
+                <td class="nome" id="{i+3}" name="nome_{i+3}" onclick="highlightSeat('{i + 3}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p3.nome}</td>
+                <td class="nome" id="{i+2}" name="nome_{i+2}" onclick="highlightSeat('{i + 2}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p4.nome}</td>
                 """
         
         html += "</tr>"
