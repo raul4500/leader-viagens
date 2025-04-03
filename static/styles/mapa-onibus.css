@@ -117,6 +117,51 @@ body {
     color: white;
 }
 
+.sidebar-right .buttons{
+    position: relative;
+    top: 180px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.confirmar, .cancelar{
+    width: 100px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+}
+
+.sidebar-right .buttons .confirmar{
+    cursor: pointer;
+    background-color: rgb(186, 255, 203);
+    color: rgb(0, 0, 0);
+    border: 1px solid green;
+}
+
+.sidebar-right .buttons .confirmar:hover{
+    background-color: rgb(38, 139, 64);
+    color: white;
+}
+
+.sidebar-right .buttons .cancelar{
+    cursor: pointer;
+    background-color: rgba(255, 0, 0, 0.801);
+    color: rgb(255, 255, 255);
+    border: 1px solid rgb(110, 0, 0);
+}
+
+.sidebar-right .buttons .cancelar:hover{
+    background-color: rgb(255, 179, 179);
+    color: rgb(0, 0, 0);
+}
+
 .seat-container {
     display: flex;
     flex-wrap: wrap;

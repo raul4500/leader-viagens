@@ -39,21 +39,21 @@
 
             <div class="header">
                 <div class="left">
-                <button class="block" onclick="mapa()">
-                    <i class="bi bi-border-all"></i>
-                    <p>Mapa</p>
-                </button>
-                <button class="block" onclick="dados()">
-                    <i class="bi bi-table"></i>
-                    <p>Dados</p>
-                </button>
+                    <button class="block" onclick="mapa()">
+                        <i class="bi bi-border-all"></i>
+                        <p>Mapa</p>
+                    </button>
+                    <button class="block" onclick="dados()">
+                        <i class="bi bi-table"></i>
+                        <p>Dados</p>
+                    </button>
+                </div>
+                <div class="right">
+                    <button class="toggle-btn-right" onclick="toggleSidebar(event)">+</button>
+                </div>
             </div>
-            <div class="right">
-                <button class="toggle-btn-right" onclick="toggleSidebar(event)">+</button>
-            </div>
-            </div>
-            
-             {{mapa|safe}}
+
+            {{mapa|safe}}
 
             {{dados|safe}}
 
@@ -80,6 +80,10 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
+            <div class="buttons">
+                <button class="cancelar" id="cancelar" onclick="closeSidebar(event)">Cencelar</button>
+                <button class="confirmar" id="confirmar" onclick="closeSidebar(event)">Confirmar</button>
             </div>
         </div>
 
@@ -116,21 +120,14 @@
             sidebar.classList.toggle("active");
             event.stopPropagation();
 
-            if (sidebar.classList.contains("active")) {
-                document.addEventListener("click", closeSidebar);
-            } else {
-                document.getElementById("mapa-onibus").classList.remove("active");
-                document.removeEventListener("click", closeSidebar);
-            }
         }
 
         function closeSidebar(event) {
             document.getElementById("mapa-onibus").classList.remove("active");
             let sidebar = document.getElementById("sidebarRight");
-            if (!sidebar.contains(event.target)) {
-                sidebar.classList.remove("active");
-                document.removeEventListener("click", closeSidebar);
-            }
+            sidebar.classList.remove("active");
+            event.stopPropagation();
+            window.location.reload();
         }
 
         function searchClient() {
@@ -231,21 +228,50 @@
 
         function drop(event) {
             event.preventDefault();
+            let count = []
+            if (localStorage.getItem('nomes') == '') {
+                localStorage.setItem('nomes', JSON.stringify(count))
+            } else {
+                count.push(localStorage.getItem('nomes'))
+            }
+            let x = false;
+            let y = 0;
             let name = event.dataTransfer.getData("text");
             if (event.target.classList.contains("nome")) {
                 if (document.getElementById(event.target.id).innerText != "") {
-                    confirm("Assento já ocupado!\nDeseja trocar?") ? event.target.innerText = name : event.target.innerText = event.target.innerText;
+                    if (event.target.innerText == name) {
+                        alert("Assento já ocupado com este passageiro!")
+                    } else {
+                        confirm("Assento já ocupado!\nDeseja trocar?") ? x = true : event.target.innerText = event.target.innerText;
+                    }
                 } else {
+                    //{% for p in passageiros %}
+                    if (name == "{{ p.nome }}" || event.target.innerText == "Bento") {
+                        x = true
+                    } else {
+                        y += 1;
+                    }
+                    //{% endfor%}
+                }
+                if (y == "{{passageiros|length}}") {
+                    alert("Passageiro não encontrado no banco de dados")
+                }
+
+                if (x) {
                     event.target.style.backgroundColor = "red";
                     event.target.style.color = "white";
-                } document.getElementById(event.target.id).style.backgroundColor = "red";
-                document.getElementById(event.target.id).style.color = "white";
-                document.getElementById(`assento_${event.target.id}`).style.backgroundColor = "red";
-                document.getElementById(`assento_${event.target.id}`).style.color = "white";
-                //document.getElementById(`assento_${event.target.id}`).style.backgroundColor = "red";
-                //document.getElementById(`assento_${event.target.id}`).style.color = "white";
-                event.target.innerText = name;
-
+                    document.getElementById(event.target.id).style.backgroundColor = "red";
+                    document.getElementById(event.target.id).style.color = "white";
+                    document.getElementById(`assento_${event.target.id}`).style.backgroundColor = "red";
+                    document.getElementById(`assento_${event.target.id}`).style.color = "white";
+                    //document.getElementById(`assento_${event.target.id}`).style.backgroundColor = "red";
+                    //document.getElementById(`assento_${event.target.id}`).style.color = "white";
+                    event.target.innerText = name;
+                    count.push(name)
+                    localStorage.setItem('nomes', JSON.stringify(count))
+                }
+                alert(count)
+                alert(localStorage.getItem('nomes'))
             }
         }
 

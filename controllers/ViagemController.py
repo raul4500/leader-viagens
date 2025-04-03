@@ -80,7 +80,7 @@ def teste(viagem_id):
     if not viagem:
         flash('Viagem não encontrada.', 'error')
         return redirect(url_for('viagem_controller.index'))
-    return render_template('mapa-onibus.html', viagem=viagem, passageiros=passageiros, reservas=reservas, dados=dados(reservas, passageiros), mapa=mapa(viagem, reservas, passageiros), formatar_data=formatar_data)
+    return render_template('mapa-onibus.html', viagem=viagem, passageiros=passageiros, reservas=reservas, dados=dados(reservas, passageiros), mapa=mapa(viagem, reservas, passageiros), formatar_data=formatar_data, type=type)
 
 
 
