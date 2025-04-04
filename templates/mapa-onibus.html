@@ -89,8 +89,13 @@
 
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
     <script>
 
+        localStorage.removeItem('nomes');
+        localStorage.removeItem('assentos');
 
         const allSeats = document.querySelectorAll('.nome');
         allSeats.forEach(assentos => {
@@ -144,7 +149,9 @@
             // Primeiro, removemos a classe 'selected' de todas as células e botões
             const allButtons = document.querySelectorAll('.nome');
             const allSeats = document.querySelectorAll('.assento');
-
+            let sidebar = document.getElementById("sidebarRight");
+            if (sidebar.classList.contains("active")) {
+            } else {toggleSidebar(event)}
             allButtons.forEach(button => {
                 button.classList.remove('selected')
                 if (button.innerText != "") {
@@ -183,6 +190,7 @@
                     document.addEventListener('keydown', (e) => {
                         if (e.key === 'Delete' && button.classList.contains('selected')) {
                             button.innerHTML = ''; // Apaga o conteúdo do bloco
+                            alert()
                         }
                     });
 
@@ -228,11 +236,13 @@
 
         function drop(event) {
             event.preventDefault();
-            let count = []
-            if (localStorage.getItem('nomes') == '') {
-                localStorage.setItem('nomes', JSON.stringify(count))
-            } else {
-                count.push(localStorage.getItem('nomes'))
+            let nomes = []
+            let assentos_id = []
+            if (localStorage.getItem('nomes') != null) {
+                nomes.push(localStorage.getItem('nomes'))
+            }
+            if (localStorage.getItem('assentos') != null) {
+                assentos_id.push(localStorage.getItem('assentos'))
             }
             let x = false;
             let y = 0;
@@ -258,6 +268,10 @@
                 }
 
                 if (x) {
+                    let source = $(event.target);
+                    let target = $(event.target);
+                    if (source && target && source[0] !== target[0]) {
+                    saveHistory(source, target);}
                     event.target.style.backgroundColor = "red";
                     event.target.style.color = "white";
                     document.getElementById(event.target.id).style.backgroundColor = "red";
@@ -267,14 +281,48 @@
                     //document.getElementById(`assento_${event.target.id}`).style.backgroundColor = "red";
                     //document.getElementById(`assento_${event.target.id}`).style.color = "white";
                     event.target.innerText = name;
-                    count.push(name)
-                    localStorage.setItem('nomes', JSON.stringify(count))
+                    nomes.push(name)
+                    assentos_id.push(event.target.id)
+                    localStorage.setItem('assentos', assentos_id)
+                    localStorage.setItem('nomes', nomes)
                 }
-                alert(count)
-                alert(localStorage.getItem('nomes'))
             }
         }
 
+        function saveHistory(source, target) {
+            history.push({
+                source: { cell: source, content: source.text() },
+                target: { cell: target, content: target.text() }
+            });
+        }
+
+        function undo() {
+            if (history.length > 0) {
+                const lastAction = history.pop();
+                lastAction.target.cell.text(lastAction.source.content);
+                lastAction.source.cell.text(lastAction.target.content);
+            }
+        }
+
+        function redo() {
+            if (history.length > 0) {
+                const lastAction = history.pop();
+                lastAction.source.cell.text(lastAction.target.content);
+                lastAction.target.cell.text(lastAction.source.content);
+            }
+        }
+
+        $(document).keydown(function(e) {
+            if (e.ctrlKey && e.key === 'z') {
+                undo();
+            }
+        });
+
+        $(document).keydown(function(e) {
+            if (e.ctrlKey && e.key === 'y') {
+                redo();
+            }
+        });
 
     </script>
 </body>

@@ -73,7 +73,7 @@ def editar_viagem(id):
     return redirect(url_for('viagem_controller.index'))
 
 @viagem_controller.route('/viagem/<int:viagem_id>')
-def teste(viagem_id):
+def viagem(viagem_id):
     passageiros = passageiroRepository.getAllPassageiros()
     viagem = viagemRepository.getViagem(viagem_id)
     reservas = reservaRepository.getAllReservas()
@@ -101,7 +101,6 @@ def dados(reservas, passageiros):
 
     # Itera para gerar a tabela com base nas reservas
     for i in range(36):  # Loop de 0 a 35
-        print(i)
         # Flag para verificar se houve alguma reserva
         encontrou_reserva = False
         p = None  # Inicializa a variável do passageiro como None
