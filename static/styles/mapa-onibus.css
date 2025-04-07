@@ -1,3 +1,8 @@
+::-webkit-scrollbar {
+    height: 0px;
+    width: 0px;
+}
+
 body {
     font-family: Arial, sans-serif;
     padding: 0;
@@ -9,7 +14,9 @@ body {
 
 .container{
     width: 100%;
+    height: 100%;
     overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 .header{
@@ -65,7 +72,6 @@ body {
     cursor: pointer;
     border-radius: 5px;
 }
-
 
 .sidebar-right {
     position: fixed;
@@ -162,26 +168,6 @@ body {
     color: rgb(0, 0, 0);
 }
 
-.seat-container {
-    display: flex;
-    flex-wrap: wrap;
-    width: 400px;
-    margin: 50px auto;
-    gap: 10px;
-}
-
-.seat {
-    width: 80px;
-    height: 80px;
-    background-color: lightgray;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 5px;
-    cursor: pointer;
-    border: 2px solid #333;
-}
-
 .drag-item {
     cursor: grab;
     padding: 5px;
@@ -200,21 +186,27 @@ h3 {
 
 .mapa-onibus {
     position: relative;
-    top: 30px;
-    left: 50%;
-    transform: translateX(-50%);
+    height: calc(100vh - 140px);
+    width: 100%;
+    overflow-y: scroll;
+    padding: 30px 0 30px 0;
     border-collapse: collapse;
-    width: 600px;
     margin-bottom: 50px;
     transition: .5s;
 }
 
 .mapa-onibus.active{
-    left: calc(50% - 500px);
-    transform: translateX(0%);
+    width: calc(100% - 300px);
+    transition: .5s;
 }
 
-.assento {
+.mapa-onibus table {
+    width: 600px;
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+.mapa-onibus table .assento {
     background-color: rgb(115, 187, 67);
     border: 1px solid black;
     width: 4px;
@@ -222,7 +214,7 @@ h3 {
     text-align: center;
 }
 
-.nome {
+.mapa-onibus table .nome {
     border: 1px solid black;
     background-color: rgb(115, 187, 67);
     width: 100px;

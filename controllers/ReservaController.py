@@ -17,9 +17,11 @@ def index(assento, viagem_id, passageiro_id):
     if passageiro and viagem:
         reservaRepository.createReserva(assento, passageiro_id, viagem_id)
         flash('Reserva criada com sucesso!', 'success')
+        print('Reserva criada com sucesso!')
     else:
         flash('Erro ao criar reserva.', 'error')
-    return redirect(url_for('index_controller.index'))
+        print('Erro ao criar reserva.')
+    return redirect(url_for('viagem_controller.viagem', viagem_id=viagem_id))
 
 @reserva_controller.route('/deletar_reserva/<int:reserva_id>', methods=['GET', 'POST'])
 def deletar_reserva(reserva_id):

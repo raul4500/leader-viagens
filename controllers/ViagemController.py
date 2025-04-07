@@ -153,7 +153,8 @@ def mapa(viagem, reservas, passageiros):
             self.nome = nome
     # Início do código HTML
     html = f"""
-    <table id="mapa-onibus" class="mapa-onibus" style="display: block;">
+    <div id="mapa-onibus" class="mapa-onibus" style="display: block;">
+    <table>
         <tbody>
             <tr>
                 <td colspan="7" style="height: 50px; font-size: 2.5vw;">
@@ -190,7 +191,7 @@ def mapa(viagem, reservas, passageiros):
             <tr>
                 <td colspan="9">
                     <center>
-                        <h2 style="font-size: 16px; color: red;">OU 6X DE R$ {viagem.preco / 6}</h2>
+                        <h2 style="font-size: 16px; color: red;">OU 6X DE R$ {(viagem.preco / 6):,.2f}</h2>
                     </center>
                 </td>
             </tr>
@@ -234,7 +235,7 @@ def mapa(viagem, reservas, passageiros):
                 </td>
                 """
             elif i + 1 == viagem.qtd_assentos:
-                p1 = P()  # Inicializa a variável do passageiro como None
+                p1 = P() 
                 p2 = P()
                 for r in reservas:
                     if r.assento == i:
@@ -334,13 +335,13 @@ def mapa(viagem, reservas, passageiros):
                 <td class="space"></td>
                 <td class="assento" id="assento_{i+3}">{i+3}</td>
                 <td class="assento" id="assento_{i+2}">{i+2}</td>
-                <td class="nome" id="{i+3}" name="nome_{i+3}" onclick="highlightSeat('{i + 3}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p3.nome}</td>
-                <td class="nome" id="{i+2}" name="nome_{i+2}" onclick="highlightSeat('{i + 2}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p4.nome}</td>
+                <td class="nome" id="{i+3}" name="nome_{i+3}" onclick="highlightSeat('{i + 3}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p4.nome}</td>
+            <td class="nome" id="{i+2}" name="nome_{i+2}" onclick="highlightSeat('{i + 2}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p3.nome}</td>
                 """
         
         html += "</tr>"
 
-    html += "</tbody></table>"
+    html += "</tbody></table></div></div>"
 
     return html
 
