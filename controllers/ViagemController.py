@@ -76,7 +76,7 @@ def editar_viagem(id):
 def viagem(viagem_id):
     passageiros = passageiroRepository.getAllPassageiros()
     viagem = viagemRepository.getViagem(viagem_id)
-    reservas = reservaRepository.getAllReservas()
+    reservas = reservaRepository.getReservasByViagem(viagem_id)
     if not viagem:
         flash('Viagem não encontrada.', 'error')
         return redirect(url_for('viagem_controller.index'))

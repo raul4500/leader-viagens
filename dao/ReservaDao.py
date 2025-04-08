@@ -8,6 +8,10 @@ class ReservaDao:
     @staticmethod
     def getAllReservas():
         return Reserva.query.all()
+    
+    @staticmethod
+    def getReservasByViagem(viagem_id):
+        return Reserva.query.filter_by(viagem_id=viagem_id).all()
 
     @staticmethod
     def addReserva(assento, passageiro_id, viagem_id):

@@ -6,6 +6,9 @@ class ReservaRepository:
 
     def getAllReservas(self):
         return self.reservaDao.getAllReservas()
+    
+    def getReservasByViagem(self, viagem_id):
+        return self.reservaDao.getReservasByViagem(viagem_id)
 
     def getReserva(self, id):
         return self.reservaDao.getReserva(id)

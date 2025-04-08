@@ -81,7 +81,7 @@
             </div>
             <div class="buttons">
                 <button class="cancelar" id="cancelar" onclick="closeSidebar(event)">Cencelar</button>
-                <button class="confirmar" id="confirmar" onclick="closeSidebar(event)">Confirmar</button>
+                <button class="confirmar" id="confirmar" onclick="confirmar()">Confirmar</button>
             </div>
         </div>
 
@@ -92,9 +92,11 @@
 
     <script>
 
-        localStorage.removeItem('nomes');
-        localStorage.removeItem('assentos');
-
+        localStorage.setItem('nomes', "");
+        localStorage.setItem('assentos', "");
+        localStorage.setItem('cancelar_reserva', "");
+        let cancelar_reserva = [];
+        let reservados = [];
         const allSeats = document.querySelectorAll('.nome');
         allSeats.forEach(assentos => {
             if (assentos.innerText != "") {
@@ -102,18 +104,12 @@
                 assentos.style.color = "white";
                 document.getElementById(`assento_${assentos.id}`).style.backgroundColor = "red";
                 document.getElementById(`assento_${assentos.id}`).style.color = "white";
+                reservados.push(assentos.id)
             }
 
         });
 
-        allSeats.forEach(assentos => {
-            if (assentos.innerText != "") {
-                //alert(assentos.id)}
-            }
-                               
-
-        });
-
+        localStorage.setItem('reservados', reservados)
 
         function mapa() {
             document.getElementById("mapa-onibus").style.display = "block";
@@ -211,6 +207,13 @@
                                     }
                                 });
                             }
+                            reservados.forEach(r => {
+                                if (r == button.id) {
+                                    cancelar_reserva.push(r)
+                                    reservados.splice(reservados.indexOf(r), 1);
+                                }
+                            });
+                            localStorage.setItem('cancelar_reserva', cancelar_reserva)
                             button.innerHTML = ''; // Apaga o conteúdo do bloco
                         }
                     });
@@ -256,6 +259,9 @@
         }
 
         function drop(event) {
+            let sidebar = document.getElementById("sidebarRight");
+            if (sidebar.classList.contains("active")) {
+            } else {toggleSidebar(event)}
             event.preventDefault();
             let nomes = []
             let assentos_id = []
@@ -274,6 +280,24 @@
                         alert("Assento já ocupado com este passageiro!")
                     } else {
                         confirm("Assento já ocupado!\nDeseja trocar?") ? x = true : event.target.innerText = event.target.innerText;
+                        if(x) {   
+                            let y = []
+                            assentos = localStorage.getItem('assentos').split(",")
+                            reservados.forEach(r => {
+                                if (r == event.target.id) {
+                                    if(cancelar_reserva.find(r => r == event.target.id) != undefined){
+                                    }else{
+                                    cancelar_reserva.push(r)}
+                                }
+                            });
+                            assentos.forEach(a => {
+                                if(a != event.target.id) {
+                                    y.push(a)
+                                }
+                            });
+                            localStorage.setItem('assentos', y)
+                            localStorage.setItem('cancelar_reserva', cancelar_reserva)}
+                            
                     }
                 } else {
                     //{% for p in passageiros %}
@@ -344,6 +368,15 @@
                 redo();
             }
         });
+
+        function confirmar(){
+            allSeats.forEach(element => {
+                if(element.innerTex != ""){
+                    alert("Assentos ocupados: " + element.innerText + "\nAssento: " + element.id)
+                }
+            });
+        }
+
 
     </script>
 </body>
