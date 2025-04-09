@@ -203,7 +203,8 @@ h3 {
 .mapa-onibus table {
     width: 600px;
     border-collapse: collapse;
-    margin: 0 auto;
+    margin: 0 auto 150px auto;
+    height: calc(fit-content + 100px);
 }
 
 .mapa-onibus table .assento {
@@ -231,4 +232,11 @@ h3 {
 .piso {
     text-align: center;
 
+}
+
+
+@media (max-width: 600px) {
+    .mapa-onibus table {
+        width: 100%;
+    }
 }

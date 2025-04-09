@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    
+
     <div class="main">
         <div class="sidebar">
             <a href="/">
@@ -140,7 +140,7 @@
         function searchClient() {
             let input = document.getElementById("searchInput").value.toLowerCase();
             let rows = document.querySelectorAll("#clientTableBody tr");
-            
+
 
             rows.forEach(row => {
 
@@ -149,13 +149,38 @@
             });
         }
 
+        function removerDuplicados(lista) {
+            let elementosVistos = new Set(); // Para verificar os elementos já vistos
+            let posicoesDuplicadas = []; // Para armazenar as posições das duplicatas
+
+            // Laço para percorrer a lista e encontrar duplicatas
+            for (let i = 0; i < lista.length; i++) {
+                const item = lista[i];
+
+                // Se o item já foi visto, é uma duplicata
+                if (elementosVistos.has(item)) {
+                    posicoesDuplicadas.push(i); // Adiciona a posição da duplicata
+
+                } else {
+                    elementosVistos.add(item); // Marca como visto
+                }
+            }
+
+            // Remove os elementos duplicados (mantendo apenas o último)
+            posicoesDuplicadas.forEach(posicao => {
+                lista.splice(posicao, 1); // Remove o elemento na posição
+            });
+
+            return lista
+        }
+
         function highlightSeat(seatId) {
             // Primeiro, removemos a classe 'selected' de todas as células e botões
             const allButtons = document.querySelectorAll('.nome');
             const allSeats = document.querySelectorAll('.assento');
             let sidebar = document.getElementById("sidebarRight");
             if (sidebar.classList.contains("active")) {
-            } else {toggleSidebar(event)}
+            } else { toggleSidebar(event) }
             allButtons.forEach(button => {
                 button.classList.remove('selected')
                 if (button.innerText != "") {
@@ -196,10 +221,10 @@
                             //t(button.id + " apagado!")
                             assentos_id = localStorage.getItem('assentos').split(",")
                             nomes = localStorage.getItem('nomes').split(",")
-                            if(assentos_id.length > 0 && nomes.length > 0){
+                            if (assentos_id.length > 0 && nomes.length > 0) {
                                 assentos_id.forEach(assento => {
                                     if (assento == button.id) {
-        
+
                                         assentos_id.splice(assentos_id.indexOf(assento), 1);
                                         nomes.splice(nomes.indexOf(button.innerText), 1);
                                         localStorage.setItem('assentos', assentos_id)
@@ -213,6 +238,7 @@
                                     reservados.splice(reservados.indexOf(r), 1);
                                 }
                             });
+
                             localStorage.setItem('cancelar_reserva', cancelar_reserva)
                             button.innerHTML = ''; // Apaga o conteúdo do bloco
                         }
@@ -261,17 +287,19 @@
         function drop(event) {
             let sidebar = document.getElementById("sidebarRight");
             if (sidebar.classList.contains("active")) {
-            } else {toggleSidebar(event)}
+            } else { toggleSidebar(event) }
             event.preventDefault();
             let nomes = []
-            let assentos_id = []
+            let assentos = []
             if (localStorage.getItem('nomes') != null) {
                 nomes.push(localStorage.getItem('nomes'))
             }
             if (localStorage.getItem('assentos') != null) {
-                assentos_id.push(localStorage.getItem('assentos'))
+                assentos.push(localStorage.getItem('assentos'))
             }
+            assentos.push(event.target.id)
             let x = false;
+            let trocar = true;
             let y = 0;
             let name = event.dataTransfer.getData("text");
             if (event.target.classList.contains("nome")) {
@@ -279,25 +307,28 @@
                     if (event.target.innerText == name) {
                         alert("Assento já ocupado com este passageiro!")
                     } else {
-                        confirm("Assento já ocupado!\nDeseja trocar?") ? x = true : event.target.innerText = event.target.innerText;
-                        if(x) {   
-                            let y = []
-                            assentos = localStorage.getItem('assentos').split(",")
+                        confirm("Assento já ocupado!\nDeseja trocar?") ? x = true : trocar = false;
+                        if (x) {
                             reservados.forEach(r => {
                                 if (r == event.target.id) {
-                                    if(cancelar_reserva.find(r => r == event.target.id) != undefined){
-                                    }else{
-                                    cancelar_reserva.push(r)}
+                                    if (cancelar_reserva.find(r => r == event.target.id) != undefined) {
+                                    } else {
+                                        cancelar_reserva.forEach(c => {
+                                            if (c == event.target.id) {
+                                                cancelar_reserva.splice(cancelar_reserva.indexOf(c), 1);
+                                            }
+                                        });
+                                        cancelar_reserva.push(r)
+                                    }
                                 }
                             });
-                            assentos.forEach(a => {
-                                if(a != event.target.id) {
-                                    y.push(a)
-                                }
-                            });
-                            localStorage.setItem('assentos', y)
-                            localStorage.setItem('cancelar_reserva', cancelar_reserva)}
-                            
+                            nomes.push(name)
+
+                            localStorage.setItem('nomes', nomes)
+                            localStorage.setItem('assentos', removerDuplicados(assentos))
+                            localStorage.setItem('cancelar_reserva', cancelar_reserva)
+                        }
+
                     }
                 } else {
                     //{% for p in passageiros %}
@@ -308,15 +339,15 @@
                     }
                     //{% endfor%}
                 }
+
                 if (y == "{{passageiros|length}}") {
                     alert("Passageiro não encontrado no banco de dados")
-                }
-
-                if (x) {
-                    let source = $(event.target);
+                } else if (trocar) {
+                    /*let source = $(event.target);
                     let target = $(event.target);
                     if (source && target && source[0] !== target[0]) {
-                    saveHistory(source, target);}
+                        saveHistory(source, target);
+                    }*/
                     event.target.style.backgroundColor = "red";
                     event.target.style.color = "white";
                     document.getElementById(event.target.id).style.backgroundColor = "red";
@@ -327,8 +358,7 @@
                     //document.getElementById(`assento_${event.target.id}`).style.color = "white";
                     event.target.innerText = name;
                     nomes.push(name)
-                    assentos_id.push(event.target.id)
-                    localStorage.setItem('assentos', assentos_id)
+                    localStorage.setItem('assentos', assentos)
                     localStorage.setItem('nomes', nomes)
                 }
             }
@@ -357,21 +387,21 @@
             }
         }
 
-        $(document).keydown(function(e) {
+        $(document).keydown(function (e) {
             if (e.ctrlKey && e.key === 'z') {
                 undo();
             }
         });
 
-        $(document).keydown(function(e) {
+        $(document).keydown(function (e) {
             if (e.ctrlKey && e.key === 'y') {
                 redo();
             }
         });
 
-        function confirmar(){
+        function confirmar() {
             allSeats.forEach(element => {
-                if(element.innerTex != ""){
+                if (element.innerTex != "") {
                     alert("Assentos ocupados: " + element.innerText + "\nAssento: " + element.id)
                 }
             });
