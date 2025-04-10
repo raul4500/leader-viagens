@@ -322,6 +322,7 @@ h2 {
 }
 
 .viagens-blocks a{
+    height: fit-content;
     text-decoration: none;
     color: black;
 }

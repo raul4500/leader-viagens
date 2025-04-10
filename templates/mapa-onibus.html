@@ -150,28 +150,26 @@
         }
 
         function removerDuplicados(lista) {
-            let elementosVistos = new Set(); // Para verificar os elementos já vistos
-            let posicoesDuplicadas = []; // Para armazenar as posições das duplicatas
+            let restultado = []; // Para armazenar as posições das duplicatas
 
             // Laço para percorrer a lista e encontrar duplicatas
             for (let i = 0; i < lista.length; i++) {
+                let y = 0;
                 const item = lista[i];
-
-                // Se o item já foi visto, é uma duplicata
-                if (elementosVistos.has(item)) {
-                    posicoesDuplicadas.push(i); // Adiciona a posição da duplicata
-
-                } else {
-                    elementosVistos.add(item); // Marca como visto
+                for(let j = 0; j < restultado.length; j++){
+                    if (item == restultado[j]){
+                        continue;
+                    } else {
+                        y += 1;
+                    }
                 }
+                if (y == restultado.length) {
+                    restultado.push(item); // Adiciona o item à lista de resultados se não for duplicado
+                }
+                
+
             }
-
-            // Remove os elementos duplicados (mantendo apenas o último)
-            posicoesDuplicadas.forEach(posicao => {
-                lista.splice(posicao, 1); // Remove o elemento na posição
-            });
-
-            return lista
+            return restultado
         }
 
         function highlightSeat(seatId) {
@@ -289,15 +287,35 @@
             if (sidebar.classList.contains("active")) {
             } else { toggleSidebar(event) }
             event.preventDefault();
-            let nomes = []
-            let assentos = []
-            if (localStorage.getItem('nomes') != null) {
-                nomes.push(localStorage.getItem('nomes'))
+            let nomes = [];
+            let aa = [];
+            if (localStorage.getItem('nomes') != "") {
+                nomes.push(localStorage.getItem('nomes'));
             }
-            if (localStorage.getItem('assentos') != null) {
-                assentos.push(localStorage.getItem('assentos'))
+            if (localStorage.getItem('assentos') != "") {
+                aa.push(localStorage.getItem('assentos'));
+                aa.push(event.target.id);
+            } else {
+                aa.push(event.target.id);
             }
-            assentos.push(event.target.id)
+
+            let ab = false;
+            let count = 0;
+            let assentos = [];
+            let posicao = [];
+
+            aa.forEach(a => {
+                if (a != event.target.id) {
+                    assentos.push(a)
+                    count += 1;
+                } else if (a == event.target.id && ab == false) {
+                    assentos.push(a)
+                    count += 1;
+                    posicao.push(count);
+                    ab = true;
+                }
+            });
+
             let x = false;
             let trocar = true;
             let y = 0;
@@ -323,9 +341,8 @@
                                 }
                             });
                             nomes.push(name)
-
                             localStorage.setItem('nomes', nomes)
-                            localStorage.setItem('assentos', removerDuplicados(assentos))
+                            localStorage.setItem('assentos', assentos)
                             localStorage.setItem('cancelar_reserva', cancelar_reserva)
                         }
 
@@ -358,7 +375,8 @@
                     //document.getElementById(`assento_${event.target.id}`).style.color = "white";
                     event.target.innerText = name;
                     nomes.push(name)
-                    localStorage.setItem('assentos', assentos)
+                    alert(aa)
+                    localStorage.setItem('assentos', aa)
                     localStorage.setItem('nomes', nomes)
                 }
             }
