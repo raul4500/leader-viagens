@@ -149,29 +149,6 @@
             });
         }
 
-        function removerDuplicados(lista) {
-            let restultado = []; // Para armazenar as posições das duplicatas
-
-            // Laço para percorrer a lista e encontrar duplicatas
-            for (let i = 0; i < lista.length; i++) {
-                let y = 0;
-                const item = lista[i];
-                for(let j = 0; j < restultado.length; j++){
-                    if (item == restultado[j]){
-                        continue;
-                    } else {
-                        y += 1;
-                    }
-                }
-                if (y == restultado.length) {
-                    restultado.push(item); // Adiciona o item à lista de resultados se não for duplicado
-                }
-                
-
-            }
-            return restultado
-        }
-
         function highlightSeat(seatId) {
             // Primeiro, removemos a classe 'selected' de todas as células e botões
             const allButtons = document.querySelectorAll('.nome');
@@ -287,13 +264,19 @@
             if (sidebar.classList.contains("active")) {
             } else { toggleSidebar(event) }
             event.preventDefault();
+            if (event.dataTransfer.getData("text") == ""){
+                return;
+            }
             let nomes = [];
             let aa = [];
             if (localStorage.getItem('nomes') != "") {
                 nomes.push(localStorage.getItem('nomes'));
             }
             if (localStorage.getItem('assentos') != "") {
-                aa.push(localStorage.getItem('assentos'));
+                let w = (localStorage.getItem('assentos')).split(",");
+                w.forEach(a => {
+                        aa.push(a)
+                });
                 aa.push(event.target.id);
             } else {
                 aa.push(event.target.id);
@@ -302,7 +285,7 @@
             let ab = false;
             let count = 0;
             let assentos = [];
-            let posicao = [];
+            let posicao;
 
             aa.forEach(a => {
                 if (a != event.target.id) {
@@ -311,10 +294,13 @@
                 } else if (a == event.target.id && ab == false) {
                     assentos.push(a)
                     count += 1;
-                    posicao.push(count);
+                    posicao = count;
+                    //nomes[posicao] = event.dataTransfer.getData("text");
                     ab = true;
                 }
             });
+
+            alert(ab)
 
             let x = false;
             let trocar = true;
@@ -375,8 +361,7 @@
                     //document.getElementById(`assento_${event.target.id}`).style.color = "white";
                     event.target.innerText = name;
                     nomes.push(name)
-                    alert(aa)
-                    localStorage.setItem('assentos', aa)
+                    localStorage.setItem('assentos', assentos)
                     localStorage.setItem('nomes', nomes)
                 }
             }
