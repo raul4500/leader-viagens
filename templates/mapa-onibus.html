@@ -260,6 +260,7 @@
         }
 
         function drop(event) {
+
             let sidebar = document.getElementById("sidebarRight");
             if (sidebar.classList.contains("active")) {
             } else { toggleSidebar(event) }
@@ -270,7 +271,7 @@
             let nomes = [];
             let aa = [];
             if (localStorage.getItem('nomes') != "") {
-                nomes.push(localStorage.getItem('nomes'));
+                nomes = (localStorage.getItem('nomes')).split(",");
             }
             if (localStorage.getItem('assentos') != "") {
                 let w = (localStorage.getItem('assentos')).split(",");
@@ -281,7 +282,7 @@
             } else {
                 aa.push(event.target.id);
             }
-
+            
             let ab = false;
             let count = 0;
             let assentos = [];
@@ -293,14 +294,14 @@
                     count += 1;
                 } else if (a == event.target.id && ab == false) {
                     assentos.push(a)
-                    count += 1;
-                    posicao = count;
+                    posicao = count+1;
                     //nomes[posicao] = event.dataTransfer.getData("text");
                     ab = true;
+                    count += 1;
                 }
             });
 
-            alert(ab)
+            
 
             let x = false;
             let trocar = true;
@@ -326,7 +327,7 @@
                                     }
                                 }
                             });
-                            nomes.push(name)
+                           
                             localStorage.setItem('nomes', nomes)
                             localStorage.setItem('assentos', assentos)
                             localStorage.setItem('cancelar_reserva', cancelar_reserva)
