@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabela para PDF</title>
+    <title>{{ viagem.destino }}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/sidebar-main.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/mapa-onibus.css') }}">
@@ -87,332 +87,343 @@
 
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-
-    <script>
-
-        localStorage.setItem('nomes', "");
-        localStorage.setItem('assentos', "");
-        localStorage.setItem('cancelar_reserva', "");
-        let cancelar_reserva = [];
-        let reservados = [];
-        const allSeats = document.querySelectorAll('.nome');
-        allSeats.forEach(assentos => {
-            if (assentos.innerText != "") {
-                assentos.style.backgroundColor = "red";
-                assentos.style.color = "white";
-                document.getElementById(`assento_${assentos.id}`).style.backgroundColor = "red";
-                document.getElementById(`assento_${assentos.id}`).style.color = "white";
-                reservados.push(assentos.id)
-            }
-
-        });
-
-        localStorage.setItem('reservados', reservados)
-
-        function mapa() {
-            document.getElementById("mapa-onibus").style.display = "block";
-            document.querySelector(".tabela-dados").style.display = "none";
-        }
-
-        function dados() {
-            document.getElementById("mapa-onibus").style.display = "none";
-            document.querySelector(".tabela-dados").style.display = "block";
-        }
-
-        function toggleSidebar(event) {
-            document.getElementById("mapa-onibus").classList.add("active");
-            let sidebar = document.getElementById("sidebarRight");
-            sidebar.classList.toggle("active");
-            event.stopPropagation();
-
-        }
-
-        function closeSidebar(event) {
-            document.getElementById("mapa-onibus").classList.remove("active");
-            let sidebar = document.getElementById("sidebarRight");
-            sidebar.classList.remove("active");
-            event.stopPropagation();
-            window.location.reload();
-        }
-
-        function searchClient() {
-            let input = document.getElementById("searchInput").value.toLowerCase();
-            let rows = document.querySelectorAll("#clientTableBody tr");
-
-
-            rows.forEach(row => {
-
-                let name = row.cells[1].textContent.toLowerCase();
-                row.style.display = name.includes(input) ? "" : "none";
-            });
-        }
-
-        function highlightSeat(seatId) {
-            // Primeiro, removemos a classe 'selected' de todas as células e botões
-            const allButtons = document.querySelectorAll('.nome');
-            const allSeats = document.querySelectorAll('.assento');
-            let sidebar = document.getElementById("sidebarRight");
-            if (sidebar.classList.contains("active")) {
-            } else { toggleSidebar(event) }
-            allButtons.forEach(button => {
-                button.classList.remove('selected')
-                if (button.innerText != "") {
-                    button.style.backgroundColor = "red";
-                    button.style.color = "white";
-                    document.getElementById(`assento_${button.id}`).style.backgroundColor = "red";
-                } else {
-                    button.style.backgroundColor = "rgb(115, 187, 67)";
-                    button.style.color = "black";
-                }
-
-            });
-            allSeats.forEach(seat => {
-                seat.classList.remove('selected')
-                if (seat.style.backgroundColor == "red" || seat.style.backgroundColor == "#4CAF51") {
-                    seat.style.backgroundColor = "red";
-                    seat.style.color = "white";
-                } else {
-                    seat.style.backgroundColor = "rgb(115, 187, 67)";
-                    seat.style.color = "black";
-                }
-            });
-
-            // Adicionamos a classe 'selected' ao botão clicado e à célula de assento correspondente
-            const button = document.getElementById(seatId);
-            const seat = document.getElementById(`assento_${seatId}`);
-
-            if (button) {
-                if (button.classList.contains('selected')) {
-                    button.classList.remove('selected');
-                } else {
-                    button.classList.add('selected');
-                    button.style.backgroundColor = "#4CAF50";
-                    button.style.color = "white";
-
-                    document.addEventListener('keydown', (e) => {
-                        if (e.key === 'Delete' && button.classList.contains('selected') && button.innerText != "") {
-                            //t(button.id + " apagado!")
-                            assentos_id = localStorage.getItem('assentos').split(",")
-                            nomes = localStorage.getItem('nomes').split(",")
-                            if (assentos_id.length > 0 && nomes.length > 0) {
-                                assentos_id.forEach(assento => {
-                                    if (assento == button.id) {
-
-                                        assentos_id.splice(assentos_id.indexOf(assento), 1);
-                                        nomes.splice(nomes.indexOf(button.innerText), 1);
-                                        localStorage.setItem('assentos', assentos_id)
-                                        localStorage.setItem('nomes', nomes)
-                                    }
-                                });
-                            }
-                            reservados.forEach(r => {
-                                if (r == button.id) {
-                                    cancelar_reserva.push(r)
-                                    reservados.splice(reservados.indexOf(r), 1);
-                                }
-                            });
-
-                            localStorage.setItem('cancelar_reserva', cancelar_reserva)
-                            button.innerHTML = ''; // Apaga o conteúdo do bloco
-                        }
-                    });
-
-                    document.addEventListener('click', (e) => {
-                        // Verifica se o clique foi fora do bloco de texto
-                        if (!button.contains(e.target)) {
-                            button.classList.remove('selected')
-                            if (button.innerText != "") {
-                                button.style.backgroundColor = "red";
-                                button.style.color = "white";
-                                document.getElementById(`assento_${button.id}`).style.backgroundColor = "red";
-                            } else {
-                                button.style.backgroundColor = "rgb(115, 187, 67)";
-                                button.style.color = "black";
-                            }
-                            seat.classList.remove('selected')
-                            if (seat.style.backgroundColor == "red" || seat.style.backgroundColor == "#4CAF51") {
-                                seat.style.backgroundColor = "red";
-                                seat.style.color = "white";
-                            } else {
-                                seat.style.backgroundColor = "rgb(115, 187, 67)";
-                                seat.style.color = "black";
-                            }
-                        }
-
-                    });
-
-                    seat.classList.add('selected');
-                    seat.style.backgroundColor = "#4CAF51";
-                    seat.style.color = "white";
-                }
-            }
-
-        }
-
-        function drag(event) {
-            event.dataTransfer.setData("text", event.target.innerText);
-        }
-
-        function allowDrop(event) {
-            event.preventDefault();
-        }
-
-        function drop(event) {
-
-            let sidebar = document.getElementById("sidebarRight");
-            if (sidebar.classList.contains("active")) {
-            } else { toggleSidebar(event) }
-            event.preventDefault();
-            if (event.dataTransfer.getData("text") == ""){
-                return;
-            }
-            let nomes = [];
-            let aa = [];
-            if (localStorage.getItem('nomes') != "") {
-                nomes = (localStorage.getItem('nomes')).split(",");
-            }
-            if (localStorage.getItem('assentos') != "") {
-                let w = (localStorage.getItem('assentos')).split(",");
-                w.forEach(a => {
-                        aa.push(a)
-                });
-                aa.push(event.target.id);
-            } else {
-                aa.push(event.target.id);
-            }
-            
-            let ab = false;
-            let count = 0;
-            let assentos = [];
-            let posicao;
-
-            aa.forEach(a => {
-                if (a != event.target.id) {
-                    assentos.push(a)
-                    count += 1;
-                } else if (a == event.target.id && ab == false) {
-                    assentos.push(a)
-                    posicao = count+1;
-                    //nomes[posicao] = event.dataTransfer.getData("text");
-                    ab = true;
-                    count += 1;
-                }
-            });
-
-            
-
-            let x = false;
-            let trocar = true;
-            let y = 0;
-            let name = event.dataTransfer.getData("text");
-            if (event.target.classList.contains("nome")) {
-                if (document.getElementById(event.target.id).innerText != "") {
-                    if (event.target.innerText == name) {
-                        alert("Assento já ocupado com este passageiro!")
-                    } else {
-                        confirm("Assento já ocupado!\nDeseja trocar?") ? x = true : trocar = false;
-                        if (x) {
-                            reservados.forEach(r => {
-                                if (r == event.target.id) {
-                                    if (cancelar_reserva.find(r => r == event.target.id) != undefined) {
-                                    } else {
-                                        cancelar_reserva.forEach(c => {
-                                            if (c == event.target.id) {
-                                                cancelar_reserva.splice(cancelar_reserva.indexOf(c), 1);
-                                            }
-                                        });
-                                        cancelar_reserva.push(r)
-                                    }
-                                }
-                            });
-                           
-                            localStorage.setItem('nomes', nomes)
-                            localStorage.setItem('assentos', assentos)
-                            localStorage.setItem('cancelar_reserva', cancelar_reserva)
-                        }
-
-                    }
-                } else {
-                    //{% for p in passageiros %}
-                    if (name == "{{ p.nome }}" || event.target.innerText == "Bento") {
-                        x = true
-                    } else {
-                        y += 1;
-                    }
-                    //{% endfor%}
-                }
-
-                if (y == "{{passageiros|length}}") {
-                    alert("Passageiro não encontrado no banco de dados")
-                } else if (trocar) {
-                    /*let source = $(event.target);
-                    let target = $(event.target);
-                    if (source && target && source[0] !== target[0]) {
-                        saveHistory(source, target);
-                    }*/
-                    event.target.style.backgroundColor = "red";
-                    event.target.style.color = "white";
-                    document.getElementById(event.target.id).style.backgroundColor = "red";
-                    document.getElementById(event.target.id).style.color = "white";
-                    document.getElementById(`assento_${event.target.id}`).style.backgroundColor = "red";
-                    document.getElementById(`assento_${event.target.id}`).style.color = "white";
-                    //document.getElementById(`assento_${event.target.id}`).style.backgroundColor = "red";
-                    //document.getElementById(`assento_${event.target.id}`).style.color = "white";
-                    event.target.innerText = name;
-                    nomes.push(name)
-                    localStorage.setItem('assentos', assentos)
-                    localStorage.setItem('nomes', nomes)
-                }
-            }
-        }
-
-        function saveHistory(source, target) {
-            history.push({
-                source: { cell: source, content: source.text() },
-                target: { cell: target, content: target.text() }
-            });
-        }
-
-        function undo() {
-            if (history.length > 0) {
-                const lastAction = history.pop();
-                lastAction.target.cell.text(lastAction.source.content);
-                lastAction.source.cell.text(lastAction.target.content);
-            }
-        }
-
-        function redo() {
-            if (history.length > 0) {
-                const lastAction = history.pop();
-                lastAction.source.cell.text(lastAction.target.content);
-                lastAction.target.cell.text(lastAction.source.content);
-            }
-        }
-
-        $(document).keydown(function (e) {
-            if (e.ctrlKey && e.key === 'z') {
-                undo();
-            }
-        });
-
-        $(document).keydown(function (e) {
-            if (e.ctrlKey && e.key === 'y') {
-                redo();
-            }
-        });
-
-        function confirmar() {
-            allSeats.forEach(element => {
-                if (element.innerTex != "") {
-                    alert("Assentos ocupados: " + element.innerText + "\nAssento: " + element.id)
-                }
-            });
-        }
-
-
-    </script>
 </body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+<script>
+
+    localStorage.setItem('nomes', "");
+    localStorage.setItem('assentos', "");
+    localStorage.setItem('cancelar_reserva', "");
+    let cancelar_reserva = [];
+    let reservados = [];
+    const allSeats = document.querySelectorAll('.nome');
+    allSeats.forEach(assentos => {
+        if (assentos.innerText != "") {
+            assentos.style.backgroundColor = "red";
+            assentos.style.color = "white";
+            document.getElementById(`assento_${assentos.id}`).style.backgroundColor = "red";
+            document.getElementById(`assento_${assentos.id}`).style.color = "white";
+            reservados.push(assentos.id)
+        }
+
+    });
+
+    localStorage.setItem('reservados', reservados)
+
+    function mapa() {
+        document.getElementById("mapa-onibus").style.display = "block";
+        document.querySelector(".tabela-dados").style.display = "none";
+    }
+
+    function dados() {
+        document.getElementById("mapa-onibus").style.display = "none";
+        document.querySelector(".tabela-dados").style.display = "block";
+    }
+
+    function toggleSidebar(event) {
+        document.getElementById("mapa-onibus").classList.add("active");
+        let sidebar = document.getElementById("sidebarRight");
+        sidebar.classList.toggle("active");
+        event.stopPropagation();
+
+    }
+
+    function closeSidebar(event) {
+        document.getElementById("mapa-onibus").classList.remove("active");
+        let sidebar = document.getElementById("sidebarRight");
+        sidebar.classList.remove("active");
+        event.stopPropagation();
+        window.location.reload();
+    }
+
+    function searchClient() {
+        let input = document.getElementById("searchInput").value.toLowerCase();
+        let rows = document.querySelectorAll("#clientTableBody tr");
+
+
+        rows.forEach(row => {
+
+            let name = row.cells[1].textContent.toLowerCase();
+            row.style.display = name.includes(input) ? "" : "none";
+        });
+    }
+
+    function highlightSeat(seatId) {
+        // Primeiro, removemos a classe 'selected' de todas as células e botões
+        const allButtons = document.querySelectorAll('.nome');
+        const allSeats = document.querySelectorAll('.assento');
+        let sidebar = document.getElementById("sidebarRight");
+        if (sidebar.classList.contains("active")) {
+        } else { toggleSidebar(event) }
+        allButtons.forEach(button => {
+            button.classList.remove('selected')
+            if (button.innerText != "") {
+                button.style.backgroundColor = "red";
+                button.style.color = "white";
+                document.getElementById(`assento_${button.id}`).style.backgroundColor = "red";
+            } else {
+                button.style.backgroundColor = "rgb(115, 187, 67)";
+                button.style.color = "black";
+            }
+
+        });
+        allSeats.forEach(seat => {
+            seat.classList.remove('selected')
+            if (seat.style.backgroundColor == "red" || seat.style.backgroundColor == "#4CAF51") {
+                seat.style.backgroundColor = "red";
+                seat.style.color = "white";
+            } else {
+                seat.style.backgroundColor = "rgb(115, 187, 67)";
+                seat.style.color = "black";
+            }
+        });
+
+        // Adicionamos a classe 'selected' ao botão clicado e à célula de assento correspondente
+        const button = document.getElementById(seatId);
+        const seat = document.getElementById(`assento_${seatId}`);
+
+        if (button) {
+            if (button.classList.contains('selected')) {
+                button.classList.remove('selected');
+            } else {
+                button.classList.add('selected');
+                button.style.backgroundColor = "#4CAF50";
+                button.style.color = "white";
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Delete' && button.classList.contains('selected') && button.innerText != "") {
+                        //t(button.id + " apagado!")
+                        assentos_id = localStorage.getItem('assentos').split(",")
+                        nomes = localStorage.getItem('nomes').split(",")
+                        if (assentos_id.length > 0 && nomes.length > 0) {
+                            assentos_id.forEach(assento => {
+                                if (assento == button.id) {
+
+                                    assentos_id.splice(assentos_id.indexOf(assento), 1);
+                                    nomes.splice(nomes.indexOf(button.innerText), 1);
+                                    localStorage.setItem('assentos', assentos_id)
+                                    localStorage.setItem('nomes', nomes)
+                                }
+                            });
+                        }
+                        reservados.forEach(r => {
+                            if (r == button.id) {
+                                cancelar_reserva.push(r)
+                                reservados.splice(reservados.indexOf(r), 1);
+                            }
+                        });
+
+                        localStorage.setItem('cancelar_reserva', cancelar_reserva)
+                        button.innerHTML = ''; // Apaga o conteúdo do bloco
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    // Verifica se o clique foi fora do bloco de texto
+                    if (!button.contains(e.target)) {
+                        button.classList.remove('selected')
+                        if (button.innerText != "") {
+                            button.style.backgroundColor = "red";
+                            button.style.color = "white";
+                            document.getElementById(`assento_${button.id}`).style.backgroundColor = "red";
+                        } else {
+                            button.style.backgroundColor = "rgb(115, 187, 67)";
+                            button.style.color = "black";
+                        }
+                        seat.classList.remove('selected')
+                        if (seat.style.backgroundColor == "red" || seat.style.backgroundColor == "#4CAF51") {
+                            seat.style.backgroundColor = "red";
+                            seat.style.color = "white";
+                        } else {
+                            seat.style.backgroundColor = "rgb(115, 187, 67)";
+                            seat.style.color = "black";
+                        }
+                    }
+
+                });
+
+                seat.classList.add('selected');
+                seat.style.backgroundColor = "#4CAF51";
+                seat.style.color = "white";
+            }
+        }
+
+    }
+
+    function drag(event) {
+        event.dataTransfer.setData("text", event.target.innerText);
+    }
+
+    function allowDrop(event) {
+        event.preventDefault();
+    }
+
+    function drop(event) {
+
+        let sidebar = document.getElementById("sidebarRight");
+        if (sidebar.classList.contains("active")) {
+        } else { toggleSidebar(event) }
+        event.preventDefault();
+        if (event.dataTransfer.getData("text") == "") {
+            return;
+        }
+
+        let aa = [];
+        let nomes = [];
+
+        if (localStorage.getItem('nomes') != "") {
+            nomes = (localStorage.getItem('nomes')).split(",");
+        }
+    
+        if (localStorage.getItem('assentos') != "") {
+            let w = (localStorage.getItem('assentos')).split(",");
+            w.forEach(a => {
+                aa.push(a)
+            });
+            aa.push(event.target.id);
+        } else {
+            aa.push(event.target.id);
+        }
+
+        let ab = false;
+        let count = 0;
+        let assentos = [];
+        let posicao;
+        let trocar_nome = false;
+
+        aa.forEach(a => {
+            if (a != event.target.id) {
+                assentos.push(a)
+                count += 1;
+            } else if (a == event.target.id && ab == false) {
+                assentos.push(a)
+                posicao = count + 1;
+                //nomes[posicao] = event.dataTransfer.getData("text");
+                ab = true;
+                count += 1;
+            }
+        });
+
+        let x = false;
+        let trocar = true;
+        let y = 0;
+        let name = event.dataTransfer.getData("text");
+        if (event.target.classList.contains("nome")) {
+            if (document.getElementById(event.target.id).innerText != "") {
+                if (event.target.innerText == name) {
+                    alert("Assento já ocupado com este passageiro!")
+                } else {
+                    confirm("Assento já ocupado!\nDeseja trocar?") ? x = true : trocar = false;
+
+                    if (x) {
+                        reservados.forEach(r => {
+                            if (r == event.target.id) {
+                                if (cancelar_reserva.find(r => r == event.target.id) != undefined) {
+                                } else {
+                                    cancelar_reserva.forEach(c => {
+                                        if (c == event.target.id) {
+                                            cancelar_reserva.splice(cancelar_reserva.indexOf(c), 1);
+                                        }
+                                    });
+                                    cancelar_reserva.push(r)
+                                }
+                            }
+                        });
+
+                        trocar_nome = true;
+
+                        localStorage.setItem('assentos', assentos)
+                        localStorage.setItem('cancelar_reserva', cancelar_reserva)
+                    }
+
+                }
+            } else {
+                //{% for p in passageiros %}
+                if (name == "{{ p.nome }}" || event.target.innerText == "Bento") {
+                    x = true
+                } else {
+                    y += 1;
+                }
+                //{% endfor%}
+            }
+
+            if (y == "{{passageiros|length}}") {
+                alert("Passageiro não encontrado no banco de dados")
+            } else if (trocar) {
+
+                /*let source = $(event.target);
+                let target = $(event.target);
+                if (source && target && source[0] !== target[0]) {
+                    saveHistory(source, target);
+                }*/
+                event.target.style.backgroundColor = "red";
+                event.target.style.color = "white";
+                document.getElementById(event.target.id).style.backgroundColor = "red";
+                document.getElementById(event.target.id).style.color = "white";
+                document.getElementById(`assento_${event.target.id}`).style.backgroundColor = "red";
+                document.getElementById(`assento_${event.target.id}`).style.color = "white";
+                //document.getElementById(`assento_${event.target.id}`).style.backgroundColor = "red";
+                //document.getElementById(`assento_${event.target.id}`).style.color = "white";
+                event.target.innerText = name;
+                if (trocar_nome) {
+                    nomes[posicao] = event.dataTransfer.getData("text");
+                } else {
+                    nomes.push(name)
+                }
+
+                localStorage.setItem('assentos', assentos)
+                localStorage.setItem('nomes', nomes)
+            }
+        }
+    }
+
+    function saveHistory(source, target) {
+        history.push({
+            source: { cell: source, content: source.text() },
+            target: { cell: target, content: target.text() }
+        });
+    }
+
+    function undo() {
+        if (history.length > 0) {
+            const lastAction = history.pop();
+            lastAction.target.cell.text(lastAction.source.content);
+            lastAction.source.cell.text(lastAction.target.content);
+        }
+    }
+
+    function redo() {
+        if (history.length > 0) {
+            const lastAction = history.pop();
+            lastAction.source.cell.text(lastAction.target.content);
+            lastAction.target.cell.text(lastAction.source.content);
+        }
+    }
+
+    $(document).keydown(function (e) {
+        if (e.ctrlKey && e.key === 'z') {
+            undo();
+        }
+    });
+
+    $(document).keydown(function (e) {
+        if (e.ctrlKey && e.key === 'y') {
+            redo();
+        }
+    });
+
+    function confirmar() {
+        allSeats.forEach(element => {
+            if (element.innerTex != "") {
+                alert("Assentos ocupados: " + element.innerText + "\nAssento: " + element.id)
+            }
+        });
+    }
+
+
+</script>
 
 </html>
