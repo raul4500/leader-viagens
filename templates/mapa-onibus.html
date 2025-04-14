@@ -67,13 +67,15 @@
                         <tr>
                             <th>ID</th>
                             <th>Nome</th>
+                            <th>RG</th>
                         </tr>
                     </thead>
                     <tbody id="clientTableBody">
                         {% for p in passageiros %}
                         <tr>
                             <td>{{ p.id }}</td>
-                            <td draggable="true" class="drag-item" ondragstart="drag(event)">{{ p.nome }}</td>
+                            <td draggable="true" class="drag-item" ondragstart="drag(event, '{{p.rg}}')">{{ p.nome }}</td>
+                            <td>{{ p.rg }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -94,7 +96,7 @@
 
 <script>
 
-    localStorage.setItem('nomes', "");
+    localStorage.setItem('rg', "");
     localStorage.setItem('assentos', "");
     localStorage.setItem('cancelar_reserva', "");
     let cancelar_reserva = [];
@@ -197,15 +199,15 @@
                     if (e.key === 'Delete' && button.classList.contains('selected') && button.innerText != "") {
                         //t(button.id + " apagado!")
                         assentos_id = localStorage.getItem('assentos').split(",")
-                        nomes = localStorage.getItem('nomes').split(",")
-                        if (assentos_id.length > 0 && nomes.length > 0) {
+                        rg = localStorage.getItem('rg').split(",")
+                        if (assentos_id.length > 0 && rg.length > 0) {
                             assentos_id.forEach(assento => {
                                 if (assento == button.id) {
 
                                     assentos_id.splice(assentos_id.indexOf(assento), 1);
-                                    nomes.splice(nomes.indexOf(button.innerText), 1);
+                                    rg.splice(rg.indexOf(button.innerText), 1);
                                     localStorage.setItem('assentos', assentos_id)
-                                    localStorage.setItem('nomes', nomes)
+                                    localStorage.setItem('rg', rg)
                                 }
                             });
                         }
@@ -253,8 +255,10 @@
 
     }
 
-    function drag(event) {
+    function drag(event, rg) {
         event.dataTransfer.setData("text", event.target.innerText);
+        event.dataTransfer.setData("id", event.target.id);
+        event.dataTransfer.setData("rg", rg);
     }
 
     function allowDrop(event) {
@@ -272,10 +276,10 @@
         }
 
         let aa = [];
-        let nomes = [];
+        let rg = [];
 
-        if (localStorage.getItem('nomes') != "") {
-            nomes = (localStorage.getItem('nomes')).split(",");
+        if (localStorage.getItem('rg') != "") {
+            rg = (localStorage.getItem('rg')).split(",");
         }
     
         if (localStorage.getItem('assentos') != "") {
@@ -301,7 +305,7 @@
             } else if (a == event.target.id && ab == false) {
                 assentos.push(a)
                 posicao = count + 1;
-                //nomes[posicao] = event.dataTransfer.getData("text");
+                //rg[posicao] = event.dataTransfer.getData("text");
                 ab = true;
                 count += 1;
             }
@@ -350,6 +354,7 @@
                 //{% endfor%}
             }
 
+
             if (y == "{{passageiros|length}}") {
                 alert("Passageiro não encontrado no banco de dados")
             } else if (trocar) {
@@ -369,18 +374,37 @@
                 //document.getElementById(`assento_${event.target.id}`).style.color = "white";
                 event.target.innerText = name;
                 if (trocar_nome) {
-                    nomes[posicao] = event.dataTransfer.getData("text");
+                    rg[posicao-1] = event.dataTransfer.getData("rg");
                 } else {
-                    nomes.push(name)
+                    rg.push(event.dataTransfer.getData("rg"));
                 }
 
                 localStorage.setItem('assentos', assentos)
-                localStorage.setItem('nomes', nomes)
+                localStorage.setItem('rg', rg)
             }
         }
     }
 
-    function saveHistory(source, target) {
+    function confirmar() {
+        let rg = localStorage.getItem('rg').split(",");
+        let assentos = localStorage.getItem('assentos').split(",");
+        let cancelar_reserva = localStorage.getItem('cancelar_reserva').split(",");
+        
+        if(rg=="" && assentos=="" && cancelar_reserva==""){
+            alert("Nenhuma mudança feita!");
+            return;
+        }
+
+        window.location.href = `/reservar/{{ viagem.id }}/${rg}/${assentos}/${cancelar_reserva}`;
+
+    }
+
+
+</script>
+
+<script>
+
+function saveHistory(source, target) {
         history.push({
             source: { cell: source, content: source.text() },
             target: { cell: target, content: target.text() }
@@ -414,15 +438,6 @@
             redo();
         }
     });
-
-    function confirmar() {
-        allSeats.forEach(element => {
-            if (element.innerTex != "") {
-                alert("Assentos ocupados: " + element.innerText + "\nAssento: " + element.id)
-            }
-        });
-    }
-
 
 </script>
 
