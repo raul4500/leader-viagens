@@ -108,7 +108,7 @@ def dados(reservas, passageiros):
             if r.assento == i:
                 # Encontra o passageiro relacionado à reserva
                 for passageiro in passageiros:
-                    if passageiro.id == r.passageiro_id:
+                    if passageiro.id == r.passageiro_id or passageiro.rg == r.passageiro_id:
                         # Adiciona o passageiro à lista de passageiros reservados
                         p = passageiro
         if p:  # Verifica se o passageiro existe
@@ -224,7 +224,7 @@ def mapa(viagem, reservas, passageiros):
                     if r.assento == i:
                 # Encontra o passageiro relacionado à reserva
                         for passageiro in passageiros:
-                            if passageiro.id == r.passageiro_id:
+                            if passageiro.id == r.passageiro_id or passageiro.rg == r.passageiro_id:
                         # Adiciona o passageiro à lista de passageiros reservados
                                 p = passageiro
                 html += f"""
@@ -241,14 +241,14 @@ def mapa(viagem, reservas, passageiros):
                     if r.assento == i:
                 # Encontra o passageiro relacionado à reserva
                         for passageiro in passageiros:
-                            if passageiro.id == r.passageiro_id:
+                            if passageiro.id == r.passageiro_id or passageiro.rg == r.passageiro_id:
                         # Adiciona o passageiro à lista de passageiros reservados
                                 p1 = passageiro
                 for r in reservas:
                     if r.assento == i+1:
                 # Encontra o passageiro relacionado à reserva
                         for passageiro in passageiros:
-                            if passageiro.id == r.passageiro_id:
+                            if passageiro.id == r.passageiro_id or passageiro.rg == r.passageiro_id:
                         # Adiciona o passageiro à lista de passageiros reservados
                                 p2 = passageiro
                 html += f"""
@@ -265,21 +265,21 @@ def mapa(viagem, reservas, passageiros):
                     if r.assento == i:
                 # Encontra o passageiro relacionado à reserva
                         for passageiro in passageiros:
-                            if passageiro.id == r.passageiro_id:
+                            if passageiro.id == r.passageiro_id or passageiro.rg == r.passageiro_id:
                         # Adiciona o passageiro à lista de passageiros reservados
                                 p1 = passageiro
                 for r in reservas:
                     if r.assento == i+1:
                 # Encontra o passageiro relacionado à reserva
                         for passageiro in passageiros:
-                            if passageiro.id == r.passageiro_id:
+                            if passageiro.id == r.passageiro_id or passageiro.rg == r.passageiro_id:
                         # Adiciona o passageiro à lista de passageiros reservados
                                 p2 = passageiro
                 for r in reservas:
                     if r.assento == i+2:
                 # Encontra o passageiro relacionado à reserva
                         for passageiro in passageiros:
-                            if passageiro.id == r.passageiro_id:
+                            if passageiro.id == r.passageiro_id or passageiro.rg == r.passageiro_id:
                         # Adiciona o passageiro à lista de passageiros reservados
                                 p3 = passageiro
                 html += f"""
@@ -303,28 +303,28 @@ def mapa(viagem, reservas, passageiros):
                     if r.assento == i:
                 # Encontra o passageiro relacionado à reserva
                         for passageiro in passageiros:
-                            if passageiro.id == r.passageiro_id:
+                            if passageiro.id == r.passageiro_id or passageiro.rg == r.passageiro_id:
                         # Adiciona o passageiro à lista de passageiros reservados
                                 p1 = passageiro
                 for r in reservas:
                     if r.assento == i+1:
                 # Encontra o passageiro relacionado à reserva
                         for passageiro in passageiros:
-                            if passageiro.id == r.passageiro_id:
+                            if passageiro.id == r.passageiro_id or passageiro.rg == r.passageiro_id:
                         # Adiciona o passageiro à lista de passageiros reservados
                                 p2 = passageiro
                 for r in reservas:
                     if r.assento == i+2:
                 # Encontra o passageiro relacionado à reserva
                         for passageiro in passageiros:
-                            if passageiro.id == r.passageiro_id:
+                            if passageiro.id == r.passageiro_id or passageiro.rg == r.passageiro_id:
                         # Adiciona o passageiro à lista de passageiros reservados
                                 p3 = passageiro
                 for r in reservas:
                     if r.assento == i+3:
                 # Encontra o passageiro relacionado à reserva
                         for passageiro in passageiros:
-                            if passageiro.id == r.passageiro_id:
+                            if passageiro.id == r.passageiro_id or passageiro.rg == r.passageiro_id:
                         # Adiciona o passageiro à lista de passageiros reservados
                                 p4 = passageiro                
                 html += f"""

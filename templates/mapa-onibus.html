@@ -394,8 +394,8 @@
             alert("Nenhuma mudança feita!");
             return;
         }
-
-        window.location.href = `/reservar/{{ viagem.id }}/${rg}/${assentos}/${cancelar_reserva}`;
+        alert(cancelar_reserva)
+        window.location.href = `/reservar/{{viagem.id}}?rg=${rg}&assentos=${assentos}&cancelar_reserva=${cancelar_reserva}`;
 
     }
 

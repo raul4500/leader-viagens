@@ -10,14 +10,29 @@ reservaRepository = ReservaRepository()
 viagemRepository = ViagemRepository()
 passageiroRepository = PassageiroRepository()
 
-@reserva_controller.route('/reservar/<int:viagem_id>/<passageiro_rg>/<assentos>/<cancelar_reservas>', methods=['GET', 'POST'])
-def index(viagem_id, passageiro_rg, assentos, cancelar_reservas):
-    print('viagem_id:', viagem_id)
-    print('passageiro_rg:', passageiro_rg)
-    print('assentos:', assentos)
-    print('cancelar_reservas:', cancelar_reservas)
-    viagem = viagemRepository.getViagem(viagem_id)
-    return
+@reserva_controller.route('/reservar/<int:viagem_id>')
+def index(viagem_id):
+    passageiro_rgs = request.args.getlist('rg')
+    assentos = request.args.getlist('assentos')
+    cancelar_reservas = request.args.getlist('cancelar_reserva')
+    for c in cancelar_reservas:
+        reserva = reservaRepository.getReserva(c)
+        if reserva:
+            reservaRepository.deleteReserva(c)
+    for rg in passageiro_rgs:
+        for assento in assentos:
+            if reservaRepository.getReserva(assento):
+                flash('Assento já reservado.', 'error')
+                return redirect(url_for('index_controller.index'))
+            if passageiroRepository.getPassageiro(rg):
+                passageiro = passageiroRepository.getPassageiro(rg)
+            viagem = viagemRepository.getViagem(viagem_id)
+            if viagem:
+                reservaRepository.createReserva(assento, rg, viagem_id)
+                flash('Reserva criada com sucesso!', 'success')
+            else:
+                flash('Erro ao criar reserva.', 'error')
+    return render_template('index.html')
     if passageiro and viagem:
         reservaRepository.createReserva(assento, passageiro_rg, viagem_id)
         flash('Reserva criada com sucesso!', 'success')
