@@ -12,6 +12,9 @@ class ReservaRepository:
 
     def getReserva(self, id):
         return self.reservaDao.getReserva(id)
+    
+    def getReservaByAssento(self, assento_id):
+        return self.reservaDao.getReservaByAssento(assento_id)
 
     def createReserva(self, assento, passageiro_id, viagem_id):
         return self.reservaDao.addReserva (assento, passageiro_id, viagem_id)
