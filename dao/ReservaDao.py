@@ -35,8 +35,8 @@ class ReservaDao:
         return reserva.toJson()
 
     @staticmethod
-    def delReserva(id):
-        reserva = ReservaDao.getReserva(id)
+    def delReserva(assento_id):
+        reserva = ReservaDao.getReservaByAssento(assento_id)
         if reserva:
             db.session.delete(reserva)
             db.session.commit()
