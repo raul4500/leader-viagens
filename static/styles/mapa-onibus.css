@@ -1,16 +1,44 @@
+::-webkit-scrollbar {
+    height: 0px;
+    width: 0px;
+}
+
 body {
     font-family: Arial, sans-serif;
     padding: 0;
     margin: 0;
     overflow-x: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+.container{
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 .header{
-    width: calc(100vw - 100px);
+    width: 100%;
     padding: 16px;
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     box-shadow: 0px .1px 10px rgba(0, 0, 0, .5);
+}
+
+.header .left, .right{
+    display: flex;
+    flex-direction: row;
+}
+
+.header .right{
+    margin-right: 30px;
+}
+
+.header .right.active{
+    margin-right: 350px;
 }
 
 .header .block{
@@ -18,7 +46,6 @@ body {
     flex-direction: row;
     line-height: 0px;
     margin: 0 24px 0 0px;
-    height: 80%;
     padding: 14px;
     border: 1px solid grey;
     border-radius: 8px;
@@ -34,6 +61,120 @@ body {
     margin-right: 8px;
 }
 
+.header .toggle-btn-right {
+    font-size: 40px;
+    position: relative;
+    margin-right: 0;
+    background-color: #1cc240;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.sidebar-right {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: #f4f4f4;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease;
+    padding: 16px 0 0 0;
+    overflow: hidden;
+}
+
+.sidebar-right.active {
+    padding: 16px;
+    right: 0;
+}
+
+.sidebar-right .search-box {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.sidebar-right .clients-table {
+    width: 100%;
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+}
+
+.sidebar-right table {
+    margin: 24px;
+    width: 50%;
+    border-collapse: collapse;
+}
+
+.sidebar-right table th,td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.sidebar-right table th {
+    background-color: #007bff;
+    color: white;
+}
+
+.sidebar-right .buttons{
+    position: relative;
+    top: 180px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.confirmar, .cancelar{
+    width: 100px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+}
+
+.sidebar-right .buttons .confirmar{
+    cursor: pointer;
+    background-color: rgb(186, 255, 203);
+    color: rgb(0, 0, 0);
+    border: 1px solid green;
+}
+
+.sidebar-right .buttons .confirmar:hover{
+    background-color: rgb(38, 139, 64);
+    color: white;
+}
+
+.sidebar-right .buttons .cancelar{
+    cursor: pointer;
+    background-color: rgba(255, 0, 0, 0.801);
+    color: rgb(255, 255, 255);
+    border: 1px solid rgb(110, 0, 0);
+}
+
+.sidebar-right .buttons .cancelar:hover{
+    background-color: rgb(255, 179, 179);
+    color: rgb(0, 0, 0);
+}
+
+.drag-item {
+    cursor: grab;
+    padding: 5px;
+    background-color: #ddd;
+    border-radius: 3px;
+}
+
 h2 {
     margin: 0;
     font-weight: bold;
@@ -45,15 +186,28 @@ h3 {
 
 .mapa-onibus {
     position: relative;
-    top: 30px;
-    left: 50%;
-    transform: translateX(-50%);
+    height: calc(100vh - 140px);
+    width: 100%;
+    overflow-y: scroll;
+    padding: 30px 0 30px 0;
     border-collapse: collapse;
-    width: 600px;
     margin-bottom: 50px;
+    transition: .5s;
 }
 
-.assento {
+.mapa-onibus.active{
+    width: calc(100% - 300px);
+    transition: .5s;
+}
+
+.mapa-onibus table {
+    width: 600px;
+    border-collapse: collapse;
+    margin: 0 auto 150px auto;
+    height: calc(fit-content + 100px);
+}
+
+.mapa-onibus table .assento {
     background-color: rgb(115, 187, 67);
     border: 1px solid black;
     width: 4px;
@@ -61,7 +215,7 @@ h3 {
     text-align: center;
 }
 
-.nome {
+.mapa-onibus table .nome {
     border: 1px solid black;
     background-color: rgb(115, 187, 67);
     width: 100px;
@@ -80,12 +234,9 @@ h3 {
 
 }
 
-button.selected {
-background-color: #4CAF50; /* Cor verde para indicar seleção */
-color: white;
-}
 
-.assento.selected {
-background-color: #4CAF50; /* Cor verde para indicar seleção */
-color: white;
+@media (max-width: 600px) {
+    .mapa-onibus table {
+        width: 100%;
+    }
 }

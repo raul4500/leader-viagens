@@ -8,6 +8,14 @@ class ReservaDao:
     @staticmethod
     def getAllReservas():
         return Reserva.query.all()
+    
+    @staticmethod
+    def getReservasByViagem(viagem_id):
+        return Reserva.query.filter_by(viagem_id=viagem_id).all()
+    
+    @staticmethod
+    def getReservaByAssento(assento_id):
+        return Reserva.query.filter_by(assento=assento_id).first()
 
     @staticmethod
     def addReserva(assento, passageiro_id, viagem_id):
@@ -27,8 +35,8 @@ class ReservaDao:
         return reserva.toJson()
 
     @staticmethod
-    def delReserva(id):
-        reserva = ReservaDao.getReserva(id)
+    def delReserva(assento_id):
+        reserva = ReservaDao.getReservaByAssento(assento_id)
         if reserva:
             db.session.delete(reserva)
             db.session.commit()

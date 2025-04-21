@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/modal.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/barra-rolagem.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/flash-messages.css') }}">
+    <link rel="icon" href="../static/styles/img/logo_size_invert.jpg" type="image/jpg">
     <title>Financeiro-Leader</title>
 
 </head>
@@ -19,6 +20,7 @@
 
     <div class="main">
         <div class="sidebar">
+            
             <a href="/">
                 <div class="sidebar-item"><i class="bi bi-house-fill"></i></div>
             </a>
@@ -133,7 +135,7 @@
                     </div>
                     <div class="viagens-blocks">
                         {% for v in viagens %}
-                        <a href="">
+                        <a href="/viagem/{{v.id}}">
                             <div class="block">{{ v.destino }}</div>
                         </a>
                         {% endfor %}
