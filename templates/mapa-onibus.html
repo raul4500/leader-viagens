@@ -16,7 +16,7 @@
         height: 300px;
         overflow-y: scroll;
         bottom: 10px;
-        left: 100px;
+        right: 100px;
         z-index: 1000;
     }
 
@@ -36,7 +36,7 @@
             <a href="/viagens">
                 <div class="sidebar-item"><i class="bi bi-airplane-fill"></i></div>
             </a>
-            <a href="">
+            <a href="/financeiro">
                 <div class="sidebar-item"><i class="bi bi-credit-card-fill"></i></div>
             </a>
             <a href="" class="bell">
@@ -64,16 +64,6 @@
             {{mapa|safe}}
 
             {{dados|safe}}
-
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            <div class=flashes>
-                {% for category, message in messages %}
-                <div class="{{ category }}">{{ message }}</div>
-                {% endfor %}
-            </div>
-            {% endif %}
-            {% endwith %}
 
         </div>
 

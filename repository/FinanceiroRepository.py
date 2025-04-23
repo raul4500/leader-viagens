@@ -1,8 +1,8 @@
-from dao.__init__ import*
+from dao.FinanceiroDao import*
 
 class FinanceiroRepository:
     def __init__(self):
-        self.dao = FinanceiroDao()
+        self.financeiroDao = FinanceiroDao()
 
     def getAllFinancas(self):
         return self.financeiroDao.getAllFinancas()

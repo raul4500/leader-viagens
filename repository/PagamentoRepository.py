@@ -1,4 +1,4 @@
-from dao.__init__ import *
+from dao.PagamentoDao import *
 
 class PagamentoRepository:
     def __init__(self):

@@ -1,6 +1,6 @@
 from .ViagemDao import *
 from .ReservaDao import *
 from .PassageiroDao import *
-from .FinanceiroDao import *
+from .PagamentoDao import *
 from .LembreteDao import *
-from .FinanceiroDao import*
+from .FinanceiroDao import *

@@ -7,7 +7,7 @@ from datetime import*
 financeiro_controller = Blueprint("financeiro_controller", __name__)
 
 @financeiro_controller.route('/financeiro')
-def financeiro():
+def index():
     repos = FinanceiroRepository()
     passageiro_id = request.args.get('passageiro_id')
 

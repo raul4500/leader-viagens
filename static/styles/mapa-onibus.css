@@ -13,6 +13,8 @@ body {
 }
 
 .container{
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100%;
     overflow-x: hidden;
@@ -232,6 +234,13 @@ h3 {
 .piso {
     text-align: center;
 
+}
+
+.tabela-dados {
+    position: relative;
+    margin: 0 auto;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 

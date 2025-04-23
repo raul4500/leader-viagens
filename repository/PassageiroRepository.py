@@ -1,4 +1,4 @@
-from dao.__init__ import *
+from dao.PassageiroDao import *
 
 class PassageiroRepository:
     def __init__(self):

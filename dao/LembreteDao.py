@@ -1,4 +1,4 @@
-from models.__init__ import *
+from models.Lembrete import *
 
 class LembreteDao:
     @staticmethod

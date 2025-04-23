@@ -1,4 +1,4 @@
-from dao.__init__ import *
+from dao.LembreteDao import *
 
 class LembreteRepository:
     def __init__(self):

@@ -1,5 +1,6 @@
 from .ViagemRepository import *
 from .ReservaRepository import *
 from .PassageiroRepository import *
-from .FinanceiroRepository import *
+from .PagamentoRepository import *
 from .LembreteRepository import *
+from .FinanceiroRepository import *

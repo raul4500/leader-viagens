@@ -1,4 +1,4 @@
-from models.__init__ import *
+from models.Passageiro import *
 
 # classe dos autores com suas próprias funções (CRUD)
 

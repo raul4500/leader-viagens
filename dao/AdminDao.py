@@ -4,23 +4,23 @@ from models.__init__ import *
 
 class AdminDao:
     @staticmethod
-    def getAdmin(id):
-        return Admin.query.get(id)
+    #def getAdmin(id):
+    #   return Admin.query.get(id)
     
-    @staticmethod
-    def getAdminByEmail(email):
-        return Admin.query.filter_by(email=email).first()
-    
-    @staticmethod
-    def getAllAdmins():
-        return Admin.query.all()
-    
-    @staticmethod
-    def addAdmin(nome, email, senha):
-        admin = Admin(nome=nome, email=email, senha=senha)
-        db.session.add(admin)
-        db.session.commit()
-        return admin.toJson()
+    #@staticmethod
+    #def getAdminByEmail(email):
+    #    return Admin.query.filter_by(email=email).first()
+    #
+    #@staticmethod
+    #def getAllAdmins():
+    #    return Admin.query.all()
+    #
+    #@staticmethod
+    #def addAdmin(nome, email, senha):
+    #    admin = Admin(nome=nome, email=email, senha=senha)
+    #    db.session.add(admin)
+    #    db.session.commit()
+    #    return admin.toJson()
     
     @staticmethod
     def attAdmin(id, nome, email, senha):

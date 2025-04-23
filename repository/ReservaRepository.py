@@ -1,4 +1,4 @@
-from dao.__init__ import *
+from dao.ReservaDao import *
 
 class ReservaRepository:
     def __init__(self):

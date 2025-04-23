@@ -1,8 +1,8 @@
 from dao.__init__ import *
 
 class AdminRepository:
-    def __init__(self):
-        self.adminDao = AdminDao()
+    #def __init__(self):
+    #    self.adminDao = AdminDao()
     
     def getAllAdmins(self):
         return self.adminDao.getAllAdmins()
