@@ -22,6 +22,7 @@ body {
 }
 
 .header{
+    height: 60px;
     width: 100%;
     padding: 16px;
     display: flex;
@@ -237,15 +238,19 @@ h3 {
 }
 
 .tabela-dados {
-    position: relative;
-    margin: 0 auto;
+    position: absolute;
+    margin: 120px;
     width: 100%;
     border-collapse: collapse;
 }
 
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
     .mapa-onibus table {
         width: 100%;
+    }
+
+    .tabela-dados {
+        margin: 200px 0 0 0;
     }
 }

@@ -87,7 +87,7 @@ def viagem(viagem_id):
 def dados(viagem, reservas, passageiros):
     # Inicia o código HTML
     html = f'''
-    <div class="tabela-dados" style="display: none;">
+    <div class="tabela-dados" id="tabela-dados" style="display: none;">
         <table>
             <tr>
                 <th>NOME</th>
@@ -199,8 +199,11 @@ def dados(viagem, reservas, passageiros):
 
 def mapa(viagem, reservas, passageiros):
     class P:
-        def __init__(self, nome=''):
+        def __init__(self, nome='', rg='', nascimento='', telefone=''):
             self.nome = nome
+            self.rg = rg
+            self.nascimento = nascimento
+            self.telefone = telefone
     # Início do código HTML
     html = f"""
     <div id="mapa-onibus" class="mapa-onibus" style="display: block;">
@@ -280,8 +283,12 @@ def mapa(viagem, reservas, passageiros):
                 html += f"""
                 <td class="assento" id="assento_{i}" style="opacity: 0; border: none"></td>
                 <td class="assento" id="assento_{i}">{i}</td>
-                <td class="nome" draggable=True ondragstart="drag(event)" id="{i}" name="nome_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p.nome}</td>
-                <td class="nome" draggable=True ondragstart="drag(event)" id="{i}" name="nome_{i}" style="opacity: 0; border: none">
+                <td class="nome" draggable=True ondragstart="drag(event, '{p.rg}')" id="{i}" name="nome_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <div class="caixa-info">{p.nome}
+                    <div class="caixa-info-text">RG: {p.rg} <br> CPF: {p.rg} <br> Telefone: {p.telefone} </div>
+                </div>
+                </td>
+                <td class="nome" draggable=True ondragstart="drag(event, '{p.rg}')" id="{i}" name="nome_{i}" style="opacity: 0; border: none">
                 </td>
                 """
             elif i + 1 == viagem.qtd_assentos:
@@ -304,8 +311,14 @@ def mapa(viagem, reservas, passageiros):
                 html += f"""
                 <td class="assento" id="assento_{i}">{i}</td>
                 <td class="assento" id="assento_{i+1}">{i+1}</td>
-                <td class="nome" draggable=True ondragstart="drag(event)" id="{i}" name="nome_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p1.nome}</td>
-                <td class="nome" draggable=True ondragstart="drag(event)" id="{i+1}" name="nome_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p2.nome}</td>
+                <td class="nome" draggable=True ondragstart="drag(event, '{p1.rg}')" id="{i}" name="nome_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <div class="caixa-info">{p1.nome}
+                    <div class="caixa-info-text">RG: {p1.rg} <br> CPF: {p1.rg} <br> Telefone: {p1.telefone} </div>
+                </td>
+                <td class="nome" draggable=True ondragstart="drag(event, '{p2.rg}')" id="{i+1}" name="nome_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <div class="caixa-info">{p2.nome}
+                    <div class="caixa-info-text">RG: {p2.rg} <br> CPF: {p2.rg} <br> Telefone: {p2.telefone} </div>
+                </td>
                 """
             elif i + 2 == viagem.qtd_assentos:
                 p1 = P()  # Inicializa a variável do passageiro como None
@@ -335,13 +348,22 @@ def mapa(viagem, reservas, passageiros):
                 html += f"""
                 <td class="assento" id="assento_{i}">{i}</td>
                 <td class="assento" id="assento_{i+1}">{i+1}</td>
-                <td class="nome" draggable=True ondragstart="drag(event)" id="{i}" name="nome_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p1.nome}</td>
-                <td class="nome" draggable=True ondragstart="drag(event)" id="{i+1}" name="nome_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p2.nome}</td>
+                <td class="nome" draggable=True ondragstart="drag(event, '{p1.rg}')" id="{i}" name="nome_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <div class="caixa-info">{p1.nome}
+                    <div class="caixa-info-text">RG: {p1.rg} <br> CPF: {p1.rg} <br> Telefone: {p1.telefone} </div>
+                </td>
+                <td class="nome" draggable=True ondragstart="drag(event, '{p2.rg}')" id="{i+1}" name="nome_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <div class="caixa-info">{p2.nome}
+                    <div class="caixa-info-text">RG: {p2.rg} <br> CPF: {p2.rg} <br> Telefone: {p2.telefone} </div>
+                </td>
                 <td class="space"></td>
                 <td class="assento" id="assento_{i}" style="opacity: 0; border: none"></td>
                 <td class="assento" id="assento_{i+2}">{i+2}</td>
-                <td class="nome" draggable=True ondragstart="drag(event)" id="{i+2}" name="nome_{i+2}" onclick="highlightSeat('{i + 2}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p3.nome}</td>
-                <td class="nome" draggable=True ondragstart="drag(event)" id="{i}" name="nome_{i}" style="opacity: 0; border: none">
+                <td class="nome" draggable=True ondragstart="drag(event, '{p3.rg}')" id="{i+2}" name="nome_{i+2}" onclick="highlightSeat('{i + 2}')" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <div class="caixa-info">{p3.nome}
+                    <div class="caixa-info-text">RG: {p3.rg} <br> CPF: {p3.rg} <br> Telefone: {p3.telefone} </div>
+                </td>
+                <td class="nome" draggable=True ondragstart="drag(event, '{p.rg}')" id="{i}" name="nome_{i}" style="opacity: 0; border: none">
                 </td>
                 """
             else:
@@ -380,13 +402,25 @@ def mapa(viagem, reservas, passageiros):
                 html += f"""
                 <td class="assento" id="assento_{i}">{i}</td>
                 <td class="assento" id="assento_{i+1}">{i+1}</td>
-                <td class="nome" draggable=True ondragstart="drag(event)" id="{i}" name="nome_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p1.nome}</td>
-                <td class="nome" draggable=True ondragstart="drag(event)" id="{i+1}" name="nome_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p2.nome}</td>
+                <td class="nome" title="Idade: 30&#10;Email: joao@example.com" draggable=True ondragstart="drag(event, '{p1.rg}')" id="{i}" name="nome_{i}" onclick="highlightSeat('{i}')" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <div class="caixa-info">{p1.nome}
+                    <div class="caixa-info-text">RG: {p1.rg} <br> CPF: {p1.rg} <br> Telefone: {p1.telefone} </div>
+                </td>
+                <td class="nome" draggable=True ondragstart="drag(event, '{p2.rg}')" id="{i+1}" name="nome_{i+1}" onclick="highlightSeat('{i + 1}')" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <div class="caixa-info">{p2.nome}
+                    <div class="caixa-info-text">RG: {p2.rg} <br> CPF: {p2.rg} <br> Telefone: {p2.telefone} </div>
+                </td>
                 <td class="space"></td>
                 <td class="assento" id="assento_{i+3}">{i+3}</td>
                 <td class="assento" id="assento_{i+2}">{i+2}</td>
-                <td class="nome" draggable=True ondragstart="drag(event)" id="{i+3}" name="nome_{i+3}" onclick="highlightSeat('{i + 3}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p4.nome}</td>
-            <td class="nome" draggable=True ondragstart="drag(event)" id="{i+2}" name="nome_{i+2}" onclick="highlightSeat('{i + 2}')" ondragover="allowDrop(event)" ondrop="drop(event)">{p3.nome}</td>
+                <td class="nome" draggable=True ondragstart="drag(event, '{p4.rg}')" id="{i+3}" name="nome_{i+3}" onclick="highlightSeat('{i + 3}')" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <div class="caixa-info">{p4.nome}
+                    <div class="caixa-info-text">RG: {p4.rg} <br> CPF: {p4.rg} <br> Telefone: {p4.telefone} </div>
+                </td>
+            <td class="nome" draggable=True ondragstart="drag(event, '{p3.rg}')" id="{i+2}" name="nome_{i+2}" onclick="highlightSeat('{i + 2}')" ondragover="allowDrop(event)" ondrop="drop(event)">
+            <div class="caixa-info">{p3.nome}
+                    <div class="caixa-info-text">RG: {p3.rg} <br> CPF: {p3.rg} <br> Telefone: {p3.telefone} </div>
+            </td>
                 """
         
         html += "</tr>"

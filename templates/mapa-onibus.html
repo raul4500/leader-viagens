@@ -21,6 +21,32 @@
     }
 
     </style>
+
+<style>
+    .caixa-info {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .caixa-info .caixa-info-text {
+      display: none;
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #222;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 13px;
+      white-space: nowrap;
+      z-index: 1;
+    }
+    
+    .nome:hover .caixa-info-text {
+      display: block;
+    }
+    </style>
 </head>
 
 <body>
@@ -127,12 +153,12 @@
 
     function mapa() {
         document.getElementById("mapa-onibus").style.display = "block";
-        document.querySelector(".tabela-dados").style.display = "none";
+        document.getElementById("tabela-dados").style.display = "none";
     }
 
     function dados() {
         document.getElementById("mapa-onibus").style.display = "none";
-        document.querySelector(".tabela-dados").style.display = "block";
+        document.getElementById("tabela-dados").style.display = "block";
     }
 
     function toggleSidebar(event) {
@@ -284,7 +310,7 @@
         if (event.dataTransfer.getData("text") == "") {
             return;
         }
-
+        
         let aa = [];
         let rg = [];
 
@@ -324,7 +350,7 @@
         let x = false;
         let trocar = true;
         let y = 0;
-        let name = event.dataTransfer.getData("text");
+        let name = event.dataTransfer.getData("text").split("RG")[0].trim();
         if (event.target.classList.contains("nome")) {
             if (document.getElementById(event.target.id).innerText != "") {
                 if (event.target.innerText == name) {
