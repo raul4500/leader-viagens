@@ -88,7 +88,7 @@ def dados(viagem, reservas, passageiros):
     # Inicia o código HTML
     html = f'''
     <div class="tabela-dados" id="tabela-dados" style="display: none;">
-        <table>
+        <table class="tbdd">
             <tr>
                 <th>NOME</th>
                 <th>RG</th>

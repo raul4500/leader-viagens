@@ -194,7 +194,7 @@ h3 {
     overflow-y: scroll;
     padding: 30px 0 30px 0;
     border-collapse: collapse;
-    margin-bottom: 50px;
+    margin-bottom: 24px;
     transition: .5s;
 }
 
@@ -240,17 +240,67 @@ h3 {
 .tabela-dados {
     position: absolute;
     margin: 120px;
-    width: 100%;
+    width: calc(100% - 150px);
+    height: 500px;
+    overflow: scroll;
     border-collapse: collapse;
 }
 
+.tabela-dados table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
 
-@media (max-width: 700px) {
+.tabela-dados td{
+    padding: 8px;
+    border: 1px solid #000000;
+    text-align: left;
+}
+
+.tabela-dados th{
+    padding: 8px;
+    border: 1px solid #000000;
+    text-align: left;
+    background-color: #000000;
+    color: white;
+}
+
+
+@media (max-width: 1000px) {
     .mapa-onibus table {
         width: 100%;
     }
 
     .tabela-dados {
-        margin: 200px 0 0 0;
+        height: 400px;
+        margin: 200px 0 0 20px;
+        width: calc(100% - 50px);
+        overflow-x: scroll;
+    }
+
+    .tabela-dados table {
+        width: 1000px;
+    }
+}
+
+@media print {
+    body *{
+        visibility: hidden;
+    }
+
+    .mapa-onibus, .mapa-onibus *{
+        visibility: visible;
+    }
+    .mapa-onibus{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: fit-content;
+    }
+    .mapa-onibus table {
+        width: 100%;
+        height: 100%;
     }
 }

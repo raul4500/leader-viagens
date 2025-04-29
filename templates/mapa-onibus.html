@@ -82,7 +82,7 @@
                         <p>Dados</p>
                     </button>
                 </div>
-                <div class="right">
+                <div class="right" id="adicionar">
                     <button class="toggle-btn-right" onclick="toggleSidebar(event)">+</button>
                 </div>
             </div>
@@ -157,6 +157,7 @@
     }
 
     function dados() {
+        window.print()
         document.getElementById("mapa-onibus").style.display = "none";
         document.getElementById("tabela-dados").style.display = "block";
     }
@@ -165,6 +166,7 @@
         document.getElementById("mapa-onibus").classList.add("active");
         let sidebar = document.getElementById("sidebarRight");
         sidebar.classList.toggle("active");
+        mapa();
         event.stopPropagation();
 
     }
