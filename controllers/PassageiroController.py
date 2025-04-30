@@ -87,6 +87,7 @@ def cadastrar_passageiro(url):
         nome = request.form['nome']
         nascimento = request.form['nascimento']
         rg = request.form['rg']
+        cpf = request.form['cpf']
         telefone = request.form['telefone']
         status = request.form['status']
         # Convert nascimento to a date object
@@ -98,7 +99,7 @@ def cadastrar_passageiro(url):
             return redirect(url_for(f'passageiro_controller.cadastrar_passageiro', url=url))
         
         if verificarInfo(nome, rg, telefone):
-            passageiroRepository.createPassageiro(nome, nascimento, rg, telefone, status)
+            passageiroRepository.createPassageiro(nome, nascimento, rg, cpf, telefone, status)
             flash('passageiro registrado', 'success')
             return redirect(url_for(f'{url}.index'))
     return redirect(url_for(f'{url}.index'))
@@ -109,6 +110,7 @@ def editar_passageiro(id, url):
         nome = request.form['nome']
         nascimento = request.form['nascimento']
         rg = request.form['rg']
+        cpf = request.form['cpf']
         if nascimento!='':
             nascimento = formatar_data(nascimento)
         telefone = request.form['telefone']

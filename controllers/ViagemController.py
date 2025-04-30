@@ -90,6 +90,7 @@ def dados(viagem, reservas, passageiros):
     <div class="tabela-dados" id="tabela-dados" style="display: none;">
         <table class="tbdd">
             <tr>
+                <th></th>
                 <th>NOME</th>
                 <th>RG</th>
                 <th>DT-NASCTO</th>
@@ -116,6 +117,7 @@ def dados(viagem, reservas, passageiros):
             # Adiciona a linha de dados para a reserva
             html += f'''
             <tr>
+                <td>{i}</td>
                 <td>{p.nome}</td>
                 <td>{p.rg}</td>
                 <td>{p.nascimento}</td>
@@ -136,11 +138,13 @@ def dados(viagem, reservas, passageiros):
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
             </tr>
             '''
 
     html += f'''
         <tr>
+                <th></th>
                 <th>NOME</th>
                 <th>RG</th>
                 <th>DT-NASCTO</th>
@@ -166,6 +170,7 @@ def dados(viagem, reservas, passageiros):
             # Adiciona a linha de dados para a reserva
             html += f'''
             <tr>
+                <td>{i}</td>
                 <td>{p.nome}</td>
                 <td>{p.rg}</td>
                 <td>{p.nascimento}</td>
@@ -181,6 +186,7 @@ def dados(viagem, reservas, passageiros):
             html += f'''
             <tr>
                 <td>{i}</td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
