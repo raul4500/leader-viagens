@@ -10,9 +10,10 @@ viagemRepository = ViagemRepository()
 passageiroRepository = PassageiroRepository()
 lembreteRepository = LembreteRepository()
 
+
 @index_controller.route('/')
 def index():
     viagens = viagemRepository.getAllViagens()
     passageiros = passageiroRepository.getAllPassageiros()
     lembretes = lembreteRepository.getAllLembretes()
-    return render_template('index.html', viagens=viagens, passageiros=passageiros, lembretes=lembretes)
+    return render_template('index.html', sidebar=sidebar, viagens=viagens, passageiros=passageiros, lembretes=lembretes)

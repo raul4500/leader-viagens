@@ -79,12 +79,12 @@ def validar_rg(rg):
 @passageiro_controller.route('/passageiros')
 def index():
     passageiros = passageiroRepository.getAllPassageiros()
-    return render_template('passageiros.html', passageiros=passageiros, formatar_data=formatar_data, formatar_data_registro=formatar_data_registro, str=str)
+    return render_template('passageiros.html', sidebar=sidebar, passageiros=passageiros, formatar_data=formatar_data, formatar_data_registro=formatar_data_registro, str=str)
 
 @passageiro_controller.route('/cadastrar_passageiro/<url>', methods=['GET', 'POST'])
 def cadastrar_passageiro(url):
     if request.method == 'POST':
-        nome = request.form['nome']
+        nome = request.form['nome'].upper()
         nascimento = request.form['nascimento']
         rg = request.form['rg']
         cpf = request.form['cpf']
@@ -107,7 +107,7 @@ def cadastrar_passageiro(url):
 @passageiro_controller.route('/editar_passageiro/<int:id>/<url>', methods=['GET', 'POST'])
 def editar_passageiro(id, url):
     if request.method == 'POST':
-        nome = request.form['nome']
+        nome = request.form['nome'].upper()
         nascimento = request.form['nascimento']
         rg = request.form['rg']
         cpf = request.form['cpf']

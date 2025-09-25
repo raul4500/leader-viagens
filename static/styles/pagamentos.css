@@ -1,0 +1,95 @@
+h1 {
+  margin: 0px;
+  padding: 0px;
+}
+
+.pagamentos{
+  width: calc(100% - 32px);
+  display: flex;
+  flex-direction: column;
+  margin: 0px;
+  padding: 16px;
+}
+
+.ultimos-pagamentos {
+    width: calc(100% - 32px);
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    border-radius: 8px;
+    background-color: rgb(235, 235, 235);
+}
+
+.registros {
+  margin-top: 16px;
+  height: fit-content;
+  max-width: 100%;
+  white-space: nowrap;
+  padding: 0px;
+  overflow-x: scroll;
+}
+
+.registros table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid rgb(163, 163, 163);
+}
+
+.registros th {
+  border-bottom: 1px solid rgb(163, 163, 163);
+  font-weight: normal;
+  background-color: rgb(241, 241, 241);
+  padding: 10px 0px 10px 8px;
+  text-align: left;
+}
+
+.registros td {
+  border-bottom: 1px solid rgb(163, 163, 163);
+  padding: 10px 0px 10px 8px;
+  text-align: left;
+}
+
+.registros td button {
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.registros td button:hover {
+  background-color: rgb(214, 214, 214);
+}
+
+.registros td .nome {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Estilo para o bloco de ações */
+.action-block {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.action-block ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.action-block ul li {
+  margin: 4px 0;
+}
+
+.action-block ul li a {
+  text-decoration: none;
+  color: black;
+}

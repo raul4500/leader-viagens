@@ -10,18 +10,20 @@ class PagamentoDao:
         return Pagamento.query.all()
 
     @staticmethod
-    def addPagamento(reserva_id, data_pagamento, valor, status):
-        pagamento = Pagamento(reserva_id=reserva_id, data_pagamento=data_pagamento, valor=valor, status=status)
+    def addPagamento(data_pagamento, valor, forma_pagamento, destino):
+        pagamento = Pagamento(data_pagamento=data_pagamento, valor=valor, forma_pagamento=forma_pagamento, destino=destino)
         db.session.add(pagamento)
         db.session.commit()
         return pagamento.toJson()
 
     @staticmethod
-    def attPagamento(id, valor, status):
+    def attPagamento(id, valor, data_pagamento, forma_pagamento, destino):
         pagamento = PagamentoDao.getPagamento(id)
         if pagamento:
             pagamento.valor = valor
-            pagamento.status = status
+            pagamento.data_pagamento = data_pagamento
+            pagamento.forma_pagamento = forma_pagamento
+            pagamento.destino = destino
             db.session.commit()
         return pagamento.toJson()
 

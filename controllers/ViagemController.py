@@ -21,7 +21,7 @@ def formatar_data(data):
 @viagem_controller.route('/viagens')
 def index():
     viagens = viagemRepository.getAllViagens()
-    return render_template('viagens.html', viagens=viagens, formatar_data=formatar_data)
+    return render_template('viagens.html',sidebar=sidebar, viagens=viagens, formatar_data=formatar_data)
 
 @viagem_controller.route('/cadastrar_viagem', methods=['GET','POST'])
 def cadastrar_viagem():
@@ -80,7 +80,7 @@ def viagem(viagem_id):
     if not viagem:
         flash('Viagem não encontrada.', 'error')
         return redirect(url_for('viagem_controller.index'))
-    return render_template('mapa-onibus.html', viagem=viagem, passageiros=passageiros, reservas=reservas, dados=dados(viagem, reservas, passageiros), mapa=mapa(viagem, reservas, passageiros), formatar_data=formatar_data, type=type)
+    return render_template('mapa-onibus.html', sidebar=sidebar, viagem=viagem, passageiros=passageiros, reservas=reservas, dados=dados(viagem, reservas, passageiros), mapa=mapa(viagem, reservas, passageiros), formatar_data=formatar_data, type=type)
 
 
 
@@ -99,9 +99,12 @@ def dados(viagem, reservas, passageiros):
                 <th>OBSERVAÇÃO</th>
             </tr>
     '''
+    maior37 = False
+    if viagem.qtd_assentos > 37:
+        maior37 = True
 
     # Itera para gerar a tabela com base nas reservas
-    for i in range(1,38): 
+    for i in range(1,viagem.qtd_assentos + 1): 
         # Flag para verificar se houve alguma reserva
         encontrou_reserva = False
         p = None  # Inicializa a variável do passageiro como None
@@ -141,59 +144,60 @@ def dados(viagem, reservas, passageiros):
                 <td></td>
             </tr>
             '''
-
-    html += f'''
-        <tr>
-                <th></th>
-                <th>NOME</th>
-                <th>RG</th>
-                <th>DT-NASCTO</th>
-                <th>TELEFONE</th>
-                <th>PAGAMENTO</th>
-                <th>OBSERVAÇÃO</th>
-            </tr>
-    '''
-
-    for i in range(38, viagem.qtd_assentos + 1): 
-        # Flag para verificar se houve alguma reserva
-        encontrou_reserva = False
-        p = None  # Inicializa a variável do passageiro como None
-        for r in reservas:
-            if r.assento == i:
-                # Encontra o passageiro relacionado à reserva
-                for passageiro in passageiros:
-                    if passageiro.id == r.passageiro_id or passageiro.rg == r.passageiro_id:
-                        # Adiciona o passageiro à lista de passageiros reservados
-                        p = passageiro
-        if p:  # Verifica se o passageiro existe
-            encontrou_reserva = True
-            # Adiciona a linha de dados para a reserva
-            html += f'''
+    
+    if maior37:
+        html += f'''
             <tr>
-                <td>{i}</td>
-                <td>{p.nome}</td>
-                <td>{p.rg}</td>
-                <td>{p.nascimento}</td>
-                <td>{p.telefone}</td>
-                <td>{p.id}</td>
-                <td></td>
-            </tr>
-            '''
+                    <th></th>
+                    <th>NOME</th>
+                    <th>RG</th>
+                    <th>DT-NASCTO</th>
+                    <th>TELEFONE</th>
+                    <th>PAGAMENTO</th>
+                    <th>OBSERVAÇÃO</th>
+                </tr>
+        '''
+
+        for i in range(38, viagem.qtd_assentos + 1): 
+            # Flag para verificar se houve alguma reserva
+            encontrou_reserva = False
+            p = None  # Inicializa a variável do passageiro como None
+            for r in reservas:
+                if r.assento == i:
+                    # Encontra o passageiro relacionado à reserva
+                    for passageiro in passageiros:
+                        if passageiro.id == r.passageiro_id or passageiro.rg == r.passageiro_id:
+                            # Adiciona o passageiro à lista de passageiros reservados
+                            p = passageiro
+            if p:  # Verifica se o passageiro existe
+                encontrou_reserva = True
+                # Adiciona a linha de dados para a reserva
+                html += f'''
+                <tr>
+                    <td>{i}</td>
+                    <td>{p.nome}</td>
+                    <td>{p.rg}</td>
+                    <td>{p.nascimento}</td>
+                    <td>{p.telefone}</td>
+                    <td>{p.id}</td>
+                    <td></td>
+                </tr>
+                '''
 
 
-        # Caso não tenha encontrado a reserva para esse assento, adiciona uma linha vazia
-        if not encontrou_reserva:
-            html += f'''
-            <tr>
-                <td>{i}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            '''
+            # Caso não tenha encontrado a reserva para esse assento, adiciona uma linha vazia
+            if not encontrou_reserva:
+                html += f'''
+                <tr>
+                    <td>{i}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                '''
     
     # Fecha a tabela e a div
     html += '''
@@ -369,8 +373,7 @@ def mapa(viagem, reservas, passageiros):
                 <div class="caixa-info">{p3.nome}
                     <div class="caixa-info-text">RG: {p3.rg} <br> CPF: {p3.rg} <br> Telefone: {p3.telefone} </div>
                 </td>
-                <td class="nome" draggable=True ondragstart="drag(event, '{p.rg}')" id="{i}" name="nome_{i}" style="opacity: 0; border: none">
-                </td>
+                
                 """
             else:
                 p1 = P()  # Inicializa a variável do passageiro como None

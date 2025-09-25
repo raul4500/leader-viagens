@@ -10,11 +10,11 @@ class PagamentoRepository:
     def getPagamento(self, id):
         return self.pagamentoDao.getPagamento(id)
 
-    def createPagamento(self, reserva_id, data_pagamento, valor, status):
-        return self.pagamentoDao.addPagamento(reserva_id, data_pagamento, valor, status)
+    def createPagamento(self, data_pagamento, valor, forma_pagamento, destino):
+        return self.pagamentoDao.addPagamento(data_pagamento, valor, forma_pagamento, destino)
 
-    def updatePagamento(self, id, reserva_id, data_pagamento, valor, status):
-        return self.pagamentoDao.attCliente(id, reserva_id, data_pagamento, valor, status)
+    def updatePagamento(self, id, data_pagamento, valor, forma_pagamento, destino):
+        return self.pagamentoDao.attCliente(id, data_pagamento, valor, forma_pagamento, destino)
 
     def deletePagamento(self, id):
         return self.pagamentoDao.delPagamento(id)

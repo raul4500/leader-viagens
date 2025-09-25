@@ -6,7 +6,6 @@ from datetime import*
 
 admin_controller = Blueprint('admin_controller', __name__)
 
-adminRepository = AdminRepository()
 viagemRepository = ViagemRepository()
 clienteRepository = PassageiroRepository()
 

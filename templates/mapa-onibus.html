@@ -1,480 +1,526 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ viagem.destino }}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/sidebar-main.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/flash-messages.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/mapa-onibus.css') }}">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='styles/sidebar-main.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='styles/flash-messages.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='styles/mapa-onibus.css') }}"
+    />
     <style>
-
-    .flashes {
+      .flashes {
         position: fixed;
         height: 300px;
         overflow-y: scroll;
+        bottom: -500px;
+        left: 100px;
+        transition: bottom 0.6s ease;
+      }
+      .flashes.active {
         bottom: 10px;
-        right: 100px;
-        z-index: 1000;
-    }
-
+      }
     </style>
 
-<style>
-    .caixa-info {
-      position: relative;
-      display: inline-block;
-    }
-    
-    .caixa-info .caixa-info-text {
-      display: none;
-      position: absolute;
-      bottom: 120%;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #222;
-      color: #fff;
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-size: 13px;
-      white-space: nowrap;
-      z-index: 1;
-    }
-    
-    .nome:hover .caixa-info-text {
-      display: block;
-    }
+    <style>
+      .caixa-info {
+        position: relative;
+        display: inline-block;
+      }
+
+      .caixa-info .caixa-info-text {
+        display: none;
+        position: absolute;
+        bottom: 120%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #222;
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 13px;
+        white-space: nowrap;
+        z-index: 1;
+      }
+
+      .nome:hover .caixa-info-text {
+        display: block;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <div class="main">
-        <div class="sidebar">
-            <a href="/">
-                <div class="sidebar-item"><i class="bi bi-house-fill"></i></div>
-            </a>
-            <a href="/passageiros">
-                <div class="sidebar-item"><i class="bi bi-person-fill"></i></div>
-            </a>
-            <a href="/viagens">
-                <div class="sidebar-item"><i class="bi bi-airplane-fill"></i></div>
-            </a>
-            <a href="/financeiro">
-                <div class="sidebar-item"><i class="bi bi-credit-card-fill"></i></div>
-            </a>
-            <a href="" class="bell">
-                <div class="sidebar-item"><i class="bi bi-bell-fill"></i></div>
-            </a>
+      {{sidebar|safe}}
+
+      <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %}
+        <div class="flashes">
+          {% for category, message in messages %}
+          <div class="{{ category }}">{{ message }}</div>
+          {% endfor %}
         </div>
-        <div class="container">
+        {% endif %} {% endwith %}
 
-            <div class="header">
-                <div class="left">
-                    <button class="block" onclick="mapa()">
-                        <i class="bi bi-border-all"></i>
-                        <p>Mapa</p>
-                    </button>
-                    <button class="block" onclick="dados()">
-                        <i class="bi bi-table"></i>
-                        <p>Dados</p>
-                    </button>
-                </div>
-                <div class="right" id="adicionar">
-                    <button class="toggle-btn-right" onclick="toggleSidebar(event)">+</button>
-                </div>
-            </div>
-
-            {{mapa|safe}}
-
-            {{dados|safe}}
-
+        <div class="header">
+          <div class="left">
+            <button class="block" onclick="mapa()">
+              <i class="bi bi-border-all"></i>
+              <p>Mapa</p>
+            </button>
+            <button class="block" onclick="dados()">
+              <i class="bi bi-table"></i>
+              <p>Dados</p>
+            </button>
+          </div>
+          <div class="right" id="adicionar">
+            <button class="toggle-btn-right" onclick="toggleSidebar(event)">
+              +
+            </button>
+          </div>
         </div>
 
-        <div class="sidebar-right" id="sidebarRight" onclick="event.stopPropagation()">
-            <h2>Clientes</h2>
-            <input type="text" class="search-box" id="searchInput" onkeyup="searchClient()"
-                placeholder="Buscar nome...">
-            <div class="clients-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>RG</th>
-                        </tr>
-                    </thead>
-                    <tbody id="clientTableBody">
-                        {% for p in passageiros %}
-                        <tr>
-                            <td>{{ p.id }}</td>
-                            <td draggable="true" class="drag-item" ondragstart="drag(event, '{{p.rg}}')">{{ p.nome }}</td>
-                            <td>{{ p.rg }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="buttons">
-                <button class="cancelar" id="cancelar" onclick="closeSidebar(event)">Cencelar</button>
-                <button class="confirmar" id="confirmar" onclick="confirmar()">Confirmar</button>
-            </div>
-        </div>
+        {{mapa|safe}} {{dados|safe}}
+      </div>
 
+      <div
+        class="sidebar-right"
+        id="sidebarRight"
+        onclick="event.stopPropagation()"
+      >
+        <h2>Clientes</h2>
+        <input
+          type="text"
+          class="search-box"
+          id="searchInput"
+          onkeyup="searchClient()"
+          placeholder="Buscar nome..."
+        />
+        <div class="clients-table">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>RG</th>
+              </tr>
+            </thead>
+            <tbody id="clientTableBody">
+              {% for p in passageiros %}
+              <tr>
+                <td>{{ p.id }}</td>
+                <td
+                  draggable="true"
+                  class="drag-item"
+                  ondragstart="drag(event, '{{p.rg}}')"
+                >
+                  {{ p.nome }}
+                </td>
+                <td>{{ p.rg }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="buttons">
+          <button class="cancelar" id="cancelar" onclick="closeSidebar(event)">
+            Cencelar
+          </button>
+          <button class="confirmar" id="confirmar" onclick="confirmar()">
+            Confirmar
+          </button>
+        </div>
+      </div>
     </div>
+  </body>
 
-</body>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <script>
+    // Exibe a mensagem flash por 3 segundos e depois a oculta
+    document.addEventListener("DOMContentLoaded", function () {
+      const flashMessage = document.querySelector(".flashes");
+      if (flashMessage && window.innerWidth > 1100) {
+        flashMessage.classList.add("active");
+        setTimeout(function () {
+          flashMessage.classList.remove("active");
+        }, 3000); // 3000 ms = 3 segundos
+      }
+    });
+  </script>
 
-<script>
-
-    localStorage.setItem('rg', "");
-    localStorage.setItem('assentos', "");
-    localStorage.setItem('cancelar_reserva', "");
+  <script>
+    localStorage.setItem("rg", "");
+    localStorage.setItem("assentos", "");
+    localStorage.setItem("cancelar_reserva", "");
     let cancelar_reserva = [];
     let reservados = [];
-    const allSeats = document.querySelectorAll('.nome');
-    allSeats.forEach(assentos => {
-        if (assentos.innerText != "") {
-            assentos.style.backgroundColor = "red";
-            assentos.style.color = "white";
-            document.getElementById(`assento_${assentos.id}`).style.backgroundColor = "red";
-            document.getElementById(`assento_${assentos.id}`).style.color = "white";
-            reservados.push(assentos.id)
-        }
-
+    const allSeats = document.querySelectorAll(".nome");
+    allSeats.forEach((assentos) => {
+      if (assentos.innerText != "") {
+        assentos.style.backgroundColor = "red";
+        assentos.style.color = "white";
+        document.getElementById(
+          `assento_${assentos.id}`
+        ).style.backgroundColor = "red";
+        document.getElementById(`assento_${assentos.id}`).style.color = "white";
+        reservados.push(assentos.id);
+      }
     });
 
-    localStorage.setItem('reservados', reservados)
+    localStorage.setItem("reservados", reservados);
 
     function mapa() {
-        document.getElementById("mapa-onibus").style.display = "block";
-        document.getElementById("tabela-dados").style.display = "none";
+      document.getElementById("mapa-onibus").style.display = "block";
+      document.getElementById("tabela-dados").style.display = "none";
     }
 
     function dados() {
-        document.getElementById("mapa-onibus").style.display = "none";
-        document.getElementById("tabela-dados").style.display = "block";
+      document.getElementById("mapa-onibus").style.display = "none";
+      document.getElementById("tabela-dados").style.display = "block";
     }
 
     function toggleSidebar(event) {
-        document.getElementById("mapa-onibus").classList.add("active");
-        let sidebar = document.getElementById("sidebarRight");
-        sidebar.classList.toggle("active");
-        mapa();
-        event.stopPropagation();
-
+      document.getElementById("mapa-onibus").classList.add("active");
+      let sidebar = document.getElementById("sidebarRight");
+      sidebar.classList.toggle("active");
+      mapa();
+      event.stopPropagation();
     }
 
     function closeSidebar(event) {
-        document.getElementById("mapa-onibus").classList.remove("active");
-        let sidebar = document.getElementById("sidebarRight");
-        sidebar.classList.remove("active");
-        event.stopPropagation();
-        window.location.reload();
+      document.getElementById("mapa-onibus").classList.remove("active");
+      let sidebar = document.getElementById("sidebarRight");
+      sidebar.classList.remove("active");
+      event.stopPropagation();
+      window.location.reload();
     }
 
     function searchClient() {
-        let input = document.getElementById("searchInput").value.toLowerCase();
-        let rows = document.querySelectorAll("#clientTableBody tr");
+      let input = document.getElementById("searchInput").value.toLowerCase();
+      let rows = document.querySelectorAll("#clientTableBody tr");
 
-
-        rows.forEach(row => {
-
-            let name = row.cells[1].textContent.toLowerCase();
-            row.style.display = name.includes(input) ? "" : "none";
-        });
+      rows.forEach((row) => {
+        let name = row.cells[1].textContent.toLowerCase();
+        row.style.display = name.includes(input) ? "" : "none";
+      });
     }
 
     function highlightSeat(seatId) {
-        // Primeiro, removemos a classe 'selected' de todas as células e botões
-        const allButtons = document.querySelectorAll('.nome');
-        const allSeats = document.querySelectorAll('.assento');
-        let sidebar = document.getElementById("sidebarRight");
-        if (sidebar.classList.contains("active")) {
-        } else { toggleSidebar(event) }
-        allButtons.forEach(button => {
-            button.classList.remove('selected')
-            if (button.innerText != "") {
+      // Primeiro, removemos a classe 'selected' de todas as células e botões
+      const allButtons = document.querySelectorAll(".nome");
+      const allSeats = document.querySelectorAll(".assento");
+      let sidebar = document.getElementById("sidebarRight");
+      if (sidebar.classList.contains("active")) {
+      } else {
+        toggleSidebar(event);
+      }
+      allButtons.forEach((button) => {
+        button.classList.remove("selected");
+        if (button.innerText != "") {
+          button.style.backgroundColor = "red";
+          button.style.color = "white";
+          document.getElementById(
+            `assento_${button.id}`
+          ).style.backgroundColor = "red";
+        } else {
+          button.style.backgroundColor = "rgb(115, 187, 67)";
+          button.style.color = "black";
+        }
+      });
+      allSeats.forEach((seat) => {
+        seat.classList.remove("selected");
+        if (
+          seat.style.backgroundColor == "red" ||
+          seat.style.backgroundColor == "#4CAF51"
+        ) {
+          seat.style.backgroundColor = "red";
+          seat.style.color = "white";
+        } else {
+          seat.style.backgroundColor = "rgb(115, 187, 67)";
+          seat.style.color = "black";
+        }
+      });
+
+      // Adicionamos a classe 'selected' ao botão clicado e à célula de assento correspondente
+      const button = document.getElementById(seatId);
+      const seat = document.getElementById(`assento_${seatId}`);
+
+      if (button) {
+        if (button.classList.contains("selected")) {
+          button.classList.remove("selected");
+        } else {
+          button.classList.add("selected");
+          button.style.backgroundColor = "#4CAF50";
+          button.style.color = "white";
+
+          document.addEventListener("keydown", (e) => {
+            if (
+              e.key === "Delete" &&
+              button.classList.contains("selected") &&
+              button.innerText != ""
+            ) {
+              //t(button.id + " apagado!")
+              assentos_id = localStorage.getItem("assentos").split(",");
+              rg = localStorage.getItem("rg").split(",");
+              if (assentos_id.length > 0 && rg.length > 0) {
+                assentos_id.forEach((assento) => {
+                  if (assento == button.id) {
+                    assentos_id.splice(assentos_id.indexOf(assento), 1);
+                    rg.splice(rg.indexOf(button.innerText), 1);
+                    localStorage.setItem("assentos", assentos_id);
+                    localStorage.setItem("rg", rg);
+                  }
+                });
+              }
+              reservados.forEach((r) => {
+                if (r == button.id) {
+                  cancelar_reserva.push(r);
+                  reservados.splice(reservados.indexOf(r), 1);
+                }
+              });
+
+              localStorage.setItem("cancelar_reserva", cancelar_reserva);
+              button.innerHTML = ""; // Apaga o conteúdo do bloco
+            }
+          });
+
+          document.addEventListener("click", (e) => {
+            // Verifica se o clique foi fora do bloco de texto
+            if (!button.contains(e.target)) {
+              button.classList.remove("selected");
+              if (button.innerText != "") {
                 button.style.backgroundColor = "red";
                 button.style.color = "white";
-                document.getElementById(`assento_${button.id}`).style.backgroundColor = "red";
-            } else {
+                document.getElementById(
+                  `assento_${button.id}`
+                ).style.backgroundColor = "red";
+              } else {
                 button.style.backgroundColor = "rgb(115, 187, 67)";
                 button.style.color = "black";
-            }
-
-        });
-        allSeats.forEach(seat => {
-            seat.classList.remove('selected')
-            if (seat.style.backgroundColor == "red" || seat.style.backgroundColor == "#4CAF51") {
+              }
+              seat.classList.remove("selected");
+              if (
+                seat.style.backgroundColor == "red" ||
+                seat.style.backgroundColor == "#4CAF51"
+              ) {
                 seat.style.backgroundColor = "red";
                 seat.style.color = "white";
-            } else {
+              } else {
                 seat.style.backgroundColor = "rgb(115, 187, 67)";
                 seat.style.color = "black";
+              }
             }
-        });
+          });
 
-        // Adicionamos a classe 'selected' ao botão clicado e à célula de assento correspondente
-        const button = document.getElementById(seatId);
-        const seat = document.getElementById(`assento_${seatId}`);
-
-        if (button) {
-            if (button.classList.contains('selected')) {
-                button.classList.remove('selected');
-            } else {
-                button.classList.add('selected');
-                button.style.backgroundColor = "#4CAF50";
-                button.style.color = "white";
-
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Delete' && button.classList.contains('selected') && button.innerText != "") {
-                        //t(button.id + " apagado!")
-                        assentos_id = localStorage.getItem('assentos').split(",")
-                        rg = localStorage.getItem('rg').split(",")
-                        if (assentos_id.length > 0 && rg.length > 0) {
-                            assentos_id.forEach(assento => {
-                                if (assento == button.id) {
-
-                                    assentos_id.splice(assentos_id.indexOf(assento), 1);
-                                    rg.splice(rg.indexOf(button.innerText), 1);
-                                    localStorage.setItem('assentos', assentos_id)
-                                    localStorage.setItem('rg', rg)
-                                }
-                            });
-                        }
-                        reservados.forEach(r => {
-                            if (r == button.id) {
-                                cancelar_reserva.push(r)
-                                reservados.splice(reservados.indexOf(r), 1);
-                            }
-                        });
-
-                        localStorage.setItem('cancelar_reserva', cancelar_reserva)
-                        button.innerHTML = ''; // Apaga o conteúdo do bloco
-                    }
-                });
-
-                document.addEventListener('click', (e) => {
-                    // Verifica se o clique foi fora do bloco de texto
-                    if (!button.contains(e.target)) {
-                        button.classList.remove('selected')
-                        if (button.innerText != "") {
-                            button.style.backgroundColor = "red";
-                            button.style.color = "white";
-                            document.getElementById(`assento_${button.id}`).style.backgroundColor = "red";
-                        } else {
-                            button.style.backgroundColor = "rgb(115, 187, 67)";
-                            button.style.color = "black";
-                        }
-                        seat.classList.remove('selected')
-                        if (seat.style.backgroundColor == "red" || seat.style.backgroundColor == "#4CAF51") {
-                            seat.style.backgroundColor = "red";
-                            seat.style.color = "white";
-                        } else {
-                            seat.style.backgroundColor = "rgb(115, 187, 67)";
-                            seat.style.color = "black";
-                        }
-                    }
-
-                });
-
-                seat.classList.add('selected');
-                seat.style.backgroundColor = "#4CAF51";
-                seat.style.color = "white";
-            }
+          seat.classList.add("selected");
+          seat.style.backgroundColor = "#4CAF51";
+          seat.style.color = "white";
         }
-
+      }
     }
 
     function drag(event, rg) {
-        event.dataTransfer.setData("text", event.target.innerText);
-        event.dataTransfer.setData("id", event.target.id);
-        event.dataTransfer.setData("rg", rg);
+      event.dataTransfer.setData("text", event.target.innerText);
+      event.dataTransfer.setData("id", event.target.id);
+      event.dataTransfer.setData("rg", rg);
     }
 
     function allowDrop(event) {
-        event.preventDefault();
+      event.preventDefault();
     }
 
     function drop(event) {
+      let sidebar = document.getElementById("sidebarRight");
+      if (sidebar.classList.contains("active")) {
+      } else {
+        toggleSidebar(event);
+      }
+      event.preventDefault();
+      if (event.dataTransfer.getData("text") == "") {
+        return;
+      }
 
-        let sidebar = document.getElementById("sidebarRight");
-        if (sidebar.classList.contains("active")) {
-        } else { toggleSidebar(event) }
-        event.preventDefault();
-        if (event.dataTransfer.getData("text") == "") {
-            return;
-        }
-        
-        let aa = [];
-        let rg = [];
+      let aa = [];
+      let rg = [];
 
-        if (localStorage.getItem('rg') != "") {
-            rg = (localStorage.getItem('rg')).split(",");
-        }
-    
-        if (localStorage.getItem('assentos') != "") {
-            let w = (localStorage.getItem('assentos')).split(",");
-            w.forEach(a => {
-                aa.push(a)
-            });
-            aa.push(event.target.id);
-        } else {
-            aa.push(event.target.id);
-        }
+      if (localStorage.getItem("rg") != "") {
+        rg = localStorage.getItem("rg").split(",");
+      }
 
-        let ab = false;
-        let count = 0;
-        let assentos = [];
-        let posicao;
-        let trocar_nome = false;
-
-        aa.forEach(a => {
-            if (a != event.target.id) {
-                assentos.push(a)
-                count += 1;
-            } else if (a == event.target.id && ab == false) {
-                assentos.push(a)
-                posicao = count + 1;
-                //rg[posicao] = event.dataTransfer.getData("text");
-                ab = true;
-                count += 1;
-            }
+      if (localStorage.getItem("assentos") != "") {
+        let w = localStorage.getItem("assentos").split(",");
+        w.forEach((a) => {
+          aa.push(a);
         });
+        aa.push(event.target.id);
+      } else {
+        aa.push(event.target.id);
+      }
 
-        let x = false;
-        let trocar = true;
-        let y = 0;
-        let name = event.dataTransfer.getData("text").split("RG")[0].trim();
-        if (event.target.classList.contains("nome")) {
-            if (document.getElementById(event.target.id).innerText != "") {
-                if (event.target.innerText == name) {
-                    alert("Assento já ocupado com este passageiro!")
-                } else {
-                    confirm("Assento já ocupado!\nDeseja trocar?") ? x = true : trocar = false;
+      let ab = false;
+      let count = 0;
+      let assentos = [];
+      let posicao;
+      let trocar_nome = false;
 
-                    if (x) {
-                        reservados.forEach(r => {
-                            if (r == event.target.id) {
-                                if (cancelar_reserva.find(r => r == event.target.id) != undefined) {
-                                } else {
-                                    cancelar_reserva.forEach(c => {
-                                        if (c == event.target.id) {
-                                            cancelar_reserva.splice(cancelar_reserva.indexOf(c), 1);
-                                        }
-                                    });
-                                    cancelar_reserva.push(r)
-                                }
-                            }
-                        });
+      aa.forEach((a) => {
+        if (a != event.target.id) {
+          assentos.push(a);
+          count += 1;
+        } else if (a == event.target.id && ab == false) {
+          assentos.push(a);
+          posicao = count + 1;
+          //rg[posicao] = event.dataTransfer.getData("text");
+          ab = true;
+          count += 1;
+        }
+      });
 
-                        trocar_nome = true;
+      let x = false;
+      let trocar = true;
+      let y = 0;
+      let name = event.dataTransfer.getData("text").split("RG")[0].trim();
+      if (event.target.classList.contains("nome")) {
+        if (document.getElementById(event.target.id).innerText != "") {
+          if (event.target.innerText == name) {
+            alert("Assento já ocupado com este passageiro!");
+          } else {
+            confirm("Assento já ocupado!\nDeseja trocar?")
+              ? (x = true)
+              : (trocar = false);
 
-                        localStorage.setItem('assentos', assentos)
-                        localStorage.setItem('cancelar_reserva', cancelar_reserva)
-                    }
-
+            if (x) {
+              reservados.forEach((r) => {
+                if (r == event.target.id) {
+                  if (
+                    cancelar_reserva.find((r) => r == event.target.id) !=
+                    undefined
+                  ) {
+                  } else {
+                    cancelar_reserva.forEach((c) => {
+                      if (c == event.target.id) {
+                        cancelar_reserva.splice(cancelar_reserva.indexOf(c), 1);
+                      }
+                    });
+                    cancelar_reserva.push(r);
+                  }
                 }
-            } else {
-                //{% for p in passageiros %}
-                if (name == "{{ p.nome }}" || event.target.innerText == "Bento") {
-                    x = true
-                } else {
-                    y += 1;
-                }
-                //{% endfor%}
+              });
+
+              trocar_nome = true;
+
+              localStorage.setItem("assentos", assentos);
+              localStorage.setItem("cancelar_reserva", cancelar_reserva);
             }
+          }
+        } else {
+          //{% for p in passageiros %}
+          if (name == "{{ p.nome }}" || event.target.innerText == "Bento") {
+            x = true;
+          } else {
+            y += 1;
+          }
+          //{% endfor%}
+        }
 
-
-            if (y == "{{passageiros|length}}") {
-                alert("Passageiro não encontrado no banco de dados")
-            } else if (trocar) {
-
-                /*let source = $(event.target);
+        if (y == "{{passageiros|length}}") {
+          alert("Passageiro não encontrado no banco de dados");
+        } else if (trocar) {
+          /*let source = $(event.target);
                 let target = $(event.target);
                 if (source && target && source[0] !== target[0]) {
                     saveHistory(source, target);
                 }*/
-                event.target.style.backgroundColor = "red";
-                event.target.style.color = "white";
-                document.getElementById(event.target.id).style.backgroundColor = "red";
-                document.getElementById(event.target.id).style.color = "white";
-                document.getElementById(`assento_${event.target.id}`).style.backgroundColor = "red";
-                document.getElementById(`assento_${event.target.id}`).style.color = "white";
-                //document.getElementById(`assento_${event.target.id}`).style.backgroundColor = "red";
-                //document.getElementById(`assento_${event.target.id}`).style.color = "white";
-                event.target.innerText = name;
-                if (trocar_nome) {
-                    rg[posicao-1] = event.dataTransfer.getData("rg");
-                } else {
-                    rg.push(event.dataTransfer.getData("rg"));
-                }
+          event.target.style.backgroundColor = "red";
+          event.target.style.color = "white";
+          document.getElementById(event.target.id).style.backgroundColor =
+            "red";
+          document.getElementById(event.target.id).style.color = "white";
+          document.getElementById(
+            `assento_${event.target.id}`
+          ).style.backgroundColor = "red";
+          document.getElementById(`assento_${event.target.id}`).style.color =
+            "white";
+          //document.getElementById(`assento_${event.target.id}`).style.backgroundColor = "red";
+          //document.getElementById(`assento_${event.target.id}`).style.color = "white";
+          event.target.innerText = name;
+          if (trocar_nome) {
+            rg[posicao - 1] = event.dataTransfer.getData("rg");
+          } else {
+            rg.push(event.dataTransfer.getData("rg"));
+          }
 
-                localStorage.setItem('assentos', assentos)
-                localStorage.setItem('rg', rg)
-            }
+          localStorage.setItem("assentos", assentos);
+          localStorage.setItem("rg", rg);
         }
+      }
     }
 
     function confirmar() {
-        let rg = localStorage.getItem('rg').split(",");
-        let assentos = localStorage.getItem('assentos').split(",");
-        let cancelar_reserva = localStorage.getItem('cancelar_reserva').split(",");
-        
-        if(rg=="" && assentos=="" && cancelar_reserva==""){
-            alert("Nenhuma mudança feita!");
-            return;
-        }
-        window.location.href = `/reservar/{{viagem.id}}?rg=${rg}&assentos=${assentos}&cancelar_reserva=${cancelar_reserva}`;
+      let rg = localStorage.getItem("rg").split(",");
+      let assentos = localStorage.getItem("assentos").split(",");
+      let cancelar_reserva = localStorage.getItem("cancelar_reserva").split(",");
 
+      if (rg == "" && assentos == "" && cancelar_reserva == "") {
+        alert("Nenhuma mudança feita!");
+        return;
+      }
+      window.location.href = `/reservar/{{viagem.id}}?rg=${rg}&assentos=${assentos}&cancelar_reserva=${cancelar_reserva}`;
     }
+  </script>
 
-
-</script>
-
-<script>
-
-function saveHistory(source, target) {
-        history.push({
-            source: { cell: source, content: source.text() },
-            target: { cell: target, content: target.text() }
-        });
+  <script>
+    function saveHistory(source, target) {
+      history.push({
+        source: { cell: source, content: source.text() },
+        target: { cell: target, content: target.text() },
+      });
     }
 
     function undo() {
-        if (history.length > 0) {
-            const lastAction = history.pop();
-            lastAction.target.cell.text(lastAction.source.content);
-            lastAction.source.cell.text(lastAction.target.content);
-        }
+      if (history.length > 0) {
+        const lastAction = history.pop();
+        lastAction.target.cell.text(lastAction.source.content);
+        lastAction.source.cell.text(lastAction.target.content);
+      }
     }
 
     function redo() {
-        if (history.length > 0) {
-            const lastAction = history.pop();
-            lastAction.source.cell.text(lastAction.target.content);
-            lastAction.target.cell.text(lastAction.source.content);
-        }
+      if (history.length > 0) {
+        const lastAction = history.pop();
+        lastAction.source.cell.text(lastAction.target.content);
+        lastAction.target.cell.text(lastAction.source.content);
+      }
     }
 
     $(document).keydown(function (e) {
-        if (e.ctrlKey && e.key === 'z') {
-            undo();
-        }
+      if (e.ctrlKey && e.key === "z") {
+        undo();
+      }
     });
 
     $(document).keydown(function (e) {
-        if (e.ctrlKey && e.key === 'y') {
-            redo();
-        }
+      if (e.ctrlKey && e.key === "y") {
+        redo();
+      }
     });
-
-</script>
-
+  </script>
 </html>
