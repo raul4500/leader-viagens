@@ -5,16 +5,17 @@ from datetime import datetime
 
 # Classe Passageiro
 class Passageiro(db.Model):
+    __tablename__ = 'passageiro'
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     nascimento = db.Column(db.String(10), nullable=True)
     rg = db.Column(db.String(9), nullable=True)
     cpf = db.Column(db.String(11), nullable=True)
-    telefone = db.Column(db.String(11), nullable=False)
+    telefone = db.Column(db.String(11), nullable=True)
     status = db.Column(db.String(30), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)  # Novo campo
 
-    pagamento_id = db.Column(db.Integer, db.ForeignKey('pagamento.id'), nullable=True)
+    pagamentos = relationship("Pagamento", secondary="passageiro_pagamento", back_populates="passageiros")
     # Relacionamento: Um Passageiro pode ter várias reservas
 
     def __repr__(self):
@@ -29,7 +30,6 @@ class Passageiro(db.Model):
             "cpf": self.cpf,
             "telefone": self.telefone,
             "status": self.status,
-            "pagamento_id": self.pagamento_id,
             "created_at": self.created_at,  # Incluindo o novo campo no JSON
-            #"reservas": [reserva.toJson() for reserva in self.reservas]
+            "pagamentos": [pagamento.toJson() for pagamento in self.pagamentos]
         }

@@ -85,18 +85,16 @@ h1 {
 .cadastrar-passageiro .identificacao {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
 }
 
 .cadastrar-passageiro .identificacao .left, .right {
   width: 50%;
-  background-color: turquoise;
 }
 
-.cadastrar-passageiro .identificacao .right {
-  width: 50%;
-  background-color: turquoise;
+.cadastrar-passageiro .identificacao input {
+  width: calc(100% - 30px);
 }
 
 .cadastrar-passageiro.active{

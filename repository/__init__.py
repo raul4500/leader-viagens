@@ -4,6 +4,7 @@ from .PassageiroRepository import *
 from .PagamentoRepository import *
 from .LembreteRepository import *
 from .FinanceiroRepository import *
+from .Pagamento_PassageiroRepository import *
 
 sidebar = """
     <div class="main">

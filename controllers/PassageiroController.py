@@ -10,6 +10,8 @@ from datetime import *
 passageiro_controller = Blueprint('passageiro_controller', __name__)
 
 passageiroRepository = PassageiroRepository()
+pagamento_passageiroRepository = PagamentoPassageiroRepository()
+
 
 def formatar_data(data_americana):
     return datetime.strptime(data_americana, "%Y-%m-%d").strftime("%d-%m-%Y")
@@ -28,21 +30,20 @@ def formatar_data_registro(data_hora):
         raise ValueError("O valor fornecido não é do tipo datetime.")
     
 def verificarInfo(nome, rg, telefone):
-    if nome == "" or rg == "" or telefone == "":
-        
-        flash('Todos os campos são obrigatórios.', 'error')
+    if nome == "":
+        flash('O nome do passageiro é obrigatório.', 'error')
         return False
 
     elif len(nome) < 3 or len(nome.strip().split(' ')) < 2 or nome.endswith(' '):
         flash('Coloque seu nome completo.', 'error')
         return False
-    elif len(rg) > 12:
+    elif len(rg) > 12 and len(rg) != 0:
         flash('RG não parece certo.', 'error')
         return False
     elif re.match(r'[a-wA-W]', rg):
         flash('Verique novamente o RG.', 'error')
         return False
-    elif len(telefone) != 15:
+    elif len(telefone) != 15 and len(telefone) != 0:
         flash('Telefone deve ter 11 caracteres.', 'error')
         return False
     elif any(char.isdigit() for char in nome):
@@ -94,7 +95,7 @@ def cadastrar_passageiro(url):
 
         # Check if RG already exists
         existing_passageiro = passageiroRepository.getPassageiroByRg(rg)
-        if existing_passageiro:
+        if existing_passageiro and existing_passageiro.rg != "":
             flash('RG já cadastrado.', 'error')
             return redirect(url_for(f'passageiro_controller.cadastrar_passageiro', url=url))
         
@@ -116,16 +117,15 @@ def editar_passageiro(id, url):
         telefone = request.form['telefone']
         status = request.form['status']
         if verificarInfo(nome, rg, telefone):  
-            passageiroRepository.updatePassageiro(id, nome, nascimento, rg, telefone, status)
+            passageiroRepository.updatePassageiro(id, nome, nascimento, rg, cpf, telefone, status)
             flash('passageiro atualizado', 'success')
             return redirect(url_for(f'{url}.index'))
     return redirect(url_for('passageiro_controller.index'))
 
-@passageiro_controller.route('/passageiro/atualizar_status/<int:id>/<status>')
-def atualizar_status(id, status):
-    passageiroRepository.updateStatus(id, status)
-    flash(f'Status de atualizado', 'success')
-    return redirect(url_for('index_controller.index'))
+@passageiro_controller.route('/associar/<int:pagamento_id>/<int:passageiro_id>', methods=['GET', 'POST'])
+def associar(pagamento_id, passageiro_id):
+    pagamento_passageiroRepository.associar_passageiro(pagamento_id, passageiro_id)
+    return redirect(url_for('passageiro_controller.index'))
 
 @passageiro_controller.route('/deletar_passageiro/<int:id>/<url>')
 def deletar_passageiro(id, url):

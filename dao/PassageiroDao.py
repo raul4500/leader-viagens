@@ -40,14 +40,6 @@ class PassageiroDao:
         return passageiro.toJson()
 
     @staticmethod
-    def attStatus(id, status):
-        passageiro = PassageiroDao.getPassageiro(id)
-        if passageiro:
-            passageiro.status = status
-            db.session.commit()
-        return passageiro
-
-    @staticmethod
     def delPassageiro(id):
         passageiro = PassageiroDao.getPassageiro(id)
         if passageiro:
