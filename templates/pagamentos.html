@@ -13,71 +13,12 @@
         <title>Pagamentos</title>
     
       <style>
-        .cadastrar-passageiro{
-  border-radius: 8px;
-  background-color: rgba(225, 255, 225, 0.658);
-  margin-bottom: 16px;
-  padding: 0 12px 0 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow: hidden;
-  transition: 1s;
-  border: 1px solid rgb(160, 160, 160);
-}
-
-.cadastrar-passageiro .identificacao {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-}
-
-.cadastrar-passageiro .identificacao .left, .right {
-  width: 50%;
-  background-color: turquoise;
-}
-
-.cadastrar-passageiro .identificacao .right {
-  width: 50%;
-  background-color: turquoise;
-}
-
-.cadastrar-passageiro.active{
-  height: 420px;
-  padding: 12px;
-  border: 1px solid rgb(39, 53, 25);
-}
-
-.cadastrar-passageiro input, textarea, select{
-  font-family: Arial, Helvetica, sans-serif;
-  border: 1px solid grey;
-  padding: 12px 8px 12px 8px;
-  border-radius: 8px;
-}
-
-.cadastrar-passageiro button {
-  padding: 16px;
-  cursor: pointer;
-  background-color: rgb(186, 255, 203);
-  color: rgb(0, 0, 0);
-  border: 1px solid green;
-  border-radius: 8px;
-}
-
-.cadastrar-passageiro button:hover{
-  background-color: rgb(38, 139, 64);
-  color: white;
-}
-
-.pagamento{
-  border: 1px solid black;
-}
       </style>
 
     </head>
 <body>
-    <div class="main">
+
+   <div class="main">
         
         {{sidebar|safe}}
 
@@ -100,25 +41,6 @@
             {% endif %}
         </div>
         </div>
-        <div class="registrar-pagamento">
-          <form class="cadastrar-passageiro" id="cadastrar-passageiro" action="/registrar_pagamento/pagamento_controller" method="post">
-
-            <label for="valor">Valor:</label>
-            <input type="text" id="valor" name="valor" required placeholder="Digite o nome do passageiro...">
-
-            <label for="data_pagamento">Data de pagamento:</label>
-            <input type="date" id="data_pagamento" name="data_pagamento" min="2025-01-01">
-
-            <label for="forma_pagamento">Forma de Pagamento:</label>
-            <input type="text" id="forma_pagamento" name="forma_pagamento" required>
-
-            <label for="destino">Destino / Observação:</label>
-            <input type="text" id="destino" name="destino" required>
-
-            <button id="confirmar" type="submit">Confirmar</button>
-
-
-        </form>
 
         </div>
         <div class="extras-pagamentos">
@@ -129,19 +51,77 @@
         </div>
         </div>
     </div>
+
+        <div class="registrar-pagamento">
+          <form class="registrar-passageiro" id="registrar-passageiro" action="/registrar_pagamento/pagamento_controller" method="post">
+            <h3>Adicionar Pagamento</h3>
+            <div class="bloco">
+              <div class="left">
+            <label for="valor">Valor:</label>
+            <input type="number" id="valor" oninput="alert(this.value)" name="valor" min="1" required>
+                </div>
+                <div class="right">
+            <label for="data_pagamento">Data de pagamento:</label>
+            <input type="date" id="data_pagamento" name="data_pagamento" min="2025-01-01" required>
+              </div>
+              </div>
+            <label for="forma_pagamento">Forma de Pagamento:</label>
+            <input type="text" id="forma_pagamento" name="forma_pagamento" required>
+
+            <label for="destino">Destino / Observação:</label>
+            <input type="text" id="destino" name="destino" required>
+
+            <div class="passageiros">
+              <div class="header">
+                <h3>Passageiros</h3>
+                <input type="text" placeholder="Pesquise o passageiro">
+              </div>
+              <table>
+                <tr>
+                  <td><input type="checkbox" onclick="adicionarPassageiro(this, 1)" id="passageiro-1"></th>
+                  <td><div class="nome">passageiro.nomedefsefsefsefsfsefsefesfsef</div></td>
+                  <td>passageiro.rg</td>
+                  <td>passageiro.telefone</td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" onclick="adicionarPassageiro(this, 2)" id="passageiro-2"></th>
+                  <td><div class="nome">passageiro.nomedefsefsefsefsfsefsefesfsef</div></td>
+                  <td>passageiro.rg</td>
+                  <td>passageiro.telefone</td>
+                </tr>
+              </table>
+            </div>
+
+            
+<button id="confirmar-pagamento" onclick="confirmar()">Confirmar</button>
+
+        </form>
+        </div>
+
 </body>
 
 
 <script>
-  function searchClient(i, cell) {
-    let input = document.getElementById(`searchInput${i}`).value.toLowerCase();
-    let rows = document.querySelectorAll("#clientTableBody tr");
 
-    rows.forEach(row => {
-      let name = row.cells[cell].textContent.toLowerCase();
-      row.style.display = name.includes(input) ? "" : "none";
-    });
+let lista_passageiros = []
+
+function adicionarPassageiro(input, id){
+  if(input.checked){
+    lista_passageiros.push(id)
+    alert(lista_passageiros)}
+  else{
+    lista_passageiros.splice(lista_passageiros.indexOf(id), 1)
+    alert(lista_passageiros)
   }
+}
+
+function confirmar(){
+    let valor = document.getElementById("valor").value;
+    let data_pagamento = document.getElementById("data_pagamento").value;
+    let forma_pagamento = document.getElementById("forma_pagamento").value;
+    let destino = document.getElementById("destino").value;
+}
+
 </script>
 
 </html>

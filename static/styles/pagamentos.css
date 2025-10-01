@@ -21,36 +21,112 @@ h1 {
     background-color: rgb(235, 235, 235);
 }
 
-.registros {
-  margin-top: 16px;
-  height: fit-content;
-  max-width: 100%;
-  white-space: nowrap;
-  padding: 0px;
-  overflow-x: scroll;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.registrar-pagamento{
+  display: none;
 }
 
-.registros table {
+.registrar-pagamento.active{
+  display: block;
+  position: fixed;
+  width: clamp(250px, 500px, 600px);
+  height: 45;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.registrar-pagamento form{
+  border-radius: 8px;
+  background-color: rgba(225, 255, 225);
+  margin-bottom: 16px;
+  padding: 0 12px 0 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  transition: 1s;
+  border: 1px solid rgb(160, 160, 160);
+}
+
+.registrar-pagamento form .bloco {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.registrar-pagamento form input, textarea, select{
+  font-family: Arial, Helvetica, sans-serif;
+  border: 1px solid grey;
+  padding: 12px 8px 12px 8px;
+  margin: 12px 0 12px 0;
+  border-radius: 8px;
+}
+
+.registrar-pagamento form button {
+  margin: 12px 0 12px 0;
+  padding: 16px;
+  cursor: pointer;
+  background-color: rgb(186, 255, 203);
+  color: rgb(0, 0, 0);
+  border: 1px solid green;
+  border-radius: 8px;
+}
+
+.registrar-pagamento form button:hover{
+  background-color: rgb(38, 139, 64);
+  color: white;
+}
+
+.registrar-pagamento form .passageiros {
+  height: 300px;
+  background-color: white;
+  border: 1px solid grey;
+  border-radius: 12px;
+}
+
+.passageiros .header{
+  padding: 0 12px 0 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.passageiros table {
   width: 100%;
   border-collapse: collapse;
   border: 1px solid rgb(163, 163, 163);
 }
 
-.registros th {
+.passageiros th {
   border-bottom: 1px solid rgb(163, 163, 163);
   font-weight: normal;
-  background-color: rgb(241, 241, 241);
   padding: 10px 0px 10px 8px;
   text-align: left;
 }
 
-.registros td {
+.passageiros td {
   border-bottom: 1px solid rgb(163, 163, 163);
   padding: 10px 0px 10px 8px;
   text-align: left;
 }
 
-.registros td button {
+.passageiros td button {
   padding: 8px;
   border-radius: 4px;
   cursor: pointer;
@@ -58,38 +134,12 @@ h1 {
   background: transparent;
 }
 
-.registros td button:hover {
+.passageiros td button:hover {
   background-color: rgb(214, 214, 214);
 }
 
-.registros td .nome {
-  max-width: 250px;
+.passageiros table td .nome {
+  max-width: 105px;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-/* Estilo para o bloco de ações */
-.action-block {
-  position: absolute;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-}
-
-.action-block ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.action-block ul li {
-  margin: 4px 0;
-}
-
-.action-block ul li a {
-  text-decoration: none;
-  color: black;
 }
