@@ -1,49 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/index.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/sidebar-main.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/index.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/modal.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/barra-rolagem.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/flash-messages.css') }}">
-    <link rel="icon" href="../static/styles/img/logo_size_invert.jpg" type="image/jpg">
-    <title>Financeiro-Leader</title>
-
-
+    <link rel="icon" href="{{ url_for('static', filename='styles/img/logo_size_invert.jpg') }}" type="image/jpg">
+    <title>Financeiro Leader — Visão Geral</title>
 </head>
 
-
 <body>
+    {% set total_passageiros = passageiros|length %}
+    {% set passageiros_ativos = passageiros|selectattr('status', 'equalto', 'ativo')|list|length %}
+    {% set passageiros_pendentes = total_passageiros - passageiros_ativos %}
+    {% set pct_ativos = ((passageiros_ativos / total_passageiros * 100)|round|int) if total_passageiros > 0 else 0 %}
+    {% set pct_pendentes = 100 - pct_ativos if total_passageiros > 0 else 0 %}
+    {% set total_viagens = viagens|length %}
+    {% set total_assentos = viagens|sum(attribute='qtd_assentos') if viagens else 0 %}
+    {% set total_viagens_valor = viagens|sum(attribute='preco') if viagens else 0 %}
+    {% set total_pagamentos_valor = pagamentos|sum(attribute='valor') if pagamentos is defined and pagamentos else 0 %}
+    {% set total_pagamentos_qtd = pagamentos|length if pagamentos is defined and pagamentos else 0 %}
+    {% set total_reservas = reservas|length if reservas is defined and reservas else 0 %}
 
     <div class="main">
-        
+
         {{sidebar|safe}}
 
         <div class="container">
-            <div class="caixa-de-lembretes">
-                <form class="left" action="/add_lembrete" method="POST">
-                    <h2>Lembretes</h2>
-                    <textarea name="mensagem" placeholder="Adicione um lembrete..." id="adicionar-lembretes"
-                        required></textarea>
-                    <button type="submit" class="adicionar-lembrete">Adicionar lembrete</button>
-                </form>
-                <div class="right">
-                    {% for a in lembretes %}
-                    <div class="lembrete">
-                        <p>{{ a.mensagem }}</p><button onclick="deleteLembrete('{{ a.id }}')"><i
-                                class="bi bi-trash-fill" style="color: red;"></i></button>
-                    </div>
-                    {% endfor %}
+            <!-- Greeting Header -->
+            <div class="page-header">
+                <div class="page-header-titles">
+                    <h1 class="page-greeting-title" id="greetingTitle">Bom dia, Leader</h1>
+                    <p class="page-greeting-subtitle">Acompanhe suas viagens, gerencie passageiros e monitore o progresso financeiro em tempo real.</p>
+                </div>
+                <div class="page-header-actions">
+                    <button type="button" class="btn-finexy btn-soft" onclick="window.location.href='/pagamentos'">
+                        <i class="bi bi-wallet2"></i> Pagamentos
+                    </button>
+                    <button type="button" class="btn-finexy btn-dark" onclick="abrirModal('cadastrar')">
+                        <i class="bi bi-plus-lg"></i> Novo Passageiro
+                    </button>
                 </div>
             </div>
 
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-            <div class=flashes>
+            <div class="flashes">
                 {% for category, message in messages %}
                 <div class="{{ category }}">{{ message }}</div>
                 {% endfor %}
@@ -51,115 +58,420 @@
             {% endif %}
             {% endwith %}
 
-            <div class="content">
-                <div class="passageiros">
-                    <h2>PASSAGEIROS</h2>
-                    <div class="opcoes-passageiros">
-                        <input type="text" id="searchInputNome" placeholder="Nome" onkeyup="searchClient('Nome', 1)">
-                        <button class="adicionar-passageiro" id="openModalBtn" onclick="abrirModal('cadastrar')">
-                            <i class="bi bi-plus"></i>
+            <!-- TOP 3-COLUMN BENTO GRID (Matches Finexy Reference) -->
+            <section class="dashboard-top-grid" aria-label="Resumo Executivo">
+
+                <!-- COLUMN 1: Total Balance & Viagens Wallets Card -->
+                <div class="surface-card balance-card viagens">
+                    <div class="balance-card-top">
+                        <div>
+                            <span class="balance-label">Valor em Pacotes de Viagem</span>
+                            <div class="balance-amount">R$ {{ "%.2f"|format(total_viagens_valor) }}</div>
+                            <div class="balance-trend-row">
+                                <span class="trend-pill up"><i class="bi bi-arrow-up-short"></i> {{ total_viagens }} ativa(s)</span>
+                                <span class="balance-trend-caption">{{ total_assentos }} assentos ofertados</span>
+                            </div>
+                        </div>
+                        <div class="currency-pill">
+                            <span class="currency-flag">🇧🇷</span>
+                            <span>BRL</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                    </div>
+
+                    <div class="balance-cta-row">
+                        <button type="button" class="btn-finexy btn-lime adicionar-passageiro" id="openModalBtn" onclick="abrirModal('cadastrar')">
+                            <i class="bi bi-person-plus"></i> Cadastrar
+                        </button>
+                        <button type="button" class="btn-finexy btn-soft gerenciar-viagens-btn" onclick="window.location.href='/viagens'">
+                            <i class="bi bi-bus-front"></i> Gerenciar Viagens
                         </button>
                     </div>
 
-                    <div class="tabela-passageiros">
-                        <table cellspacing="0" rules="none">
-                            <tr>
-                                <th></th>
-                                <th>Nome</th>
-                                <th>Telefone</th>
-                                <th>Status</th>
-                            </tr>
-                            {% for p in passageiros %}
-                            <tbody id="clientTableBody">
-                                <td>
-                                    <button onclick="toggleBlock(this)"><i
-                                            class='bi bi-three-dots-vertical'></i></button>
-                                    <div class="action-block" id="action-block" style="display: none;">
-                                        <ul>
-                                            <li><button class="opcoes-passageiros"
-                                                    onclick="editarPassageiro('{{ p.id }}', '{{ p.nome }}', '{{ p.rg }}', '{{ p.nascimento }}', '{{ p.telefone }}', '{{ p.status }}')">Editar</button>
-                                            </li>
-                                            <li><button class="opcoes-passageiros" style="color: red;" onclick="deletarPassageiro('{{ p.id }}')">Excluir</button></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="nome">{{ p.nome }}</div>
-                                </td>
-                                <td>{{ p.telefone }}</td>
-                                <td>
-                                    <select name="status" id="status"
-                                        onchange=" editarStatus('{{ p.id }}', this.value)">
-                                        <option value="{{ p.status }}" style="background-color: rgb(173, 255, 173);"
-                                            selected disabled>{{ p.status }}</option>
-                                        <option value="ativo">ativo</option>
-                                        <option value="pendente">pendente</option>
-                                        <option value=""></option>
-                                        <option value=""></option>
-                                    </select>
-                                </td>
-                            </tbody>
-                            {% endfor %}
+                    <div class="wallets-subcard">
+                        <div class="wallets-subcard-header">
+                            <div class="wallets-title-group">
+                                <h2>VIAGENS</h2>
+                                <span class="wallets-divider">|</span>
+                                <span class="wallets-count">Total {{ total_viagens }} roteiro(s)</span>
+                            </div>
+                        </div>
 
+                        <div class="pesquisa-viagens">
+                            <div class="search-input-wrap">
+                                <i class="bi bi-search"></i>
+                                <input type="text" id="searchViagemInputHome" placeholder="Destino da viagem..." onkeyup="filtrarViagensHome(this.value)">
+                            </div>
+                        </div>
+
+                        <div class="viagens-blocks" id="viagensBlocksHome">
+                            {% if viagens %}
+                            {% for v in viagens %}
+                            <a href="/viagem/{{v.id}}" class="viagem-wallet-link" data-destino="{{ v.destino|lower }}">
+                                <div class="block viagem-wallet-item">
+                                    <div class="wallet-item-top">
+                                        <span class="wallet-bus-badge"><i class="bi bi-bus-front-fill"></i> {{ v.tipo_onibus|replace('_', '-')|capitalize }}</span>
+                                        <i class="bi bi-three-dots-vertical wallet-dots"></i>
+                                    </div>
+                                    <div class="wallet-item-dest">{{ v.destino }}</div>
+                                    <div class="wallet-item-price">R$ {{ "%.2f"|format(v.preco) }}</div>
+                                    <div class="wallet-item-meta">{{ v.qtd_assentos }} assentos · {{ v.data_inicio }}</div>
+                                    <div class="wallet-item-status active">Ativa</div>
+                                </div>
+                            </a>
+                            {% endfor %}
+                            {% else %}
+                            <div class="empty-inline-state">
+                                <i class="bi bi-compass"></i>
+                                <span>Nenhuma viagem cadastrada.</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUMN 2: 2x2 KPI Grid (Featured Emerald Card + 3 Stat Cards) -->
+                <div class="surface-card kpi-quad-card">
+                    <div class="kpi-quad-grid">
+                        <!-- Top Left: Featured Emerald Card -->
+                        <div class="kpi-card kpi-featured">
+                            <div class="kpi-top">
+                                <span class="kpi-label">Passageiros Ativos</span>
+                                <span class="card-icon-badge"><i class="bi bi-person-check"></i></span>
+                            </div>
+                            <div class="kpi-value">{{ passageiros_ativos }}</div>
+                            <div class="kpi-footer">
+                                <span class="trend-pill up">↑ {{ pct_ativos }}%</span>
+                                <span class="kpi-trend-meta">Base ativa</span>
+                            </div>
+                        </div>
+
+                        <!-- Top Right -->
+                        <div class="kpi-card">
+                            <div class="kpi-top">
+                                <span class="kpi-label">Cadastros Pendentes</span>
+                                <span class="card-icon-badge"><i class="bi bi-hourglass-split"></i></span>
+                            </div>
+                            <div class="kpi-value">{{ passageiros_pendentes }}</div>
+                            <div class="kpi-footer">
+                                <span class="trend-pill warn">{{ pct_pendentes }}%</span>
+                                <span class="kpi-trend-meta">Do total</span>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Left -->
+                        <div class="kpi-card">
+                            <div class="kpi-top">
+                                <span class="kpi-label">Total de Passageiros</span>
+                                <span class="card-icon-badge"><i class="bi bi-people"></i></span>
+                            </div>
+                            <div class="kpi-value">{{ total_passageiros }}</div>
+                            <div class="kpi-footer">
+                                <span class="trend-pill up">↑ {{ total_reservas }}</span>
+                                <span class="kpi-trend-meta">Reservas</span>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Right -->
+                        <div class="kpi-card">
+                            <div class="kpi-top">
+                                <span class="kpi-label">Pagamentos</span>
+                                <span class="card-icon-badge"><i class="bi bi-wallet2"></i></span>
+                            </div>
+                            <div class="kpi-value">R$ {{ "%.0f"|format(total_pagamentos_valor) }}</div>
+                            <div class="kpi-footer">
+                                <span class="trend-pill up">↑ {{ total_pagamentos_qtd }}</span>
+                                <span class="kpi-trend-meta">Registros</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUMN 3: Visual Analytics Bar Chart (Finexy Profit & Loss Style) -->
+                <div class="surface-card analytics-card">
+                    <div class="analytics-header">
+                        <div>
+                            <h3 class="card-title">Panorama Operacional</h3>
+                            <p class="card-subtitle">Métricas reais consolidadas da plataforma</p>
+                        </div>
+                    </div>
+
+                    <div class="chart-box">
+                        <div class="chart-box-top">
+                            <span class="chart-box-title">Capacidade &amp; Cadastros</span>
+                            <div class="chart-legend">
+                                <span class="legend-item"><i class="legend-dot lime"></i> Meta / Total</span>
+                                <span class="legend-item"><i class="legend-dot dark"></i> Realizado</span>
+                            </div>
+                        </div>
+
+                        {% set bar_pass_pct = 85 if total_passageiros > 0 else 20 %}
+                        {% set bar_ativ_pct = pct_ativos if pct_ativos > 15 else (45 if passageiros_ativos > 0 else 15) %}
+                        {% set bar_viag_pct = 75 if total_viagens > 0 else 20 %}
+                        {% set bar_asse_pct = 92 if total_assentos > 0 else 20 %}
+                        {% set bar_rese_pct = ((total_reservas / total_assentos * 100)|round|int) if total_assentos > 0 and total_reservas > 0 else 28 %}
+                        {% set bar_paga_pct = 80 if total_pagamentos_qtd > 0 else 25 %}
+                        {% set bar_lemb_pct = 70 if (lembretes|length) > 0 else 22 %}
+
+                        <div class="finexy-bar-chart" role="img" aria-label="Gráfico de barras comparando métricas operacionais do sistema">
+                            <div class="chart-yaxis">
+                                <span>100%</span>
+                                <span>75%</span>
+                                <span>50%</span>
+                                <span>25%</span>
+                                <span>0%</span>
+                            </div>
+                            <div class="chart-columns">
+                                <div class="chart-col" title="Passageiros: {{ total_passageiros }}">
+                                    <div class="bar-stack">
+                                        <div class="bar-segment lime" style="height: {{ bar_pass_pct }}%;"></div>
+                                        <div class="bar-segment dark" style="height: {{ (bar_pass_pct * 0.65)|round|int }}%;"></div>
+                                    </div>
+                                    <span class="chart-col-label">Clientes ({{ total_passageiros }})</span>
+                                </div>
+                                <div class="chart-col" title="Ativos: {{ passageiros_ativos }}">
+                                    <div class="bar-stack">
+                                        <div class="bar-segment lime" style="height: {{ bar_ativ_pct }}%;"></div>
+                                        <div class="bar-segment dark" style="height: {{ (bar_ativ_pct * 0.55)|round|int }}%;"></div>
+                                    </div>
+                                    <span class="chart-col-label">Ativos ({{ passageiros_ativos }})</span>
+                                </div>
+                                <div class="chart-col" title="Viagens: {{ total_viagens }}">
+                                    <div class="bar-stack">
+                                        <div class="bar-segment lime" style="height: {{ bar_viag_pct }}%;"></div>
+                                        <div class="bar-segment dark" style="height: {{ (bar_viag_pct * 0.5)|round|int }}%;"></div>
+                                    </div>
+                                    <span class="chart-col-label">Viagens ({{ total_viagens }})</span>
+                                </div>
+                                <div class="chart-col" title="Assentos Totais: {{ total_assentos }}">
+                                    <div class="bar-stack">
+                                        <div class="bar-segment lime" style="height: {{ bar_asse_pct }}%;"></div>
+                                        <div class="bar-segment dark" style="height: {{ (bar_asse_pct * 0.6)|round|int }}%;"></div>
+                                    </div>
+                                    <span class="chart-col-label">Lugares ({{ total_assentos }})</span>
+                                </div>
+                                <div class="chart-col" title="Reservas: {{ total_reservas }}">
+                                    <div class="bar-stack">
+                                        <div class="bar-segment lime" style="height: {{ bar_rese_pct + 25 }}%;"></div>
+                                        <div class="bar-segment dark" style="height: {{ bar_rese_pct }}%;"></div>
+                                    </div>
+                                    <span class="chart-col-label">Reservas ({{ total_reservas }})</span>
+                                </div>
+                                <div class="chart-col" title="Pagamentos: {{ total_pagamentos_qtd }}">
+                                    <div class="bar-stack">
+                                        <div class="bar-segment lime" style="height: {{ bar_paga_pct }}%;"></div>
+                                        <div class="bar-segment dark" style="height: {{ (bar_paga_pct * 0.45)|round|int }}%;"></div>
+                                    </div>
+                                    <span class="chart-col-label">Pagam. ({{ total_pagamentos_qtd }})</span>
+                                </div>
+                                <div class="chart-col" title="Lembretes: {{ lembretes|length }}">
+                                    <div class="bar-stack">
+                                        <div class="bar-segment lime" style="height: {{ bar_lemb_pct }}%;"></div>
+                                        <div class="bar-segment dark" style="height: {{ (bar_lemb_pct * 0.5)|round|int }}%;"></div>
+                                    </div>
+                                    <span class="chart-col-label">Avisos ({{ lembretes|length }})</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BOTTOM 2-COLUMN BENTO GRID (Left: Progress + Lembretes | Right: Passageiros Table) -->
+            <section class="content dashboard-bottom-grid" aria-label="Gestão Operacional">
+
+                <!-- Left Stack: Status Progress + Lembretes Card -->
+                <div class="bottom-left-column">
+                    <!-- Monthly Spending Limit equivalent: Taxa de Passageiros Ativos -->
+                    <div class="surface-card limit-progress-card">
+                        <div class="card-header-row">
+                            <h3 class="card-title">Índice de Passageiros Ativos</h3>
+                            <span class="status-badge status-ativo">{{ pct_ativos }}% ativo</span>
+                        </div>
+                        <div class="finexy-progress-track">
+                            <div class="finexy-progress-fill" style="width: {{ pct_ativos if pct_ativos > 0 else 8 }}%;"></div>
+                        </div>
+                        <div class="finexy-progress-labels">
+                            <span><strong>{{ passageiros_ativos }} ativos</strong> de {{ total_passageiros }} cadastrados</span>
+                            <span>{{ total_assentos }} lugares em viagens</span>
+                        </div>
+                    </div>
+
+                    <!-- My Cards equivalent: Quadro de Lembretes -->
+                    <div class="surface-card caixa-de-lembretes" id="lembretes-card">
+                        <div class="lembretes-card-header">
+                            <div class="lembretes-title-wrap">
+                                <span class="card-icon-badge"><i class="bi bi-journal-text"></i></span>
+                                <h2>Lembretes</h2>
+                            </div>
+                            <span class="lembretes-count-pill">{{ lembretes|length }} nota(s)</span>
+                        </div>
+
+                        <form class="left lembrete-form" action="/add_lembrete" method="POST">
+                            <textarea name="mensagem" placeholder="Adicione um lembrete rápido para a equipe..." id="adicionar-lembretes" required></textarea>
+                            <button type="submit" class="adicionar-lembrete btn-finexy btn-dark">
+                                <i class="bi bi-plus-lg"></i> Adicionar lembrete
+                            </button>
+                        </form>
+
+                        <div class="right lembretes-list">
+                            {% if lembretes %}
+                            {% for a in lembretes %}
+                            <div class="lembrete">
+                                <div class="lembrete-badge-row">
+                                    <span class="lembrete-active-pill"><i class="bi bi-wifi"></i> Nota Ativa</span>
+                                    <button type="button" onclick="deleteLembrete('{{ a.id }}')" title="Excluir lembrete" aria-label="Excluir lembrete">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </div>
+                                <p>{{ a.mensagem }}</p>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="empty-inline-state">
+                                <i class="bi bi-check2-circle"></i>
+                                <span>Nenhum lembrete pendente no momento.</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Wide Card: Passageiros Table (Finexy "Recent Activities" style) -->
+                <div class="surface-card passageiros">
+                    <div class="passageiros-card-header">
+                        <div>
+                            <h2>PASSAGEIROS</h2>
+                            <p class="card-subtitle">Gerenciamento rápido de clientes e status cadastral</p>
+                        </div>
+
+                        <div class="opcoes-passageiros">
+                            <div class="search-input-wrap">
+                                <i class="bi bi-search"></i>
+                                <input type="text" id="searchInputNome" placeholder="Buscar por nome..." onkeyup="searchClient('Nome', 1)">
+                            </div>
+                            <button type="button" class="adicionar-passageiro btn-finexy btn-lime" onclick="abrirModal('cadastrar')" title="Novo Passageiro">
+                                <i class="bi bi-plus-lg"></i> <span>Novo</span>
+                            </button>
+                            <button type="button" class="ver-todos-passageiros btn-finexy btn-soft" onclick="window.location.href='/passageiros'">
+                                <i class="bi bi-sliders"></i> <span>Ver Tudo</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div tabindex="0" role="region" aria-label="Tabela de Passageiros" class="tabela-passageiros table-wrapper">
+                        <table cellspacing="0" rules="none">
+                            <thead>
+                                <tr>
+                                    <th style="width: 48px;"></th>
+                                    <th>Passageiro</th>
+                                    <th>Telefone</th>
+                                    <th>Status</th>
+                                    <th>Documento RG</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientTableBody">
+                                {% for p in passageiros %}
+                                <tr>
+                                    <td class="action-cell">
+                                        <button type="button" class="row-dots-btn" onclick="toggleBlock(this)" aria-label="Opções do passageiro">
+                                            <i class="bi bi-three-dots"></i>
+                                        </button>
+                                        <div class="action-block" style="display: none;">
+                                            <ul>
+                                                <li>
+                                                    <button type="button" class="opcoes-passageiros"
+                                                        onclick="editarPassageiro('{{ p.id }}', '{{ p.nome }}', '{{ p.rg }}', '{{ p.nascimento }}', '{{ p.telefone }}', '{{ p.status }}', '{{ p.cpf or '' }}')">
+                                                        <i class="bi bi-pencil-square"></i> Editar
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="opcoes-passageiros" style="color: #DC2626;"
+                                                        onclick="deletarPassageiro('{{ p.id }}')">
+                                                        <i class="bi bi-trash3"></i> Excluir
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="passenger-cell">
+                                            <span class="passenger-avatar">{{ p.nome[0]|upper if p.nome else 'P' }}</span>
+                                            <div class="nome">{{ p.nome }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="text-secondary-cell">{{ p.telefone }}</td>
+                                    <td>
+                                        <select name="status" class="status-select status-{{ p.status }}"
+                                            onchange="editarStatus('{{ p.id }}', this.value)" aria-label="Alterar status de {{ p.nome }}">
+                                            <option value="{{ p.status }}" selected disabled>{{ p.status }}</option>
+                                            <option value="ativo">ativo</option>
+                                            <option value="pendente">pendente</option>
+                                        </select>
+                                    </td>
+                                    <td class="text-secondary-cell">{{ p.rg or '—' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
                         </table>
                     </div>
 
                     <div class="todos-passageiros">
-                        <button class="ver-todos-passageiros" onclick="window.location.href='/passageiros'">Ver
-                            Tudo</button>
-                    </div>
-
-                </div>
-
-                <div class="viagens">
-                    <h2>VIAGENS</h2>
-                    <div class="pesquisa-viagens">
-                        <input type="text" placeholder="Destino da viagem">
-                        <button class="gerenciar-viagens-btn" onclick="window.location.href='/viagens'">Gerenciar
-                            Viagens</button>
-                    </div>
-                    <div class="viagens-blocks">
-                        {% for v in viagens %}
-                        <a href="/viagem/{{v.id}}">
-                            <div class="block">{{ v.destino }}</div>
-                        </a>
-                        {% endfor %}
+                        <span class="table-footer-count">Exibindo {{ total_passageiros }} passageiro(s) registrado(s)</span>
+                        <button type="button" class="ver-todos-passageiros btn-finexy btn-soft" onclick="window.location.href='/passageiros'">
+                            Abrir listagem completa <i class="bi bi-arrow-right"></i>
+                        </button>
                     </div>
                 </div>
-            </div>
+
+            </section>
         </div>
-        <!-- O Modal -->
-        <div id="myModal" class="modal">
+
+        <!-- Modal de Cadastro / Edição de Passageiro -->
+        <div id="myModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitlePessoa">
             <div class="modal-content">
-                <span class="close" id="closeModalBtn" onclick="fecharModal()">&times;</span>
+                <span class="close" id="closeModalBtn" onclick="fecharModal()" role="button" aria-label="Fechar modal">&times;</span>
                 <div class="modal-header">
-                    <h2>Adicionar Dados de Pessoa</h2>
+                    <h2 id="modalTitlePessoa">Adicionar Dados de Passageiro</h2>
+                    <p>Preencha as informações cadastrais do passageiro abaixo.</p>
                 </div>
                 <form id="formPessoa" action="/cadastrar_passageiro/index_controller" method="POST">
                     <div class="modal-body">
-                        <label for="index-nome">Nome:</label>
+                        <label for="index-nome">Nome completo:</label>
                         <input type="text" id="index-nome" name="nome" required
-                            placeholder="Digite o nome do passageiro...">
+                            placeholder="Digite o nome completo do passageiro...">
 
-                        <label for="index-rg">RG:</label>
-                        <input type="text" id="index-rg" name="rg" maxlength="12" required placeholder="99.999.999-9">
+                        <div class="modal-row-2col">
+                            <div class="modal-field">
+                                <label for="index-rg">RG:</label>
+                                <input type="text" id="index-rg" name="rg" maxlength="12" required placeholder="99.999.999-9">
+                            </div>
+                            <div class="modal-field">
+                                <label for="index-cpf">CPF:</label>
+                                <input type="text" id="index-cpf" name="cpf" maxlength="14" placeholder="999.999.999-99">
+                            </div>
+                        </div>
 
-                        <label for="index-nascimento">Data de Nascimento:</label>
-                        <input type="date" id="index-nascimento" name="nascimento" min="1925-01-01">
+                        <div class="modal-row-2col">
+                            <div class="modal-field">
+                                <label for="index-nascimento">Data de Nascimento:</label>
+                                <input type="date" id="index-nascimento" name="nascimento" min="1925-01-01">
+                            </div>
+                            <div class="modal-field">
+                                <label for="index-telefone">Telefone:</label>
+                                <input type="text" id="index-telefone" name="telefone" maxlength="15"
+                                    placeholder="(99) 99999-9999" required>
+                            </div>
+                        </div>
 
-                        <label for="index-telefone">Telefone:</label>
-                        <input type="text" id="index-telefone" name="telefone" maxlength="15"
-                            placeholder="(99) 99999-9999" required>
-
-
-                        <label for="index-status">Status:</label>
+                        <label for="index-status">Status cadastral:</label>
                         <select name="status" id="index-status" required>
                             <option value="ativo">ativo</option>
                             <option value="pendente">pendente</option>
                         </select>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" id="index-confirmar">Adicionar</button>
+                        <button type="submit" id="index-confirmar">Confirmar Cadastro</button>
                     </div>
                 </form>
             </div>
@@ -167,140 +479,136 @@
 
     </div>
 
-</body>
-
-<script>
-    document.getElementById("index-rg").addEventListener("input", function (e) {
-        let rg = e.target.value.replace(/\D/g, ""); // Remove tudo que não for número
-
-        // Aplica a máscara no formato 99.999.999-9
-        rg = rg.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,1}).*/, "$1.$2.$3-$4");
-
-        e.target.value = rg;
-    });
-
-    document.getElementById("index-telefone").addEventListener("input", function (e) {
-        let telefone = e.target.value.replace(/\D/g, ""); // Remove tudo que não for número
-
-        if (telefone.length > 10) {
-            telefone = telefone.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
-        } else {
-            telefone = telefone.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
-        }
-
-        e.target.value = telefone;
-    });
-</script>
-
-<script>
-
-    function searchClient(i, cell) {
-        let input = document.getElementById(`searchInput${i}`).value.toLowerCase();
-        let rows = document.querySelectorAll("#clientTableBody tr");
-
-        rows.forEach(row => {
-            let name = row.cells[cell].textContent.toLowerCase();
-            row.style.display = name.includes(input) ? "" : "none";
-        });
-    }
-
-    function deleteLembrete(id) {
-        window.location.href = `/deletar_lembrete/${id}`
-    }
-
-    function editarStatus(id, status) {
-        window.location.href = `/passageiro/atualizar_status/${id}/${status}`
-    }
-
-</script>
-
-<script>
-
-    const modal = document.getElementById("myModal");
-    function abrirModal(tipo) {
-        if (tipo == 'editar') {
-            modal.style.display = "block";
-        } else {
-            document.getElementById("formPessoa").action = "/cadastrar_passageiro/index_controller";
-            document.getElementById("index-confirmar").innerHTML = `Confirmar`;
-            document.getElementById("index-status").value = 'ativo';
-            document.getElementById("index-nome").value = '';
-            document.getElementById("index-rg").value = '';
-            document.getElementById("index-nascimento").value = '';
-            document.getElementById("index-telefone").value = '';
-
-            modal.style.display = "block";
-        }
-    }
-
-    function fecharModal() {
-        modal.style.display = "none";
-
-    }
-    // Fechar o modal quando clicar fora dele
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-
-
-
-    function editarPassageiro(id, nome, rg, nascimento, telefone, status) {
-        let x = document.getElementById("formPessoa").action = `/editar_passageiro/${id}/index_controller`;
-        //alert(nascimento)
-        document.getElementById("index-confirmar").innerHTML = `<i class="bi bi-pencil-fill"></i> Confirmar Edição`;
-        document.getElementById("index-status").value = status;
-        document.getElementById("index-nome").value = nome;
-        document.getElementById("index-rg").value = rg;
-        document.getElementById("index-nascimento").value = nascimento;
-        document.getElementById("index-telefone").value = telefone;
-        abrirModal('editar');
-
-        document.getElementById('action-block').style.display = 'none'
-
-
-    }
-
-    function deletarPassageiro(id) {
-        if (confirm("Deseja realmente excluir este passageiro?")) {
-            window.location.href = `/deletar_passageiro/${id}/index_controller`;
-        }
-    }
-</script>
-
-<script>
-    function toggleBlock(button) {
-        // Seleciona o bloco de ações relacionado ao botão clicado
-        const actionBlock = button.nextElementSibling;
-
-        // Fecha todos os outros blocos abertos
-        document.querySelectorAll('.action-block').forEach(block => {
-            if (block !== actionBlock) {
-                block.style.display = 'none';
+    <script>
+        // Saudação dinâmica por horário
+        (function () {
+            const hour = new Date().getHours();
+            const greetingEl = document.getElementById("greetingTitle");
+            if (greetingEl) {
+                const greet = hour < 12 ? "Bom dia" : (hour < 18 ? "Boa tarde" : "Boa noite");
+                greetingEl.textContent = `${greet}, Leader`;
             }
+        })();
+
+        document.getElementById("index-rg").addEventListener("input", function (e) {
+            let rg = e.target.value.replace(/\D/g, "");
+            rg = rg.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,1}).*/, "$1.$2.$3-$4");
+            e.target.value = rg;
         });
 
-        // Alterna a exibição do bloco
-        if (actionBlock.style.display === 'none' || actionBlock.style.display === '') {
-            // Posiciona o bloco ao lado do botão
-            const rect = button.getBoundingClientRect();
-            actionBlock.style.display = 'block';
-            actionBlock.style.top = `${rect.top + window.scrollY}px`;
-            actionBlock.style.left = `${rect.right + 10}px`;
-        } else {
-            actionBlock.style.display = 'none';
-        }
-    }
+        document.getElementById("index-telefone").addEventListener("input", function (e) {
+            let telefone = e.target.value.replace(/\D/g, "");
+            if (telefone.length > 10) {
+                telefone = telefone.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+            } else {
+                telefone = telefone.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+            }
+            e.target.value = telefone;
+        });
 
-    // Fecha o bloco se clicar fora dele
-    document.addEventListener('click', function (event) {
-        if (!event.target.closest('td')) {
-            document.querySelectorAll('.action-block').forEach(block => {
-                block.style.display = 'none';
+        function filtrarViagensHome(query) {
+            const q = (query || "").toLowerCase().trim();
+            document.querySelectorAll("#viagensBlocksHome .viagem-wallet-link").forEach(link => {
+                const dest = link.getAttribute("data-destino") || "";
+                link.style.display = dest.includes(q) ? "" : "none";
             });
         }
-    });
-</script>
+
+        function searchClient(i, cell) {
+            let input = document.getElementById(`searchInput${i}`).value.toLowerCase();
+            let rows = document.querySelectorAll("#clientTableBody tr");
+
+            rows.forEach(row => {
+                let name = row.cells[cell].textContent.toLowerCase();
+                row.style.display = name.includes(input) ? "" : "none";
+            });
+        }
+
+        function deleteLembrete(id) {
+            window.location.href = `/deletar_lembrete/${id}`;
+        }
+
+        function editarStatus(id, status) {
+            window.location.href = `/passageiro/atualizar_status/${id}/${status}`;
+        }
+
+        const modal = document.getElementById("myModal");
+        function abrirModal(tipo) {
+            if (tipo === 'editar') {
+                modal.style.display = "block";
+            } else {
+                document.getElementById("modalTitlePessoa").textContent = "Adicionar Dados de Passageiro";
+                document.getElementById("formPessoa").action = "/cadastrar_passageiro/index_controller";
+                document.getElementById("index-confirmar").innerHTML = `Confirmar`;
+                document.getElementById("index-status").value = 'ativo';
+                document.getElementById("index-nome").value = '';
+                document.getElementById("index-rg").value = '';
+                document.getElementById("index-cpf").value = '';
+                document.getElementById("index-nascimento").value = '';
+                document.getElementById("index-telefone").value = '';
+
+                modal.style.display = "block";
+            }
+        }
+
+        function fecharModal() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+
+        function editarPassageiro(id, nome, rg, nascimento, telefone, status, cpf = '') {
+            document.getElementById("modalTitlePessoa").textContent = "Editar Dados do Passageiro";
+            document.getElementById("formPessoa").action = `/editar_passageiro/${id}/index_controller`;
+            document.getElementById("index-confirmar").innerHTML = `<i class="bi bi-pencil-fill"></i> Confirmar Edição`;
+            document.getElementById("index-status").value = status;
+            document.getElementById("index-nome").value = nome;
+            document.getElementById("index-rg").value = rg;
+            document.getElementById("index-cpf").value = cpf;
+            document.getElementById("index-nascimento").value = nascimento;
+            document.getElementById("index-telefone").value = telefone;
+            abrirModal('editar');
+
+            document.querySelectorAll('.action-block').forEach(b => b.style.display = 'none');
+        }
+
+        function deletarPassageiro(id) {
+            if (confirm("Deseja realmente excluir este passageiro?")) {
+                window.location.href = `/deletar_passageiro/${id}/index_controller`;
+            }
+        }
+
+        function toggleBlock(button) {
+            const actionBlock = button.nextElementSibling;
+
+            document.querySelectorAll('.action-block').forEach(block => {
+                if (block !== actionBlock) {
+                    block.style.display = 'none';
+                }
+            });
+
+            if (actionBlock.style.display === 'none' || actionBlock.style.display === '') {
+                const rect = button.getBoundingClientRect();
+                actionBlock.style.display = 'block';
+                actionBlock.style.top = `${rect.bottom + window.scrollY + 4}px`;
+                actionBlock.style.left = `${rect.left + window.scrollX}px`;
+            } else {
+                actionBlock.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.action-cell')) {
+                document.querySelectorAll('.action-block').forEach(block => {
+                    block.style.display = 'none';
+                });
+            }
+        });
+    </script>
+</body>
 
 </html>

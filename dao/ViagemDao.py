@@ -42,8 +42,8 @@ class ViagemDao:
             viagem.destino = destino
             viagem.data_inicio = data_inicio
             viagem.data_fim = data_fim
-            viagem.preco = preco
-            viagem.aqt_assentos = qtd_assentos
+            viagem.preco = float(preco)
+            viagem.qtd_assentos = int(qtd_assentos)
             viagem.tipo_onibus = tipo_onibus
             viagem.descricao = descricao
             viagem.inclusos = inclusos

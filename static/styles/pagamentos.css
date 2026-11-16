@@ -1,145 +1,227 @@
-h1 {
-  margin: 0px;
-  padding: 0px;
-}
+/* ==========================================================================
+   Pagamentos Page Layout & Components
+   ========================================================================== */
 
-.pagamentos{
-  width: calc(100% - 32px);
-  display: flex;
-  flex-direction: column;
-  margin: 0px;
-  padding: 16px;
-}
-
-.ultimos-pagamentos {
-    width: calc(100% - 32px);
-    height: fit-content;
+.pagamentos {
     display: flex;
     flex-direction: column;
-    padding: 16px;
-    border-radius: 8px;
-    background-color: rgb(235, 235, 235);
+    gap: 20px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.registrar-pagamento{
-  display: none;
+.pagamentos-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
 }
 
-.registrar-pagamento.active{
-  display: block;
-  position: fixed;
-  width: clamp(250px, 500px, 600px);
-  height: 45;
-  top: 50px;
-  left: 50%;
-  transform: translateX(-50%);
+.pagamentos-kpi-grid .kpi-card:not(.kpi-featured) {
+    background-color: var(--bg-surface);
+    box-shadow: var(--shadow-card);
 }
 
-.registrar-pagamento form{
-  border-radius: 8px;
-  background-color: rgba(225, 255, 225);
-  margin-bottom: 16px;
-  padding: 0 12px 0 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow: hidden;
-  transition: 1s;
-  border: 1px solid rgb(160, 160, 160);
+.pagamentos-bento-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 0.95fr;
+    gap: 20px;
+    align-items: start;
 }
 
-.registrar-pagamento form .bloco {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
+/* Left Column: Histórico de Pagamentos */
+.ultimos-pagamentos {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
-.registrar-pagamento form input, textarea, select{
-  font-family: Arial, Helvetica, sans-serif;
-  border: 1px solid grey;
-  padding: 12px 8px 12px 8px;
-  margin: 12px 0 12px 0;
-  border-radius: 8px;
+.pagamentos-history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
 }
 
-.registrar-pagamento form button {
-  margin: 12px 0 12px 0;
-  padding: 16px;
-  cursor: pointer;
-  background-color: rgb(186, 255, 203);
-  color: rgb(0, 0, 0);
-  border: 1px solid green;
-  border-radius: 8px;
+.pagamentos-history-header h2 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.registrar-pagamento form button:hover{
-  background-color: rgb(38, 139, 64);
-  color: white;
+.pagamentos-history-header .search-input-wrap {
+    min-inline-size: 240px;
 }
 
-.registrar-pagamento form .passageiros {
-  height: 300px;
-  background-color: white;
-  border: 1px solid grey;
-  border-radius: 12px;
+.method-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
-.passageiros .header{
-  padding: 0 12px 0 20px;
-  display: flex;
-  justify-content: space-between;
+.payment-amount-cell {
+    color: var(--status-success-text);
+    font-size: 14px;
 }
 
-.passageiros table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid rgb(163, 163, 163);
+.empty-payments-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 24px;
+    border-radius: var(--radius-inner);
+    background-color: var(--bg-subtle);
+    border: 1px dashed var(--border-medium);
 }
 
-.passageiros th {
-  border-bottom: 1px solid rgb(163, 163, 163);
-  font-weight: normal;
-  padding: 10px 0px 10px 8px;
-  text-align: left;
+.empty-icon-circle {
+    inline-size: 48px;
+    block-size: 48px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: var(--brand-emerald);
+    margin-block-end: 12px;
 }
 
-.passageiros td {
-  border-bottom: 1px solid rgb(163, 163, 163);
-  padding: 10px 0px 10px 8px;
-  text-align: left;
+.empty-payments-box h3 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 700;
 }
 
-.passageiros td button {
-  padding: 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  border: none;
-  background: transparent;
+.empty-payments-box p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+    max-inline-size: 320px;
 }
 
-.passageiros td button:hover {
-  background-color: rgb(214, 214, 214);
+/* Right Column: Registrar Pagamento Card */
+.registrar-pagamento form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
-.passageiros table td .nome {
-  max-width: 105px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.form-payment-header h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.registrar-pagamento .bloco {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-field label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.form-field input {
+    inline-size: 100%;
+    background-color: var(--bg-subtle);
+}
+
+.form-field input:focus {
+    background-color: var(--bg-surface);
+}
+
+.passageiros-selector {
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-inner);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.passageiros-selector .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.passageiros-selector .header h3 {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.selected-count-pill {
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.passageiros-selector .header input {
+    padding: 7px 12px;
+    font-size: 12.5px;
+    border-radius: var(--radius-pill);
+    background-color: var(--bg-surface);
+}
+
+.passageiros-scroll-table {
+    max-block-size: 185px;
+}
+
+.passageiros-scroll-table .nome {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+#confirmar-pagamento {
+    inline-size: 100%;
+    padding-block: 12px;
+    margin-block-start: 4px;
+}
+
+@media (max-width: 1100px) {
+    .pagamentos-bento-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pagamentos-kpi-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .pagamentos-kpi-grid,
+    .registrar-pagamento .bloco {
+        grid-template-columns: 1fr;
+    }
 }

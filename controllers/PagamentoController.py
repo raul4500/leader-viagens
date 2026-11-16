@@ -8,12 +8,23 @@ from datetime import*
 pagamento_controller = Blueprint('pagamento_controller', __name__)
 
 pagamentoRepository = PagamentoRepository()
+passageiroRepository = PassageiroRepository()
+viagemRepository = ViagemRepository()
 
 @pagamento_controller.route('/pagamentos')
 def index():
     pagamentos = pagamentoRepository.getAllPagamentos()
+    passageiros = passageiroRepository.getAllPassageiros()
+    viagens = viagemRepository.getAllViagens()
     ultimos_pagamentos = ({"passageiro": {"nome": "Raul"}, "valor": 200, "data_pagamento": "2025-09-21"})
-    return render_template('pagamentos.html', sidebar=sidebar, pagamentos=pagamentos, ultimos_pagamentos=ultimos_pagamentos)
+    return render_template(
+        'pagamentos.html',
+        sidebar=sidebar,
+        pagamentos=pagamentos,
+        passageiros=passageiros,
+        viagens=viagens,
+        ultimos_pagamentos=ultimos_pagamentos
+    )
 
 @pagamento_controller.route('/registrar_pagamento/<url>', methods=['GET', 'POST'])
 def registrar_pagamento(url):

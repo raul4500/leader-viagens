@@ -1,35 +1,48 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Erro Interno do Servidor</title>
+    <title>500 — Erro Interno do Servidor</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/sidebar-main.css') }}">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        body.error-shell {
+            display: grid;
+            place-content: center;
+            min-block-size: 100dvh;
+            padding: 24px;
             text-align: center;
-            padding: 50px;
         }
-        h1 {
-            font-size: 50px;
-            color: #ff6b6b;
+        .error-card {
+            max-inline-size: 460px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 40px 32px;
         }
-        p {
-            font-size: 20px;
-            color: #333;
-        }
-        a {
-            text-decoration: none;
-            color: #007bff;
-        }
-        a:hover {
-            text-decoration: underline;
+        .error-code {
+            font-size: 56px;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: var(--status-danger-text);
+            line-height: 1;
         }
     </style>
 </head>
-<body>
-    <h1>500 - Erro Interno do Servidor</h1>
-    <p>Ocorreu um erro inesperado. Estamos trabalhando para corrigir isso.</p>
-    <p><a href="/">Voltar para a página inicial</a></p>
+
+<body class="error-shell">
+    <div class="surface-card error-card">
+        <span class="card-icon-badge" style="width: 48px; height: 48px; font-size: 22px;"><i class="bi bi-exclamation-triangle"></i></span>
+        <div class="error-code">500</div>
+        <h1 class="card-title" style="font-size: 20px;">Erro Interno do Servidor</h1>
+        <p class="card-subtitle" style="font-size: 14px;">Ocorreu um erro inesperado ao processar sua solicitação.</p>
+        <a href="/" class="btn-finexy btn-dark" style="margin-top: 8px;">
+            <i class="bi bi-arrow-left"></i> Voltar para a Visão Geral
+        </a>
+    </div>
 </body>
+
 </html>

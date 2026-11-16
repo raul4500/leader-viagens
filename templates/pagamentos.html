@@ -1,127 +1,270 @@
-
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/sidebar-main.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/modal.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/barra-rolagem.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/flash-messages.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/pagamentos.css') }}">
-        <title>Pagamentos</title>
-    
-      <style>
-      </style>
+<html lang="pt-BR">
 
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/sidebar-main.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/modal.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/barra-rolagem.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/flash-messages.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/pagamentos.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='styles/img/logo_size_invert.jpg') }}" type="image/jpg">
+    <title>Pagamentos — Financeiro Leader</title>
+</head>
+
 <body>
+    {% set lista_pagamentos = pagamentos if pagamentos is defined and pagamentos else [] %}
+    {% set total_recebido = lista_pagamentos|sum(attribute='valor') if lista_pagamentos else 0 %}
+    {% set qtd_pagamentos = lista_pagamentos|length %}
+    {% set media_pagamento = (total_recebido / qtd_pagamentos) if qtd_pagamentos > 0 else 0 %}
 
-   <div class="main">
-        
+    <div class="main">
+
         {{sidebar|safe}}
 
+        <div class="container">
+            <div class="pagamentos">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="page-header-titles">
+                        <h1>Controle de Pagamentos</h1>
+                        <p>Registre recebimentos, acompanhe o histórico financeiro e vincule transações aos roteiros.</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button type="button" class="btn-finexy btn-lime" onclick="document.getElementById('valor').focus()">
+                            <i class="bi bi-plus-lg"></i> Novo Lançamento
+                        </button>
+                    </div>
+                </div>
 
-    <div class="container">
-        <div class="pagamentos">
-        <h1>Pagamentos</h1>
-        <div class="ultimos-pagamentos">
-            <h2><i class="bi bi-clock-history"></i> Últimos Pagamentos</h2>
-            {% if pagamentos %}
-            {% for pagamento in pagamentos %}
-            <div class="pagamento">
-                <h3>{{ pagamento.data_pagamento }}</h3>
-                <p>Valor: R$ {{ "%.2f"|format(pagamento.valor) }}</p>
-                <p>{{pagamento.forma_pagamento}}</p>
-                <p>{{pagamento.destino}}</p>
-            {% endfor %}
-            {% else %}
-            <p>Nenhum pagamento recente.</p>
-            {% endif %}
-        </div>
-        </div>
+                <!-- Financial KPI Strip -->
+                <div class="pagamentos-kpi-grid">
+                    <div class="kpi-card kpi-featured">
+                        <div class="kpi-top">
+                            <span class="kpi-label">Receita Total Registrada</span>
+                            <span class="card-icon-badge"><i class="bi bi-cash-coin"></i></span>
+                        </div>
+                        <div class="kpi-value">R$ {{ "%.2f"|format(total_recebido) }}</div>
+                        <div class="kpi-footer">
+                            <span class="trend-pill up">↑ {{ qtd_pagamentos }}</span>
+                            <span class="kpi-trend-meta">Pagamentos confirmados</span>
+                        </div>
+                    </div>
 
-        </div>
-        <div class="extras-pagamentos">
-            extras
-        </div>
-        <div class="atrasos">
-            
-        </div>
+                    <div class="kpi-card">
+                        <div class="kpi-top">
+                            <span class="kpi-label">Total de Lançamentos</span>
+                            <span class="card-icon-badge"><i class="bi bi-receipt"></i></span>
+                        </div>
+                        <div class="kpi-value">{{ qtd_pagamentos }}</div>
+                        <div class="kpi-footer">
+                            <span class="trend-pill up">Ativos</span>
+                            <span class="kpi-trend-meta">No histórico geral</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-top">
+                            <span class="kpi-label">Valor Médio por Pagamento</span>
+                            <span class="card-icon-badge"><i class="bi bi-graph-up-arrow"></i></span>
+                        </div>
+                        <div class="kpi-value">R$ {{ "%.2f"|format(media_pagamento) }}</div>
+                        <div class="kpi-footer">
+                            <span class="trend-pill neutral">BRL</span>
+                            <span class="kpi-trend-meta">Média por transação</span>
+                        </div>
+                    </div>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flashes">
+                    {% for category, message in messages %}
+                    <div class="{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <!-- Main 2-Column Financial Layout -->
+                <div class="pagamentos-bento-grid">
+                    <!-- Left Column: Histórico de Pagamentos -->
+                    <div class="surface-card ultimos-pagamentos">
+                        <div class="pagamentos-history-header">
+                            <div>
+                                <h2><i class="bi bi-clock-history"></i> Últimos Pagamentos</h2>
+                                <p class="card-subtitle">Histórico completo de valores recebidos</p>
+                            </div>
+                            <div class="search-input-wrap">
+                                <i class="bi bi-search"></i>
+                                <input type="text" id="searchPagamentoInput" placeholder="Filtrar destino ou forma..." onkeyup="filtrarPagamentos(this.value)">
+                            </div>
+                        </div>
+
+                        {% if lista_pagamentos %}
+                        <div tabindex="0" role="region" aria-label="Tabela de Pagamentos" class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Destino / Referência</th>
+                                        <th>Forma de Pagamento</th>
+                                        <th>Data</th>
+                                        <th>Valor</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pagamentosTableBody">
+                                    {% for pagamento in lista_pagamentos %}
+                                    <tr class="pagamento">
+                                        <td class="text-secondary-cell">#{{ "%04d"|format(pagamento.id) }}</td>
+                                        <td><strong>{{ pagamento.destino }}</strong></td>
+                                        <td><span class="method-pill">{{ pagamento.forma_pagamento }}</span></td>
+                                        <td class="text-secondary-cell">{{ pagamento.data_pagamento }}</td>
+                                        <td><strong class="payment-amount-cell">R$ {{ "%.2f"|format(pagamento.valor) }}</strong></td>
+                                        <td><span class="status-badge status-ativo">Confirmado</span></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="empty-payments-box">
+                            <div class="empty-icon-circle"><i class="bi bi-wallet2"></i></div>
+                            <h3>Nenhum pagamento recente</h3>
+                            <p>Utilize o painel ao lado para registrar o primeiro recebimento no sistema.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Right Column: Registrar Pagamento Form -->
+                    <div class="surface-card registrar-pagamento active">
+                        <form class="registrar-passageiro" id="registrar-passageiro" action="/registrar_pagamento/pagamento_controller" method="post">
+                            <div class="form-payment-header">
+                                <h3>Adicionar Pagamento</h3>
+                                <p class="card-subtitle">Preencha os dados da transação financeira</p>
+                            </div>
+
+                            <div class="bloco">
+                                <div class="left form-field">
+                                    <label for="valor">Valor (R$):</label>
+                                    <input type="number" step="0.01" id="valor" name="valor" min="1" placeholder="0,00" required>
+                                </div>
+                                <div class="right form-field">
+                                    <label for="data_pagamento">Data de Pagamento:</label>
+                                    <input type="date" id="data_pagamento" name="data_pagamento" min="2025-01-01" required>
+                                </div>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="forma_pagamento">Forma de Pagamento:</label>
+                                <input type="text" id="forma_pagamento" name="forma_pagamento" list="formasPagamentoList" placeholder="Ex.: PIX, Cartão de Crédito, Dinheiro..." required>
+                                <datalist id="formasPagamentoList">
+                                    <option value="PIX"></option>
+                                    <option value="Cartão de Crédito"></option>
+                                    <option value="Cartão de Débito"></option>
+                                    <option value="Dinheiro"></option>
+                                    <option value="Boleto"></option>
+                                    <option value="Transferência"></option>
+                                </datalist>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="destino">Destino / Observação:</label>
+                                <input type="text" id="destino" name="destino" list="destinosViagemList" placeholder="Informe a viagem ou observação..." required>
+                                {% if viagens is defined and viagens %}
+                                <datalist id="destinosViagemList">
+                                    {% for v in viagens %}
+                                    <option value="{{ v.destino }}"></option>
+                                    {% endfor %}
+                                </datalist>
+                                {% endif %}
+                            </div>
+
+                            <div class="passageiros-selector">
+                                <div class="header">
+                                    <h3>Vincular Passageiros <span id="selectedCountBadge" class="selected-count-pill">0 selecionado(s)</span></h3>
+                                    <input type="text" id="searchPassageiroPagInput" placeholder="Pesquise o passageiro..." onkeyup="filtrarPassageirosPagamento(this.value)">
+                                </div>
+                                <div class="passageiros-scroll-table table-wrapper">
+                                    <table>
+                                        <tbody id="passageirosPagBody">
+                                            {% if passageiros is defined and passageiros %}
+                                            {% for p in passageiros %}
+                                            <tr>
+                                                <td style="width: 36px;">
+                                                    <input type="checkbox" onclick="adicionarPassageiro(this, {{ p.id }})" id="passageiro-{{ p.id }}">
+                                                </td>
+                                                <td>
+                                                    <label for="passageiro-{{ p.id }}" class="nome" style="cursor: pointer;">{{ p.nome }}</label>
+                                                </td>
+                                                <td class="text-secondary-cell">{{ p.rg or '—' }}</td>
+                                                <td class="text-secondary-cell">{{ p.telefone or '—' }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="4" class="text-secondary-cell">Nenhum passageiro cadastrado.</td>
+                                            </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <button type="submit" id="confirmar-pagamento" class="btn-finexy btn-dark" onclick="confirmar()">
+                                <i class="bi bi-check2-circle"></i> Confirmar Pagamento
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-        <div class="registrar-pagamento">
-          <form class="registrar-passageiro" id="registrar-passageiro" action="/registrar_pagamento/pagamento_controller" method="post">
-            <h3>Adicionar Pagamento</h3>
-            <div class="bloco">
-              <div class="left">
-            <label for="valor">Valor:</label>
-            <input type="number" id="valor" oninput="alert(this.value)" name="valor" min="1" required>
-                </div>
-                <div class="right">
-            <label for="data_pagamento">Data de pagamento:</label>
-            <input type="date" id="data_pagamento" name="data_pagamento" min="2025-01-01" required>
-              </div>
-              </div>
-            <label for="forma_pagamento">Forma de Pagamento:</label>
-            <input type="text" id="forma_pagamento" name="forma_pagamento" required>
+    <script>
+        let lista_passageiros = [];
 
-            <label for="destino">Destino / Observação:</label>
-            <input type="text" id="destino" name="destino" required>
+        function adicionarPassageiro(input, id) {
+            if (input.checked) {
+                if (!lista_passageiros.includes(id)) {
+                    lista_passageiros.push(id);
+                }
+            } else {
+                const idx = lista_passageiros.indexOf(id);
+                if (idx > -1) {
+                    lista_passageiros.splice(idx, 1);
+                }
+            }
+            const badge = document.getElementById("selectedCountBadge");
+            if (badge) {
+                badge.textContent = `${lista_passageiros.length} selecionado(s)`;
+            }
+        }
 
-            <div class="passageiros">
-              <div class="header">
-                <h3>Passageiros</h3>
-                <input type="text" placeholder="Pesquise o passageiro">
-              </div>
-              <table>
-                <tr>
-                  <td><input type="checkbox" onclick="adicionarPassageiro(this, 1)" id="passageiro-1"></th>
-                  <td><div class="nome">passageiro.nomedefsefsefsefsfsefsefesfsef</div></td>
-                  <td>passageiro.rg</td>
-                  <td>passageiro.telefone</td>
-                </tr>
-                <tr>
-                  <td><input type="checkbox" onclick="adicionarPassageiro(this, 2)" id="passageiro-2"></th>
-                  <td><div class="nome">passageiro.nomedefsefsefsefsfsefsefesfsef</div></td>
-                  <td>passageiro.rg</td>
-                  <td>passageiro.telefone</td>
-                </tr>
-              </table>
-            </div>
+        function filtrarPagamentos(query) {
+            const q = (query || "").toLowerCase();
+            document.querySelectorAll("#pagamentosTableBody tr").forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(q) ? "" : "none";
+            });
+        }
 
-            
-<button id="confirmar-pagamento" onclick="confirmar()">Confirmar</button>
+        function filtrarPassageirosPagamento(query) {
+            const q = (query || "").toLowerCase();
+            document.querySelectorAll("#passageirosPagBody tr").forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(q) ? "" : "none";
+            });
+        }
 
-        </form>
-        </div>
-
+        function confirmar() {
+            let valor = document.getElementById("valor").value;
+            let data_pagamento = document.getElementById("data_pagamento").value;
+            let forma_pagamento = document.getElementById("forma_pagamento").value;
+            let destino = document.getElementById("destino").value;
+        }
+    </script>
 </body>
-
-
-<script>
-
-let lista_passageiros = []
-
-function adicionarPassageiro(input, id){
-  if(input.checked){
-    lista_passageiros.push(id)
-    alert(lista_passageiros)}
-  else{
-    lista_passageiros.splice(lista_passageiros.indexOf(id), 1)
-    alert(lista_passageiros)
-  }
-}
-
-function confirmar(){
-    let valor = document.getElementById("valor").value;
-    let data_pagamento = document.getElementById("data_pagamento").value;
-    let forma_pagamento = document.getElementById("forma_pagamento").value;
-    let destino = document.getElementById("destino").value;
-}
-
-</script>
 
 </html>

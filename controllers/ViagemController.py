@@ -58,12 +58,12 @@ def editar_viagem(id):
         descricao = request.form['descricao']
         inclusos = request.form['inclusos']
         try:
-            data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d')
+            datetime.strptime(data_inicio, '%Y-%m-%d')
         except ValueError:
             flash('Data inválida.', 'error')
             return redirect(url_for('viagem_controller.index'))
         try:
-            data_fim = datetime.strptime(data_fim, '%Y-%m-%d')
+            datetime.strptime(data_fim, '%Y-%m-%d')
         except ValueError:
             flash('Data inválida.', 'error')
             return redirect(url_for('viagem_controller.index'))
@@ -219,43 +219,33 @@ def mapa(viagem, reservas, passageiros):
     <div id="mapa-onibus" class="mapa-onibus" style="display: block;">
     <table>
         <tbody>
-            <tr>
-                <td colspan="7" style="height: 50px; font-size: 2.5vw;">
-                    <center>
-                        <h3>{viagem.destino}</h3>
-                    </center>
+            <tr class="bus-meta-row">
+                <td colspan="7" class="bus-title-cell">
+                    <h3>{viagem.destino}</h3>
                 </td>
-                <td colspan="2" style="background-color: rgb(115, 187, 67);">
-                    <center>
-                        <h2>Saída: {viagem.data_inicio}</h2>
-                    </center>
+                <td colspan="2" class="bus-badge-cell">
+                    <h2>Saída: {viagem.data_inicio}</h2>
                 </td>
             </tr>
-            <tr>
-                <td colspan="7">
-                    <center>
-                        <h2>Mapa de viagem</h2>
-                    </center>
+            <tr class="bus-meta-row">
+                <td colspan="7" class="bus-subtitle-cell">
+                    <h2>Mapa de Assentos · {viagem.tipo_onibus.replace('_', '-').upper()}</h2>
                 </td>
-                <td colspan="2" style="background-color: rgb(115, 187, 67);">
-                    <center>
-                        <h2>Dezembro</h2>
-                    </center>
+                <td colspan="2" class="bus-badge-cell">
+                    <h2>Retorno: {viagem.data_fim}</h2>
                 </td>
             </tr>
-            <tr>
-                <td colspan="7">
-                    <h2 style="text-align: right; color: red;">R$ {viagem.preco}</h2>
+            <tr class="bus-price-row">
+                <td colspan="7" class="bus-price-cell">
+                    <h2>R$ {viagem.preco:,.2f}</h2>
                 </td>
-                <td colspan="2">
-                    <p style="font-size: 14px; color: red;">(PARA MEMBROS DO GRUPO)</p>
+                <td colspan="2" class="bus-group-cell">
+                    <p>VALOR POR PASSAGEIRO</p>
                 </td>
             </tr>
-            <tr>
-                <td colspan="9">
-                    <center>
-                        <h2 style="font-size: 16px; color: red;">OU 6X DE R$ {(viagem.preco / 6):,.2f}</h2>
-                    </center>
+            <tr class="bus-installment-row">
+                <td colspan="9" class="bus-installment-cell">
+                    <h2>OU ATÉ 6X DE R$ {(viagem.preco / 6):,.2f}</h2>
                 </td>
             </tr>
     """

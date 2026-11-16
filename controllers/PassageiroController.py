@@ -86,11 +86,11 @@ def index():
 def cadastrar_passageiro(url):
     if request.method == 'POST':
         nome = request.form['nome'].upper()
-        nascimento = request.form['nascimento']
-        rg = request.form['rg']
-        cpf = request.form['cpf']
-        telefone = request.form['telefone']
-        status = request.form['status']
+        nascimento = request.form.get('nascimento', '')
+        rg = request.form.get('rg', '')
+        cpf = request.form.get('cpf', '')
+        telefone = request.form.get('telefone', '')
+        status = request.form.get('status', 'ativo')
         # Convert nascimento to a date object
 
         # Check if RG already exists
@@ -109,18 +109,37 @@ def cadastrar_passageiro(url):
 def editar_passageiro(id, url):
     if request.method == 'POST':
         nome = request.form['nome'].upper()
-        nascimento = request.form['nascimento']
-        rg = request.form['rg']
-        cpf = request.form['cpf']
-        if nascimento!='':
-            nascimento = formatar_data(nascimento)
-        telefone = request.form['telefone']
-        status = request.form['status']
+        nascimento = request.form.get('nascimento', '')
+        rg = request.form.get('rg', '')
+        cpf = request.form.get('cpf', '')
+        if nascimento != '':
+            try:
+                nascimento = formatar_data(nascimento)
+            except ValueError:
+                pass
+        telefone = request.form.get('telefone', '')
+        status = request.form.get('status', 'ativo')
         if verificarInfo(nome, rg, telefone):  
             passageiroRepository.updatePassageiro(id, nome, nascimento, rg, cpf, telefone, status)
             flash('passageiro atualizado', 'success')
             return redirect(url_for(f'{url}.index'))
     return redirect(url_for('passageiro_controller.index'))
+
+@passageiro_controller.route('/passageiro/atualizar_status/<int:id>/<status>')
+def atualizar_status(id, status):
+    passageiro = passageiroRepository.getPassageiro(id)
+    if passageiro and status in ('ativo', 'pendente'):
+        passageiroRepository.updatePassageiro(
+            id,
+            passageiro.nome,
+            passageiro.nascimento,
+            passageiro.rg,
+            passageiro.cpf,
+            passageiro.telefone,
+            status
+        )
+        flash('Status do passageiro atualizado.', 'success')
+    return redirect(request.referrer or url_for('index_controller.index'))
 
 @passageiro_controller.route('/associar/<int:pagamento_id>/<int:passageiro_id>', methods=['GET', 'POST'])
 def associar(pagamento_id, passageiro_id):

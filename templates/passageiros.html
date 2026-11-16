@@ -1,241 +1,343 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/sidebar-main.css') }}">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/passageiros.css') }}">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/flash-messages.css') }}">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/barra-rolagem.css') }}">
-  <title>Passageiros</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/sidebar-main.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/passageiros.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/flash-messages.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/barra-rolagem.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='styles/img/logo_size_invert.jpg') }}" type="image/jpg">
+    <title>Passageiros — Financeiro Leader</title>
 </head>
 
 <body>
-  <div class="main">
-    
-    {{sidebar|safe}}
+    {% set total_passageiros = passageiros|length %}
+    {% set passageiros_ativos = passageiros|selectattr('status', 'equalto', 'ativo')|list|length %}
+    {% set passageiros_pendentes = total_passageiros - passageiros_ativos %}
+    {% set pct_ativos = ((passageiros_ativos / total_passageiros * 100)|round|int) if total_passageiros > 0 else 0 %}
 
-    <div class="container">
+    <div class="main">
 
-      <div class="passageiros">
-        <h1>Passageiros</h1>
-        <div class="pesquisar-passageiros">
-          <input type="text" id="searchInputNome" placeholder="Nome" onkeyup="searchClient('Nome', 1)">
-          <input type="text" id="searchInputRg" maxlength="10" placeholder="RG" onkeyup="searchClient('Rg', 2)">
-          <input type="text" id="searchInputTelefone" maxlength="12" placeholder="Telefone" onkeyup="searchClient('Telefone', 3)">
-          <input type="text" id="searchInputNascimento" placeholder="Nascimento" onkeyup="searchClient('Nascimento', 4)">
-          <input type="text" id="searchInputRegistro" placeholder="Registro" onkeyup="searchClient('Registro', 6)">
-          <button class="adicionar-passageiro" id="abrir-inputs" onclick="abrirInputs()"><i class="bi bi-plus" style="font-size: 16px;"></i>Adicionar Passageiro</button>
-          <button class="fechar-inputs" id="fechar-inputs" onclick="fecharInputs()"><i class="bi bi-x" style="font-size: 16px;"></i>Cancelar</button>
-        </div>
+        {{sidebar|safe}}
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        <div class=flashes>
-          {% for category, message in messages %}
-          <div class="{{ category }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-        {% endif %}
-        {% endwith %}
-
-        <form class="cadastrar-passageiro" id="cadastrar-passageiro" action="/cadastrar_passageiro/passageiro_controller" method="post">
-
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome" required placeholder="Digite o nome do passageiro...">
-
-            <div class="identificacao">
-              <div class="left">
-            <label for="rg">RG:</label>
-            <input type="text" id="rg" name="rg" maxlength="12" placeholder="99.999.999-9">
-          </div>
-          <div class="right">
-            <label for="cpf">CPF:</label>
-            <input type="text" id="cpf" name="cpf" maxlength="12" placeholder="999.999.999-99">
-          </div>
-          </div>
-
-            <label for="nascimento">Data de Nascimento:</label>
-            <input type="date" id="nascimento" name="nascimento" min="1925-01-01">
-
-            <label for="telefone">Telefone:</label>
-            <input type="text" id="telefone" name="telefone" maxlength="15" placeholder="(99) 99999-9999">
-
-            
-            <label for="status">Status:</label>
-            <select name="status" id="status" required>
-              <option value="ativo">ativo</option>
-              <option value="pendente">pendente</option>
-            </select>
-
-            <button id="confirmar" type="submit">Confirmar</button>
-
-
-        </form>
-
-        <div class="tabela-passageiros">
-          <table cellspacing="0" rules="none">
-            <thead>
-              <th></th>
-              <th>Nome</th>
-              <th>RG</th>
-              <th>Telefone</th>
-              <th><center>Data-Nascimento</center></th>
-              <th><center>Status</center></th>
-              <th><center>Data-Registro</center></th>
-              </tr>
-              {% for p in passageiros %}
-            <tbody id="clientTableBody">
-              <td>
-                <button onclick="toggleBlock(this)"><i class='bi bi-three-dots-vertical'></i></button>
-                <div class="action-block" id="action-block" style="display: none;">
-                  <ul>
-                    <li><button class="opcoes-passageiros" onclick="editarPassageiro('{{ p.id }}', '{{ p.nome }}', '{{ p.rg }}', '{{ p.nascimento }}', '{{ p.telefone }}', '{{ p.status }}')">Editar</button></li>
-                    <li><button class="opcoes-passageiros" onclick="deletarPassageiro('{{ p.id }}')">Excluir</button></li>
-                  </ul>
+        <div class="container">
+            <div class="passageiros-page">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="page-header-titles">
+                        <h1>Gestão de Passageiros</h1>
+                        <p>Cadastre, pesquise e acompanhe a situação cadastral de todos os passageiros.</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button type="button" class="adicionar-passageiro btn-finexy btn-lime" id="abrir-inputs" onclick="abrirInputs()">
+                            <i class="bi bi-person-plus-fill"></i> Adicionar Passageiro
+                        </button>
+                        <button type="button" class="fechar-inputs btn-finexy btn-danger-soft" id="fechar-inputs" onclick="fecharInputs()" style="display: none;">
+                            <i class="bi bi-x-lg"></i> Cancelar
+                        </button>
+                    </div>
                 </div>
-              </td>
-              <td>
-                <div class="nome">{{ p.nome }}</div>
-              </td>
-              <td>{{ p.rg }}</td>
-              <td>{{ p.telefone }}</td>
-              {% if p.nascimento %}
-              <td><center>{{ p.nascimento }}</center></td>
-              {% else %}
-              <td><center></center></td>
-              {% endif %}
-              <td><center>{{ p.status }}</center></td>
-              <td><center>{{ formatar_data_registro(p.created_at)[0] }}</center></td>
-            </tbody>
-            {% endfor %}
-          </table>
+
+                <!-- Summary KPI Strip -->
+                <div class="passageiros-kpi-grid">
+                    <div class="kpi-card kpi-featured">
+                        <div class="kpi-top">
+                            <span class="kpi-label">Total de Passageiros</span>
+                            <span class="card-icon-badge"><i class="bi bi-people"></i></span>
+                        </div>
+                        <div class="kpi-value">{{ total_passageiros }}</div>
+                        <div class="kpi-footer">
+                            <span class="trend-pill up">↑ 100%</span>
+                            <span class="kpi-trend-meta">Base registrada</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-top">
+                            <span class="kpi-label">Cadastros Ativos</span>
+                            <span class="card-icon-badge"><i class="bi bi-person-check"></i></span>
+                        </div>
+                        <div class="kpi-value">{{ passageiros_ativos }}</div>
+                        <div class="kpi-footer">
+                            <span class="trend-pill up">↑ {{ pct_ativos }}%</span>
+                            <span class="kpi-trend-meta">Aptos para reserva</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-top">
+                            <span class="kpi-label">Cadastros Pendentes</span>
+                            <span class="card-icon-badge"><i class="bi bi-clock-history"></i></span>
+                        </div>
+                        <div class="kpi-value">{{ passageiros_pendentes }}</div>
+                        <div class="kpi-footer">
+                            <span class="trend-pill warn">{{ 100 - pct_ativos if total_passageiros > 0 else 0 }}%</span>
+                            <span class="kpi-trend-meta">Aguardando revisão</span>
+                        </div>
+                    </div>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flashes">
+                    {% for category, message in messages %}
+                    <div class="{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <!-- Collapsible Registration / Edit Card -->
+                <form class="cadastrar-passageiro surface-card" id="cadastrar-passageiro" action="/cadastrar_passageiro/passageiro_controller" method="post">
+                    <div class="form-card-header">
+                        <div>
+                            <h3 class="card-title" id="formPassageiroHeading">Novo Passageiro</h3>
+                            <p class="card-subtitle">Informe os documentos e dados de contato do passageiro</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-passageiro">
+                        <div class="form-field span-2">
+                            <label for="nome">Nome Completo:</label>
+                            <input type="text" id="nome" name="nome" required placeholder="Digite o nome completo do passageiro...">
+                        </div>
+
+                        <div class="identificacao span-2">
+                            <div class="left form-field">
+                                <label for="rg">RG:</label>
+                                <input type="text" id="rg" name="rg" maxlength="12" placeholder="99.999.999-9">
+                            </div>
+                            <div class="right form-field">
+                                <label for="cpf">CPF:</label>
+                                <input type="text" id="cpf" name="cpf" maxlength="14" placeholder="999.999.999-99">
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="nascimento">Data de Nascimento:</label>
+                            <input type="date" id="nascimento" name="nascimento" min="1925-01-01">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="telefone">Telefone:</label>
+                            <input type="text" id="telefone" name="telefone" maxlength="15" placeholder="(99) 99999-9999">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="status">Status:</label>
+                            <select name="status" id="status" required>
+                                <option value="ativo">ativo</option>
+                                <option value="pendente">pendente</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field form-submit-wrap">
+                            <button id="confirmar" type="submit" class="btn-finexy btn-dark">
+                                <i class="bi bi-check2-circle"></i> Confirmar Cadastro
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Main Directory Card -->
+                <div class="surface-card passageiros">
+                    <div class="directory-header">
+                        <div>
+                            <h2 class="card-title">Diretório de Passageiros</h2>
+                            <p class="card-subtitle">Utilize os filtros abaixo para localizar passageiros por qualquer campo</p>
+                        </div>
+                    </div>
+
+                    <div class="pesquisar-passageiros">
+                        <div class="search-input-wrap">
+                            <i class="bi bi-person"></i>
+                            <input type="text" id="searchInputNome" placeholder="Filtrar por nome..." onkeyup="searchClient('Nome', 1)">
+                        </div>
+                        <div class="search-input-wrap">
+                            <i class="bi bi-card-heading"></i>
+                            <input type="text" id="searchInputRg" maxlength="12" placeholder="Filtrar RG..." onkeyup="searchClient('Rg', 2)">
+                        </div>
+                        <div class="search-input-wrap">
+                            <i class="bi bi-telephone"></i>
+                            <input type="text" id="searchInputTelefone" maxlength="15" placeholder="Filtrar telefone..." onkeyup="searchClient('Telefone', 3)">
+                        </div>
+                        <div class="search-input-wrap">
+                            <i class="bi bi-calendar3"></i>
+                            <input type="text" id="searchInputNascimento" placeholder="Nascimento..." onkeyup="searchClient('Nascimento', 4)">
+                        </div>
+                        <div class="search-input-wrap">
+                            <i class="bi bi-clock"></i>
+                            <input type="text" id="searchInputRegistro" placeholder="Data de registro..." onkeyup="searchClient('Registro', 6)">
+                        </div>
+                    </div>
+
+                    <div tabindex="0" role="region" aria-label="Lista completa de passageiros" class="tabela-passageiros table-wrapper">
+                        <table cellspacing="0" rules="none">
+                            <thead>
+                                <tr>
+                                    <th style="width: 48px;"></th>
+                                    <th>Nome</th>
+                                    <th>RG</th>
+                                    <th>Telefone</th>
+                                    <th>Data-Nascimento</th>
+                                    <th>Status</th>
+                                    <th>Data-Registro</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientTableBody">
+                                {% for p in passageiros %}
+                                <tr>
+                                    <td class="action-cell">
+                                        <button type="button" class="row-dots-btn" onclick="toggleBlock(this)" aria-label="Opções de {{ p.nome }}">
+                                            <i class="bi bi-three-dots"></i>
+                                        </button>
+                                        <div class="action-block" style="display: none;">
+                                            <ul>
+                                                <li>
+                                                    <button type="button" class="opcoes-passageiros"
+                                                        onclick="editarPassageiro('{{ p.id }}', '{{ p.nome }}', '{{ p.rg }}', '{{ p.nascimento }}', '{{ p.telefone }}', '{{ p.status }}', '{{ p.cpf or '' }}')">
+                                                        <i class="bi bi-pencil-square"></i> Editar
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="opcoes-passageiros" style="color: #DC2626;"
+                                                        onclick="deletarPassageiro('{{ p.id }}')">
+                                                        <i class="bi bi-trash3"></i> Excluir
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="passenger-cell">
+                                            <span class="passenger-avatar">{{ p.nome[0]|upper if p.nome else 'P' }}</span>
+                                            <div class="nome">{{ p.nome }}</div>
+                                        </div>
+                                    </td>
+                                    <td>{{ p.rg or '—' }}</td>
+                                    <td>{{ p.telefone or '—' }}</td>
+                                    <td>{{ p.nascimento if p.nascimento else '—' }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ p.status }}">{{ p.status }}</span>
+                                    </td>
+                                    <td>{{ formatar_data_registro(p.created_at)[0] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
         </div>
-
-      </div>
     </div>
-  </div>
 
+    <script>
+        document.getElementById("rg").addEventListener("input", function (e) {
+            let rg = e.target.value.replace(/\D/g, "");
+            rg = rg.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,1}).*/, "$1.$2.$3-$4");
+            e.target.value = rg;
+        });
 
+        document.getElementById("cpf").addEventListener("input", function (e) {
+            let cpf = e.target.value.replace(/\D/g, "");
+            cpf = cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{0,2}).*/, "$1.$2.$3-$4");
+            e.target.value = cpf;
+        });
 
+        document.getElementById("telefone").addEventListener("input", function (e) {
+            let telefone = e.target.value.replace(/\D/g, "");
+            if (telefone.length > 10) {
+                telefone = telefone.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+            } else {
+                telefone = telefone.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+            }
+            e.target.value = telefone;
+        });
+
+        function searchClient(i, cell) {
+            let input = document.getElementById(`searchInput${i}`).value.toLowerCase();
+            let rows = document.querySelectorAll("#clientTableBody tr");
+
+            rows.forEach(row => {
+                let name = row.cells[cell].textContent.toLowerCase();
+                row.style.display = name.includes(input) ? "" : "none";
+            });
+        }
+
+        function toggleBlock(button) {
+            const actionBlock = button.nextElementSibling;
+
+            document.querySelectorAll('.action-block').forEach(block => {
+                if (block !== actionBlock) {
+                    block.style.display = 'none';
+                }
+            });
+
+            if (actionBlock.style.display === 'none' || actionBlock.style.display === '') {
+                const rect = button.getBoundingClientRect();
+                actionBlock.style.display = 'block';
+                actionBlock.style.top = `${rect.bottom + window.scrollY + 4}px`;
+                actionBlock.style.left = `${rect.left + window.scrollX}px`;
+            } else {
+                actionBlock.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.action-cell')) {
+                document.querySelectorAll('.action-block').forEach(block => {
+                    block.style.display = 'none';
+                });
+            }
+        });
+
+        function abrirInputs() {
+            let inputs = document.getElementById("cadastrar-passageiro");
+            document.getElementById("abrir-inputs").style.display = "none";
+            document.getElementById("fechar-inputs").style.display = "inline-flex";
+            if (inputs) {
+                inputs.classList.add('active');
+                inputs.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function fecharInputs() {
+            let inputs = document.getElementById("cadastrar-passageiro");
+            document.getElementById("abrir-inputs").style.display = "inline-flex";
+            document.getElementById("fechar-inputs").style.display = "none";
+            if (inputs) {
+                inputs.classList.remove('active');
+            }
+        }
+
+        function editarPassageiro(id, nome, rg, nascimento, telefone, status, cpf = '') {
+            document.getElementById("formPassageiroHeading").textContent = "Editar Passageiro";
+            document.getElementById("cadastrar-passageiro").action = `/editar_passageiro/${id}/passageiro_controller`;
+            document.getElementById("fechar-inputs").onclick = function () {
+                location.reload();
+            };
+            document.getElementById("confirmar").innerHTML = `<i class="bi bi-pencil-fill"></i> Confirmar Edição`;
+            document.getElementById("status").value = status;
+            document.getElementById("nome").value = nome;
+            document.getElementById("rg").value = rg;
+            document.getElementById("cpf").value = cpf;
+            document.getElementById("nascimento").value = nascimento;
+            document.getElementById("telefone").value = telefone;
+            abrirInputs();
+
+            document.querySelectorAll('.action-block').forEach(b => b.style.display = 'none');
+        }
+
+        function deletarPassageiro(id) {
+            if (confirm("Deseja realmente excluir este passageiro?")) {
+                window.location.href = `/deletar_passageiro/${id}/passageiro_controller`;
+            }
+        }
+    </script>
 </body>
-
-<script>
-  document.getElementById("rg").addEventListener("input", function (e) {
-      let rg = e.target.value; // Remove tudo que não for número
-
-      // Aplica a máscara no formato 99.999.999-9
-      rg = rg.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,1}).*/, "$1.$2.$3-$4");
-
-      e.target.value = rg;
-  });
-
-  document.getElementById("telefone").addEventListener("input", function (e) {
-      let telefone = e.target.value.replace(/\D/g, ""); // Remove tudo que não for número
-
-      if (telefone.length > 10) {
-          telefone = telefone.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
-      } else {
-          telefone = telefone.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
-      }
-
-      e.target.value = telefone;
-  });
-</script>
-
-
-<script>
-  function searchClient(i, cell) {
-    let input = document.getElementById(`searchInput${i}`).value.toLowerCase();
-    let rows = document.querySelectorAll("#clientTableBody tr");
-
-    rows.forEach(row => {
-      let name = row.cells[cell].textContent.toLowerCase();
-      row.style.display = name.includes(input) ? "" : "none";
-    });
-  }
-</script>
-
-<script>
-  function toggleBlock(button) {
-    // Seleciona o bloco de ações relacionado ao botão clicado
-    const actionBlock = button.nextElementSibling;
-
-    // Fecha todos os outros blocos abertos
-    document.querySelectorAll('.action-block').forEach(block => {
-      if (block !== actionBlock) {
-        block.style.display = 'none';
-      }
-    });
-
-    // Alterna a exibição do bloco
-    if (actionBlock.style.display === 'none' || actionBlock.style.display === '') {
-      // Posiciona o bloco ao lado do botão
-      const rect = button.getBoundingClientRect();
-      actionBlock.style.display = 'block';
-      actionBlock.style.top = `${rect.top + window.scrollY}px`;
-      actionBlock.style.left = `${rect.right + 10}px`;
-    } else {
-      actionBlock.style.display = 'none';
-    }
-  }
-
-  // Fecha o bloco se clicar fora dele
-  document.addEventListener('click', function (event) {
-    if (!event.target.closest('td')) {
-      document.querySelectorAll('.action-block').forEach(block => {
-        block.style.display = 'none';
-      });
-    }
-  });
-</script>
-
-<script>
-  function abrirInputs() {
-      let inputs = document.getElementById("cadastrar-passageiro");
-      document.getElementById("abrir-inputs").style.display = "none";
-      document.getElementById("fechar-inputs").style.display = "block";
-      if (inputs) {
-          inputs.classList.add('active');  //Adiciona a classe 'active'
-      }
-  }
-
-  function fecharInputs() {
-      let inputs = document.getElementById("cadastrar-passageiro");
-      document.getElementById("abrir-inputs").style.display = "block";
-      document.getElementById("fechar-inputs").style.display = "none";
-      if (inputs) {
-          inputs.classList.remove('active'); // Remove a classe 'active'
-      }
-  }
-
-  function editarPassageiro(id, nome, rg, nascimento, telefone, status) {
-    let x = document.getElementById("cadastrar-passageiro").action = `/editar_passageiro/${id}/passageiro_controller`;
-    document.getElementById("fechar-inputs").onclick = function () {
-      location.reload();
-    }
-    //alert(nascimento)
-    document.getElementById("confirmar").innerHTML = `<i class="bi bi-pencil-fill"></i> Confirmar Edição`;
-    document.getElementById("status").value = status;
-    document.getElementById("nome").value = nome;
-    document.getElementById("rg").value = rg;
-    document.getElementById("nascimento").value = nascimento;
-    document.getElementById("telefone").value = telefone;
-    abrirInputs();
-
-    document.getElementById('action-block').style.display = 'none'
-
-
-  }
-
-  function deletarPassageiro(id) {
-      if (confirm("Deseja realmente excluir este passageiro?")) {
-          window.location.href = `/deletar_passageiro/${id}/passageiro_controller`;
-      }
-  }
-
-</script>
 
 </html>

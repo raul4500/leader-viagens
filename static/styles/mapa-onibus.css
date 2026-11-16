@@ -1,298 +1,529 @@
-::-webkit-scrollbar {
-    height: 0px;
-    width: 0px;
-}
+/* ==========================================================================
+   Mapa de Ônibus & Planilha de Dados (Trip Studio)
+   ========================================================================== */
 
-.container{
+.trip-studio-header {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: hidden;
+    gap: 18px;
+    margin-block-end: 20px;
 }
 
-.header{
-    height: 60px;
-    width: 100%;
-    padding: 16px;
+.trip-studio-top {
     display: flex;
-    flex-direction: row;
+    align-items: center;
     justify-content: space-between;
-    box-shadow: 0px .1px 10px rgba(0, 0, 0, .5);
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-block-end: 16px;
+    border-block-end: 1px solid var(--border-subtle);
 }
 
-.header .left, .right{
+.trip-studio-title-group {
     display: flex;
-    flex-direction: row;
+    align-items: center;
+    gap: 14px;
 }
 
-.header .right{
-    margin-right: 30px;
+.back-pill-btn {
+    inline-size: 40px;
+    block-size: 40px;
+    border-radius: 50%;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color var(--transition-fast);
 }
 
-.header .right.active{
-    margin-right: 350px;
+.back-pill-btn:hover {
+    background-color: var(--bg-muted);
 }
 
-.header .block{
-    display:flex;
-    flex-direction: row;
-    line-height: 0px;
-    margin: 0 24px 0 0px;
-    padding: 14px;
-    border: 1px solid grey;
-    border-radius: 8px;
+.trip-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.header .block:hover{
-    background-color: rgb(241, 241, 241);
-    box-shadow: 0 1px 8px rgba(148, 148, 148, 0.596);
+.trip-title-row h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
 }
 
-.header .block i{
-    font-size: 32px;
-    margin-right: 8px;
+.trip-meta-subtitle {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--text-secondary);
 }
 
-.header .toggle-btn-right {
-    font-size: 40px;
-    position: relative;
-    margin-right: 0;
-    background-color: #1cc240;
-    color: white;
-    border: none;
-    padding: 10px 15px;
+.trip-meta-subtitle strong {
+    color: var(--text-primary);
+}
+
+.trip-mini-stats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.mini-stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    border-radius: var(--radius-pill);
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.mini-stat-pill strong {
+    color: var(--text-primary);
+}
+
+.mini-stat-dot {
+    inline-size: 8px;
+    block-size: 8px;
+    border-radius: 50%;
+}
+
+.mini-stat-dot.total {
+    background-color: var(--brand-dark);
+}
+
+.mini-stat-dot.free {
+    background-color: rgb(115, 187, 67);
+}
+
+.mini-stat-dot.occupied {
+    background-color: #EF4444;
+}
+
+/* Header Action Toolbar */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.header .left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.view-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-subtle);
+    background-color: var(--bg-subtle);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
-    border-radius: 5px;
+    transition: all var(--transition-fast);
 }
 
-.sidebar-right {
-    position: fixed;
-    top: 0;
-    right: -300px;
-    width: 300px;
-    height: 100%;
-    background-color: #f4f4f4;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
-    transition: right 0.3s ease;
-    padding: 0;
-    overflow: hidden;
+.view-tab-btn p {
+    margin: 0;
 }
 
-.sidebar-right.active {
-    padding: 16px;
-    right: 0;
+.view-tab-btn:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-muted);
 }
 
-.sidebar-right .search-box {
-    width: calc(100% - 16px);
-    padding: 8px;
-    margin: 10px 0 10px 0;
-    border: 1px solid #ccc;
+.view-tab-btn.active {
+    background-color: var(--brand-dark);
+    color: #FFFFFF;
+    border-color: var(--brand-dark);
+}
+
+.seat-legend {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.legend-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.chip-box {
+    display: inline-block;
+    inline-size: 12px;
+    block-size: 12px;
     border-radius: 4px;
 }
 
-.sidebar-right .clients-table {
-    width: 100%;
-    height: 300px;
-    overflow-y: scroll;
-    border: 1px solid #ccc;
+.chip-box.free {
+    background-color: rgb(115, 187, 67);
 }
 
-.sidebar-right table {
-    margin: 0;
-    width: 100%;
-    border-collapse: collapse;
+.chip-box.occupied {
+    background-color: #EF4444;
 }
 
-.sidebar-right table th,td {
-    padding: 8px;
-    border: 1px solid #ddd;
-    text-align: left;
+.chip-box.selected {
+    background-color: #15803D;
+    box-shadow: 0 0 0 2px #9EF01A;
 }
 
-.sidebar-right table th {
-    background-color: #007bff;
-    color: white;
-}
-
-.sidebar-right .buttons{
-    position: relative;
-    top: 180px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 240px;
+/* Bus Canvas Card */
+.bus-canvas-card {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 18px;
 }
 
-.confirmar, .cancelar{
-    width: 100px;
-    height: 40px;
-    border-radius: 8px;
+.bus-helper-banner {
     display: flex;
-    justify-content: center;
     align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.bus-helper-banner i {
+    color: var(--brand-emerald);
     font-size: 16px;
 }
 
-.sidebar-right .buttons .confirmar{
-    cursor: pointer;
-    background-color: rgb(186, 255, 203);
-    color: rgb(0, 0, 0);
-    border: 1px solid green;
+.bus-helper-banner kbd {
+    padding: 2px 6px;
+    border-radius: 5px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-medium);
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
-.sidebar-right .buttons .confirmar:hover{
-    background-color: rgb(38, 139, 64);
-    color: white;
-}
-
-.sidebar-right .buttons .cancelar{
-    cursor: pointer;
-    background-color: rgba(255, 0, 0, 0.801);
-    color: rgb(255, 255, 255);
-    border: 1px solid rgb(110, 0, 0);
-}
-
-.sidebar-right .buttons .cancelar:hover{
-    background-color: rgb(255, 179, 179);
-    color: rgb(0, 0, 0);
-}
-
-.drag-item {
-    cursor: grab;
-    padding: 5px;
-    background-color: #ddd;
-    border-radius: 3px;
-}
-
-h2 {
-    margin: 0;
-    font-weight: bold;
-}
-
-h3 {
-    margin: 0;
-}
-
+/* Seat Map Table (.mapa-onibus) */
 .mapa-onibus {
-    position: relative;
-    height: calc(100vh - 140px);
-    width: 100%;
-    overflow-y: scroll;
-    padding: 30px 0 30px 0;
-    border-collapse: collapse;
-    
-    transition: .5s;
+    inline-size: 100%;
+    overflow-x: auto;
+    padding: 10px 0 24px;
+    transition: padding-inline-end 250ms ease;
 }
 
-.mapa-onibus.active{
-    width: calc(100% - 300px);
-    transition: .5s;
+.mapa-onibus.active {
+    padding-inline-end: 340px;
 }
 
 .mapa-onibus table {
-    width: 600px;
-    border-collapse: collapse;
-    margin: 0 auto 150px auto;
-    height: calc(fit-content + 100px);
+    inline-size: 100%;
+    max-inline-size: 760px;
+    margin: 0 auto;
+    border-collapse: separate;
+    border-spacing: 6px;
+    background-color: var(--bg-subtle);
+    padding: 18px;
+    border-radius: 20px;
+    border: 1px solid var(--border-subtle);
+}
+
+.bus-title-cell,
+.bus-subtitle-cell {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 12px 16px;
+    text-align: center;
+}
+
+.bus-title-cell h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.bus-subtitle-cell h2 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.bus-badge-cell {
+    background: var(--brand-emerald-gradient);
+    color: #FFFFFF;
+    border-radius: 12px;
+    padding: 10px 14px;
+    text-align: center;
+}
+
+.bus-badge-cell h2 {
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 700;
+}
+
+.bus-price-cell,
+.bus-group-cell,
+.bus-installment-cell {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 8px 14px;
+    text-align: center;
+}
+
+.bus-price-cell h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--brand-emerald);
+}
+
+.bus-group-cell p {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.bus-installment-cell h2 {
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.piso td {
+    background-color: var(--brand-dark);
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
 .mapa-onibus table .assento {
     background-color: rgb(115, 187, 67);
-    border: 1px solid black;
-    width: 4px;
-    height: 50px;
+    border: none;
+    border-radius: 8px;
+    inline-size: 36px;
+    block-size: 54px;
     text-align: center;
+    font-weight: 700;
+    font-size: 12.5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .mapa-onibus table .nome {
-    border: 1px solid black;
     background-color: rgb(115, 187, 67);
-    width: 100px;
-    height: 75px;
+    border: none;
+    border-radius: 10px;
+    inline-size: 120px;
+    block-size: 64px;
+    padding: 6px;
     text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    transition: transform 120ms ease;
+}
+
+.mapa-onibus table .nome:hover {
+    transform: translateY(-1px);
 }
 
 .space {
-    background-color: rgb(255, 255, 255);
-    border: none;
-    width: 4px;
+    background: transparent !important;
+    border: none !important;
+    inline-size: 18px;
 }
 
-.piso {
-    text-align: center;
+/* Tooltip inside seat */
+.caixa-info {
+    position: relative;
+    display: inline-block;
 }
 
-.tabela-dados {
+.caixa-info .caixa-info-text {
+    display: none;
     position: absolute;
-    margin: 120px;
-    width: calc(100% - 150px);
-    height: calc(100% - 120px);
-    overflow: scroll;
-    border-collapse: collapse;
-    background-color: rgb(255, 255, 255);
+    inset-block-end: 120%;
+    inset-inline-start: 50%;
+    transform: translateX(-50%);
+    background-color: #171717;
+    color: #FFFFFF;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.nome:hover .caixa-info-text {
+    display: block;
+}
+
+/* Planilha de Dados (.tabela-dados) */
+.tabela-dados {
+    inline-size: 100%;
+    overflow-x: auto;
+    border-radius: 14px;
+    border: 1px solid var(--border-subtle);
 }
 
 .tabela-dados table {
-    margin-bottom: 40px;
-    width: 100%;
+    inline-size: 100%;
     border-collapse: collapse;
+}
+
+.tabela-dados th {
+    background-color: var(--brand-dark);
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 12px 14px;
+    text-align: left;
+}
+
+.tabela-dados td {
+    padding: 10px 14px;
+    border-block-end: 1px solid var(--border-subtle);
+    font-size: 13px;
+}
+
+.tabela-dados tr:nth-child(even) td {
+    background-color: var(--bg-subtle);
+}
+
+/* Right Drawer (#sidebarRight) */
+.sidebar-right {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-end: -380px;
+    inline-size: 360px;
+    max-inline-size: 92dvw;
+    block-size: 100dvh;
+    background-color: var(--bg-surface);
+    border-inline-start: 1px solid var(--border-subtle);
+    box-shadow: -12px 0 36px rgba(15, 23, 42, 0.12);
+    transition: inset-inline-end 260ms cubic-bezier(0.2, 0, 0, 1);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    z-index: 150;
+}
+
+.sidebar-right.active {
+    inset-inline-end: 0;
+}
+
+.drawer-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.drawer-header h2 {
     margin: 0;
+    font-size: 18px;
+    font-weight: 700;
 }
 
-.tabela-dados td{
-    padding: 8px;
-    border: 1px solid #000000;
-    text-align: left;
+.drawer-header p {
+    margin: 2px 0 0;
+    font-size: 12.5px;
+    color: var(--text-secondary);
 }
 
-.tabela-dados th{
-    padding: 8px;
-    border: 1px solid #000000;
-    text-align: left;
-    background-color: #000000;
-    color: white;
+.drawer-close-btn {
+    inline-size: 32px;
+    block-size: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-subtle);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
+.sidebar-right .clients-table {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
 
-@media (max-width: 1000px) {
-    .mapa-onibus table {
-        width: 100%;
-    }
+.drag-item {
+    cursor: grab;
+    font-weight: 600;
+    color: var(--text-primary);
+}
 
-    .tabela-dados {
-        height: 400px;
-        margin: 200px 0 0 20px;
-        width: calc(100% - 50px);
-        overflow-x: scroll;
-    }
+.drag-item i {
+    color: var(--text-muted);
+}
 
-    .tabela-dados table {
-        width: 1000px;
+.sidebar-right .buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding-block-start: 8px;
+}
+
+@media (max-width: 1024px) {
+    .mapa-onibus.active {
+        padding-inline-end: 0;
     }
 }
 
 @media print {
-    body *{
-        visibility: hidden;
+    .topbar,
+    .sidebar,
+    .trip-studio-header,
+    .bus-helper-banner,
+    .sidebar-right {
+        display: none !important;
     }
 
-    .mapa-onibus, .mapa-onibus *{
-        visibility: visible;
+    .main {
+        display: block;
+        padding: 0;
     }
-    .mapa-onibus{
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: fit-content;
-    }
-    .mapa-onibus table {
-        width: 100%;
-        height: 100%;
+
+    .bus-canvas-card {
+        border: none;
+        box-shadow: none;
+        padding: 0;
     }
 }

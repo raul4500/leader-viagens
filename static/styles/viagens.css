@@ -1,190 +1,224 @@
-body {
-    height: 50vh;
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto', sans-serif;
-    overflow-x: hidden;
+/* ==========================================================================
+   Viagens Page Layout & Components
+   ========================================================================== */
+
+.viagens-page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-h1 {
-    margin: 0px;
-    padding: 0px;
+.viagens-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
 }
 
+.viagens-kpi-grid .kpi-card:not(.kpi-featured) {
+    background-color: var(--bg-surface);
+    box-shadow: var(--shadow-card);
+}
+
+/* Collapsible Form Card */
+.cadastrar-viagem {
+    display: none;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.cadastrar-viagem.active {
+    display: flex;
+    animation: fadeSlideDown 220ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes fadeSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-viagem-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-viagem-columns > .left,
+.form-viagem-columns > .right {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.form-viagem-columns .dates {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-field label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+    inline-size: 100%;
+    background-color: var(--bg-subtle);
+}
+
+.form-field textarea {
+    min-block-size: 64px;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+    background-color: var(--bg-surface);
+}
+
+/* Trips List Card */
 .viagens {
-    height: fit-content;
-    width: auto;
-    padding: 16px;
-    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.viagens-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
 }
 
 .opcoes-viagens {
-    width: auto;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 16px 0 16px 0;
+    align-items: center;
+    gap: 10px;
 }
 
-.opcoes-viagens input {
-    width: 60%;
-    height: 30px;
-    border-radius: 8px;
-    border: 1px solid rgb(117, 117, 117);
-    padding: 10px;
+.opcoes-viagens .search-input-wrap {
+    min-inline-size: 260px;
 }
 
-.opcoes-viagens button {
-    width: 30%;
-    height: 50px;
-    border-radius: 8px;
-    border: 1px solid rgb(117, 117, 117);
-    padding: 10px;
-    word-wrap: none;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.bus-row-icon {
+    inline-size: 36px;
+    block-size: 36px;
+    border-radius: 10px;
+    background-color: var(--status-success-bg);
+    color: var(--status-success-text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
 }
 
-.opcoes-viagens button.adicionar {
-    cursor: pointer;
-    background-color: rgb(186, 255, 203);
-    color: rgb(0, 0, 0);
-    border: 1px solid green;
+.tabela-viagens .nome {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-primary);
 }
 
-.opcoes-viagens button.adicionar:hover {
-    background-color: rgb(38, 139, 64);
-    color: white;
-}
-
-.opcoes-viagens button.fechar-inputs {
-    cursor: pointer;
-    background-color: rgba(255, 0, 0, 0.801);
-    color: rgb(255, 255, 255);
-    border: 1px solid rgb(110, 0, 0);
-}
-
-.opcoes-viagens button.fechar-inputs:hover {
-    background-color: rgb(255, 179, 179);
-    color: rgb(0, 0, 0);
-}
-
-.cadastrar-viagem{
-    height: 0;
-    border-radius: 8px;
-    background-color: rgba(225, 255, 225, 0.658);
-    margin-bottom: 16px;
-    padding: 0 12px 0 12px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    overflow: hidden;
-    transition: 1s;
-    border: 1px solid rgb(160, 160, 160);
-}
-
-.cadastrar-viagem.active{
-    height: 400px;
-    padding: 12px;
-    border: 1px solid rgb(39, 53, 25);
-}
-
-.cadastrar-viagem .left{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    width: 48%;
-    height: auto;
-}
-
-.cadastrar-viagem .left .dates{
-    justify-content: space-between;
-    display: flex;
-    flex-direction: row;
-}
-
-.cadastrar-viagem .right{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    width: 48%;
-    height: auto;
-}
-
-.cadastrar-viagem input, textarea, select{
-    font-family: Arial, Helvetica, sans-serif;
-    border: 1px solid grey;
-    padding: 12px 8px 12px 8px;
-    border-radius: 8px;
-}
-
-.cadastrar-viagem button {
-    padding: 16px;
-    cursor: pointer;
-    background-color: rgb(186, 255, 203);
-    color: rgb(0, 0, 0);
-    border: 1px solid green;
-    border-radius: 8px;
-}
-
-.cadastrar-viagem button:hover{
-    background-color: rgb(38, 139, 64);
-    color: white;
-}
-
-.tabela-viagens {
-    height: fit-content;
-    max-width: 100%;
+.viagem-sub-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-block-start: 2px;
+    max-inline-size: 340px;
     white-space: nowrap;
-    padding: 0px;
-}
-
-.tabela-viagens table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid rgb(163, 163, 163);
-}
-
-.tabela-viagens th {
-    border-bottom: 1px solid rgb(163, 163, 163);
-    font-weight: normal;
-    background-color: rgb(241, 241, 241);
-    padding: 10px 0px 10px 8px;
-    text-align: left;
-}
-
-.tabela-viagens td {
-    border-bottom: 1px solid rgb(163, 163, 163);
-    padding: 10px 0px 10px 8px;
-    text-align: left;
-}
-
-.tabela-viagens tr a{
-    color: rgb(0, 18, 32);
-    text-decoration: none;
-}   
-
-.tabela-viagens tr:hover{
-    color: rgb(0, 18, 32);
-    background-color: rgb(241, 241, 241);
-    text-decoration: underline;
-}
-
-.tabela-viagens td button {
-    padding: 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    border: none;
-    background: none;
-}
-
-.tabela-viagens td button:hover {
-    background-color: rgb(214, 214, 214);
-
-}
-
-.tabela-viagens td .nome {
-    max-width: 250px;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.date-range-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    background-color: var(--bg-subtle);
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-subtle);
+}
+
+.viagem-price-cell {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.viagem-actions-cell {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.btn-sm-pill {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.icon-action-btn {
+    inline-size: 34px;
+    block-size: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--border-subtle);
+    background-color: var(--bg-surface);
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.icon-action-btn.edit:hover {
+    background-color: var(--bg-subtle);
+    color: var(--text-primary);
+}
+
+.icon-action-btn.delete {
+    color: var(--status-danger-text);
+    border-color: var(--status-danger-border);
+    background-color: var(--status-danger-bg);
+}
+
+.icon-action-btn.delete:hover {
+    background-color: #FEE2E2;
+}
+
+@media (max-width: 1024px) {
+    .viagens-kpi-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .form-viagem-columns {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .viagens-kpi-grid,
+    .form-viagem-columns .dates {
+        grid-template-columns: 1fr;
+    }
+
+    .opcoes-viagens .search-input-wrap {
+        min-inline-size: 100%;
+    }
 }

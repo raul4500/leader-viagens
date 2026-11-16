@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -9,28 +9,80 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/viagens.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/barra-rolagem.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/flash-messages.css') }}">
-    <title>Passageiros</title>
+    <link rel="icon" href="{{ url_for('static', filename='styles/img/logo_size_invert.jpg') }}" type="image/jpg">
+    <title>Viagens — Financeiro Leader</title>
 </head>
 
 <body>
+    {% set total_viagens = viagens|length %}
+    {% set total_assentos = viagens|sum(attribute='qtd_assentos') if viagens else 0 %}
+    {% set soma_precos = viagens|sum(attribute='preco') if viagens else 0 %}
+    {% set ticket_medio = (soma_precos / total_viagens) if total_viagens > 0 else 0 %}
+
     <div class="main">
-        
+
         {{sidebar|safe}}
 
         <div class="container">
-
-            <div class="viagens">
-                <h1>Viagens</h1>
-                <div class="opcoes-viagens" id="opcoes-viagens">
-                    <input type="text" placeholder="Nome">
-                    <button class="adicionar" id="adicionar" onclick="abrirInputs()">+ Cadastrar Viagem</button>
-                    <button class="fechar-inputs" id="fechar-inputs" onclick="fecharInputs()" style="display: none;">X
-                        Cancelar</button>
+            <div class="viagens-page">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="page-header-titles">
+                        <h1>Gestão de Viagens</h1>
+                        <p>Cadastre roteiros, configure frotas e acesse o mapa interativo de assentos de cada viagem.</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button type="button" class="adicionar btn-finexy btn-lime" id="adicionar" onclick="abrirInputs()">
+                            <i class="bi bi-plus-lg"></i> Cadastrar Viagem
+                        </button>
+                        <button type="button" class="fechar-inputs btn-finexy btn-danger-soft" id="fechar-inputs" onclick="fecharInputs()" style="display: none;">
+                            <i class="bi bi-x-lg"></i> Cancelar
+                        </button>
+                    </div>
                 </div>
-                
+
+                <!-- Summary KPI Strip -->
+                <div class="viagens-kpi-grid">
+                    <div class="kpi-card kpi-featured">
+                        <div class="kpi-top">
+                            <span class="kpi-label">Viagens Ativas</span>
+                            <span class="card-icon-badge"><i class="bi bi-bus-front"></i></span>
+                        </div>
+                        <div class="kpi-value">{{ total_viagens }}</div>
+                        <div class="kpi-footer">
+                            <span class="trend-pill up">↑ 100%</span>
+                            <span class="kpi-trend-meta">Roteiros programados</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-top">
+                            <span class="kpi-label">Capacidade Ofertada</span>
+                            <span class="card-icon-badge"><i class="bi bi-grid-3x3-gap"></i></span>
+                        </div>
+                        <div class="kpi-value">{{ total_assentos }}</div>
+                        <div class="kpi-footer">
+                            <span class="trend-pill up">Lugares</span>
+                            <span class="kpi-trend-meta">Em todas as viagens</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-top">
+                            <span class="kpi-label">Ticket Médio por Roteiro</span>
+                            <span class="card-icon-badge"><i class="bi bi-tag"></i></span>
+                        </div>
+                        <div class="kpi-value">R$ {{ "%.2f"|format(ticket_medio) }}</div>
+                        <div class="kpi-footer">
+                            <span class="trend-pill neutral">BRL</span>
+                            <span class="kpi-trend-meta">Soma: R$ {{ "%.2f"|format(soma_precos) }}</span>
+                        </div>
+                    </div>
+                </div>
+
                 {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                <div class=flashes>
+                <div class="flashes">
                     {% for category, message in messages %}
                     <div class="{{ category }}">{{ message }}</div>
                     {% endfor %}
@@ -38,128 +90,191 @@
                 {% endif %}
                 {% endwith %}
 
-                <form class="cadastrar-viagem" id="cadastrar-viagem" action="/cadastrar_viagem" method="post">
-                    <div class="left">
-                        <label for="destino">Destino:</label>
-                        <input type="text" id="destino" name="destino" required
-                            placeholder="Digite o destino da viagem...">
+                <!-- Collapsible Trip Creation / Edit Form -->
+                <form class="cadastrar-viagem surface-card" id="cadastrar-viagem" action="/cadastrar_viagem" method="post">
+                    <div class="form-viagem-header">
+                        <h3 class="card-title" id="formViagemTitle">Cadastrar Nova Viagem</h3>
+                        <p class="card-subtitle">Defina o destino, período, valor, categoria do ônibus e itens inclusos</p>
+                    </div>
 
-                        <div class="dates">
-                            <div class="left">
-                                <label for="data_inicio">Data de inicio:</label>
-                                <input type="date" id="data_inicio" name="data_inicio" maxlength="9" required
-                                    placeholder="Digite a data_inicio da viagem...">
+                    <div class="form-viagem-columns">
+                        <div class="left">
+                            <div class="form-field">
+                                <label for="destino">Destino da Viagem:</label>
+                                <input type="text" id="destino" name="destino" required placeholder="Ex.: Foz do Iguaçu, Paraguai...">
                             </div>
-                            <div class="right">
-                                <label for="data_fim">Data de volta:</label>
-                                <input type="date" id="data_fim" name="data_fim" maxlength="9" required
-                                    placeholder="Digite a data_fim da viagem...">
+
+                            <div class="dates">
+                                <div class="left form-field">
+                                    <label for="data_inicio">Data de Saída:</label>
+                                    <input type="date" id="data_inicio" name="data_inicio" required>
+                                </div>
+                                <div class="right form-field">
+                                    <label for="data_fim">Data de Retorno:</label>
+                                    <input type="date" id="data_fim" name="data_fim" required>
+                                </div>
+                            </div>
+
+                            <div class="dates">
+                                <div class="left form-field">
+                                    <label for="preco">Preço por Passageiro (R$):</label>
+                                    <input type="number" step="0.01" id="preco" name="preco" required placeholder="0.00">
+                                </div>
+                                <div class="right form-field">
+                                    <label for="tipo_onibus">Categoria do Ônibus:</label>
+                                    <select name="tipo_onibus" id="tipo_onibus" required>
+                                        <option value="leito">Leito</option>
+                                        <option value="semi_leito">Semi-leito</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <label for="preco">Preco:</label>
-                        <input type="number" id="preco" name="preco" required>
 
-                        <label for="tipo_onibus">Tipo de ônibus:</label>
-                        <select name="tipo_onibus" id="tipo_onibus" required>
-                            <option value="leito">Leito</option>
-                            <option value="semi_leito">Semi-leito</option>
-                        </select>
+                        <div class="right">
+                            <div class="form-field">
+                                <label for="qtd_assentos">Quantidade de Assentos:</label>
+                                <input type="number" id="qtd_assentos" name="qtd_assentos" required placeholder="Ex.: 45, 50...">
+                            </div>
 
-                    </div>
-                    <div class="right">
-                        <label for="qtd_assentos">qtd_assentos:</label>
-                        <input type="number" id="qtd_assentos" name="qtd_assentos" maxlength="11" required
-                            vplaceholder="Digite a quantidade de assentos do ônibus...">
+                            <div class="form-field">
+                                <label for="descricao">Descrição do Roteiro:</label>
+                                <textarea id="descricao" name="descricao" required placeholder="Detalhes sobre a programação da viagem..." style="resize: none;"></textarea>
+                            </div>
 
-                        <label for="descricao">Descricão:</label>
-                        <textarea id="descricao" name="descricao" required placeholder="Descricão da viagem..."
-                            style="resize: none;"></textarea>
+                            <div class="form-field">
+                                <label for="inclusos">Itens Inclusos:</label>
+                                <textarea id="inclusos" name="inclusos" required placeholder="Separe os itens por vírgulas (,)" style="resize: none;"></textarea>
+                            </div>
 
-                        <label for="inclusos">Inclusos:</label>
-                        <textarea type="text" id="inclusos" name="inclusos" required
-                            placeholder="Separe por vírgulas (,)" style="resize: none;"></textarea>
-
-                        <button type="submit">Confirmar</button>
+                            <button type="submit" id="btnConfirmarViagem" class="btn-finexy btn-dark">
+                                <i class="bi bi-check2-circle"></i> Confirmar Viagem
+                            </button>
+                        </div>
                     </div>
                 </form>
 
-                <div class="tabela-viagens">
-                    <table cellspacing="0" rules="none">
-                        <tr>
-                            <th></th>
-                            <th>Nome</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
+                <!-- Trips Table Card -->
+                <div class="surface-card viagens">
+                    <div class="viagens-list-header">
+                        <div>
+                            <h2 class="card-title">Roteiros Programados</h2>
+                            <p class="card-subtitle">Clique em qualquer viagem para abrir o mapa de assentos e alocar passageiros</p>
+                        </div>
 
-                        {% for v in viagens %}
-                        <tr>
-                            <td onclick="window.location.href='/viagem/{{ v.id }}';">
-                                <i class='bi bi-bus-front-fill'></i>
-                            </td>
-                            <td onclick="window.location.href='/viagem/{{ v.id }}';">
-                                <div class="nome">{{ formatar_data(v.data_inicio) }} - {{ v.destino }}
-                                </div>
-                            </td>
-                            <td><button
-                                    onclick="editarViagem('{{v.id}}', '{{v.destino}}', '{{v.data_inicio}}', '{{v.data_fim}}', '{{v.preco}}', '{{v.qtd_assentos}}', '{{v.tipo_onibus}}', '{{v.descricao}}', '{{v.inclusos}}')"><i
-                                        class="bi bi-pencil-fill"></i></button></td>
-                            <td><button onclick="deletarViagem('{{v.id}}')"><i class="bi bi-trash-fill" style="color: red;"></i></button></td>
-                        </tr>
-                        {% endfor %}
-                    </table>
+                        <div class="opcoes-viagens" id="opcoes-viagens">
+                            <div class="search-input-wrap">
+                                <i class="bi bi-search"></i>
+                                <input type="text" id="searchViagemInput" placeholder="Buscar por destino ou data..." onkeyup="filtrarViagensTabela(this.value)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div tabindex="0" role="region" aria-label="Tabela de Viagens" class="tabela-viagens table-wrapper">
+                        <table cellspacing="0" rules="none">
+                            <thead>
+                                <tr>
+                                    <th style="width: 56px;">Frota</th>
+                                    <th>Roteiro &amp; Destino</th>
+                                    <th>Período</th>
+                                    <th>Categoria &amp; Lugares</th>
+                                    <th>Valor</th>
+                                    <th style="text-align: right;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="viagensTableBody">
+                                {% for v in viagens %}
+                                <tr class="viagem-row">
+                                    <td onclick="window.location.href='/viagem/{{ v.id }}';" style="cursor: pointer;">
+                                        <span class="bus-row-icon"><i class="bi bi-bus-front-fill"></i></span>
+                                    </td>
+                                    <td onclick="window.location.href='/viagem/{{ v.id }}';" style="cursor: pointer;">
+                                        <div class="nome">{{ formatar_data(v.data_inicio) }} - {{ v.destino }}</div>
+                                        <div class="viagem-sub-desc">{{ v.descricao }} · Inclusos: {{ v.inclusos }}</div>
+                                    </td>
+                                    <td onclick="window.location.href='/viagem/{{ v.id }}';" style="cursor: pointer;">
+                                        <span class="date-range-pill"><i class="bi bi-calendar-event"></i> {{ v.data_inicio }} até {{ v.data_fim }}</span>
+                                    </td>
+                                    <td onclick="window.location.href='/viagem/{{ v.id }}';" style="cursor: pointer;">
+                                        <span class="status-badge status-ativo">{{ v.tipo_onibus|replace('_', '-') }} · {{ v.qtd_assentos }} lugares</span>
+                                    </td>
+                                    <td onclick="window.location.href='/viagem/{{ v.id }}';" style="cursor: pointer;">
+                                        <strong class="viagem-price-cell">R$ {{ "%.2f"|format(v.preco) }}</strong>
+                                    </td>
+                                    <td class="viagem-actions-cell">
+                                        <a href="/viagem/{{ v.id }}" class="btn-finexy btn-soft btn-sm-pill" title="Abrir Mapa de Assentos">
+                                            <i class="bi bi-grid-3x3-gap"></i> Mapa
+                                        </a>
+                                        <button type="button" class="icon-action-btn edit" title="Editar Viagem"
+                                            onclick="editarViagem('{{v.id}}', '{{v.destino}}', '{{v.data_inicio}}', '{{v.data_fim}}', '{{v.preco}}', '{{v.qtd_assentos}}', '{{v.tipo_onibus}}', '{{v.descricao}}', '{{v.inclusos}}')">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </button>
+                                        <button type="button" class="icon-action-btn delete" title="Excluir Viagem"
+                                            onclick="deletarViagem('{{v.id}}')">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
             </div>
         </div>
     </div>
 
+    <script>
+        function filtrarViagensTabela(query) {
+            const q = (query || "").toLowerCase();
+            document.querySelectorAll("#viagensTableBody tr").forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(q) ? "" : "none";
+            });
+        }
 
+        function abrirInputs() {
+            let inputs = document.getElementById("cadastrar-viagem");
+            document.getElementById("adicionar").style.display = "none";
+            document.getElementById("fechar-inputs").style.display = "inline-flex";
+            if (inputs) {
+                inputs.classList.add('active');
+                inputs.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
 
+        function fecharInputs() {
+            let inputs = document.getElementById("cadastrar-viagem");
+            document.getElementById("adicionar").style.display = "inline-flex";
+            document.getElementById("fechar-inputs").style.display = "none";
+            if (inputs) {
+                inputs.classList.remove('active');
+            }
+        }
+
+        function editarViagem(id, destino, data_inicio, data_fim, preco, qtd_assentos, tipo_onibus, descricao, inclusos) {
+            document.getElementById("formViagemTitle").textContent = "Editar Viagem";
+            document.getElementById("btnConfirmarViagem").innerHTML = '<i class="bi bi-pencil-fill"></i> Salvar Alterações';
+            document.getElementById("cadastrar-viagem").action = "/editar_viagem/" + id;
+            document.getElementById("fechar-inputs").onclick = function () {
+                location.reload();
+            };
+            document.getElementById("destino").value = destino;
+            document.getElementById("data_inicio").value = data_inicio;
+            document.getElementById("data_fim").value = data_fim;
+            document.getElementById("preco").value = preco;
+            document.getElementById("qtd_assentos").value = qtd_assentos;
+            document.getElementById("tipo_onibus").value = tipo_onibus;
+            document.getElementById("descricao").value = descricao;
+            document.getElementById("inclusos").value = inclusos;
+            abrirInputs();
+        }
+
+        function deletarViagem(id) {
+            if (confirm("Tem certeza que deseja deletar essa viagem?")) {
+                window.location.href = "/deletar_viagem/" + id;
+            }
+        }
+    </script>
 </body>
-
-<script>
-    function abrirInputs() {
-        let inputs = document.getElementById("cadastrar-viagem");
-        document.getElementById("adicionar").style.display = "none";
-        document.getElementById("fechar-inputs").style.display = "block";
-        if (inputs) {
-            inputs.classList.add('active'); // Adiciona a classe 'active'
-        }
-    }
-
-    function fecharInputs() {
-        let inputs = document.getElementById("cadastrar-viagem");
-        document.getElementById("adicionar").style.display = "block";
-        document.getElementById("fechar-inputs").style.display = "none";
-        if (inputs) {
-            inputs.classList.remove('active'); // Remove a classe 'active'
-        }
-    }
-
-    function editarViagem(id, destino, data_inicio, data_fim, preco, qtd_assentos, tipo_onibus, descricao, inclusos) {
-        document.getElementById("cadastrar-viagem").action = "/editar_viagem/" + id;
-        document.getElementById("fechar-inputs").onclick = function () {
-            location.reload();
-        }
-        document.getElementById("destino").value = destino;
-        document.getElementById("data_inicio").value = data_inicio;
-        document.getElementById("data_fim").value = data_fim;
-        document.getElementById("preco").value = preco;
-        document.getElementById("qtd_assentos").value = qtd_assentos;
-        document.getElementById("tipo_onibus").value = tipo_onibus;
-        document.getElementById("descricao").value = descricao;
-        document.getElementById("inclusos").value = inclusos;
-        abrirInputs();
-
-    }
-
-    function deletarViagem(id) {
-        if (confirm("Tem certeza que deseja deletar essa viagem?")) {
-            window.location.href = "/deletar_viagem/" + id;
-        }
-    }
-
-</script>
 
 </html>

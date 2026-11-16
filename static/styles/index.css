@@ -1,371 +1,727 @@
+/* ==========================================================================
+   Dashboard Overview Layout (Finexy Reference Bento Grid)
+   ========================================================================== */
 
-h2 {
-    margin: 16px;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
-.flashes{
-    margin: 24px 10px 10px 10px;
-}
-
-.caixa-de-lembretes {
+.page-header-actions {
     display: flex;
-    flex-direction: row;
-    background-color: rgb(240, 240, 240);
-    height: 230px;
-    padding: 0px;
-    margin: 10px;
-    border-top-left-radius: 16px;
-    border-bottom-left-radius: 16px;
-    box-shadow: 0px 4px 19px rgba(0, 0, 0, .5);
+    align-items: center;
+    gap: 10px;
 }
 
-.caixa-de-lembretes .left {
-    width: 30%;
-    border-right: 2px solid rgb(117, 117, 117);
+/* Upper 3-Column Bento Grid */
+.dashboard-top-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.96fr) minmax(0, 0.96fr);
+    gap: 18px;
+    margin-block-end: 18px;
+    align-items: stretch;
 }
 
-.caixa-de-lembretes .left textarea {
-    padding: 4px;
-    border: 1px solid grey;
-    font-family: Arial;
-    border-radius: 8px;
-    resize: none;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    height: 100px;
-}
-
-.caixa-de-lembretes .left .adicionar-lembrete {
-    cursor: pointer;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 92%;
-    height: 40px;
-    border-radius: 8px;
-    padding: 10px;
-    word-wrap: none;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    background-color: rgb(186, 255, 203);
-    color: rgb(0, 0, 0);
-    border: 1px solid green;
-}
-
-.caixa-de-lembretes .left .adicionar-lembrete:hover {
-    background-color: rgb(38, 139, 64);
-    color: white;
-}
-
-.caixa-de-lembretes .right {
-    width: 70%;
-    overflow-y: scroll;
-}
-
-.caixa-de-lembretes .right .lembrete {
-    border: 1px solid rgb(148, 148, 148);
-    background-color: rgb(211, 211, 211);
-    width: fit-content;
-    border-radius: 24px;
-    margin: 8px;
-    padding: 0px 0px 0px 8px;
+/* Column 1: Balance & Wallets (Viagens) Card */
+.balance-card {
     display: flex;
-    overflow: hidden;
-    max-width: 100%;
-    word-break: break-all;
-}
-
-.caixa-de-lembretes .right .lembrete:hover {
-    cursor: pointer;
-}
-
-.caixa-de-lembretes .right .lembrete button {
-    background-color: rgb(212, 212, 212);
-    border: none;
-    border-left: 1px solid grey;
-    margin-left: 4px;
-    padding: 0 12px 0 12px;
-    cursor: pointer;
-}
-
-.caixa-de-lembretes .right .lembrete button:hover {
-    background-color: rgb(143, 143, 143);
-}
-
-.caixa-de-lembretes .right .lembrete p {
-    margin: 4px;
-    padding: 0px;
-    word-break: break-all;
-}
-
-.content {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-}
-
-.passageiros {
-    height: auto;
-    width: 50%;
-    padding: 0;
-    margin: 10px;
-    border-radius: 16px;
-    box-shadow: 0px 4px 19px rgba(0, 0, 0, .5);
-}
-
-.opcoes-passageiros {
-    width: auto;
-    display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
-    border-bottom: 1px solid rgb(163, 163, 163);
-    padding: 10px;
+    gap: 16px;
 }
 
-.opcoes-passageiros input {
-    width: 60%;
-    height: 30px;
-    border-radius: 8px;
-    border: 1px solid rgb(117, 117, 117);
-    padding: 10px;
+.balance-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
 }
 
-.opcoes-passageiros button {
-    width: 35%;
-    height: 50px;
-    border-radius: 8px;
-    border: 1px solid rgb(117, 117, 117);
-    padding: 10px;
-    word-wrap: none;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.balance-label {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
 }
 
-.opcoes-passageiros button.adicionar-passageiro {
-    cursor: pointer;
-    background-color: rgb(186, 255, 203);
-    color: rgb(0, 0, 0);
-    border: 1px solid green;
+.balance-amount {
+    font-size: clamp(26px, 2.5vw, 34px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+    margin-block: 4px 8px;
+    line-height: 1.1;
 }
 
-.opcoes-passageiros button.adicionar-passageiro:hover {
-    background-color: rgb(38, 139, 64);
-    color: white;
+.balance-trend-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
-.opcoes-passageiros .adicionar-passageiro i {
-    line-height: 10px;
-    font-size: 30px;
+.balance-trend-caption {
+    font-size: 12px;
+    color: var(--text-secondary);
 }
 
-.opcoes-passageiros button:hover {
-    background-color: rgb(117, 117, 117);
-    color: white;
-}
-
-.tabela-passageiros {
-    height: 280px;
-    max-width: 100%;
+.currency-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: var(--radius-pill);
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
     white-space: nowrap;
-    overflow-y: scroll;
-    padding: 0px;
 }
 
-.tabela-passageiros table {
-    width: 100%;
-    border-collapse: collapse;
+.balance-cta-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
 }
 
-.tabela-passageiros th {
-    border-bottom: 1px solid rgb(163, 163, 163);
-    font-weight: normal;
-    background-color: rgb(241, 241, 241);
-    padding: 10px 0px 10px 8px;
-    text-align: left;
+.balance-cta-row .btn-finexy {
+    padding-block: 12px;
+    font-size: 13.5px;
 }
 
-.tabela-passageiros td {
-    border-bottom: 1px solid rgb(163, 163, 163);
-    padding: 10px 0px 10px 8px;
-    text-align: left;
+/* Wallets / Viagens Sub-card */
+.wallets-subcard {
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-inner);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.tabela-passageiros td button {
-    padding: 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    border: none;
-    background: transparent;
+.wallets-subcard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.tabela-passageiros td button:hover {
-    background-color: rgb(214, 214, 214);
+.wallets-title-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.tabela-passageiros td .nome {
-    max-width: 250px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.todos-passageiros button {
-    cursor: pointer;
-    position: relative;
-    top: 16px;
-    left: 50%;
-    transform: translate(-50%, 0);
-    width: 35%;
-    height: 50px;
-    border-radius: 8px;
-    border: 1px solid rgb(117, 117, 117);
-    padding: 10px;
-    word-wrap: none;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.todos-passageiros button:hover {
-    background-color: rgb(117, 117, 117);
-    color: white;
-}
-
-/* Estilo para o bloco de ações */
-.action-block {
-    position: absolute;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 8px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-  }
-  
-  .action-block ul {
-    list-style: none;
+.wallets-title-group h2 {
     margin: 0;
-    padding: 0;
-  }
-  
-  .action-block ul li {
-    margin: 4px 0;
-  }
-  
-  .action-block ul li a {
-    text-decoration: none;
-    color: black;
-  }
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+}
 
-.viagens {
-    height: 100%;
-    width: 50%;
-    padding: 0;
-    margin: 10px;
-    height: fit-content;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-    box-shadow: 0px 4px 19px rgba(0, 0, 0, .5);
+.wallets-divider {
+    color: #D1D5DB;
+}
+
+.wallets-count {
+    font-size: 12px;
+    color: var(--text-secondary);
 }
 
 .pesquisa-viagens {
-    width: auto;
+    margin: 0;
+}
+
+.pesquisa-viagens .search-input-wrap input {
+    background-color: var(--bg-surface);
+    padding-block: 7px;
+    font-size: 12.5px;
+}
+
+.viagens-blocks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+    gap: 10px;
+    max-block-size: 165px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-inline-end: 2px;
+}
+
+.viagem-wallet-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.viagem-wallet-item {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 12px;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.viagem-wallet-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+    border-color: #D1D5DB;
+}
+
+.wallet-item-top {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgb(163, 163, 163);
-    padding: 10px;
+    margin-block-end: 4px;
 }
 
-.pesquisa-viagens input {
-    width: 60%;
-    height: 30px;
-    border-radius: 8px;
-    border: 1px solid rgb(117, 117, 117);
-    padding: 10px;
+.wallet-bus-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
 }
 
+.wallet-bus-badge i {
+    color: var(--brand-emerald);
+}
 
-.gerenciar-viagens-btn {
-    cursor: pointer;
-    width: 35%;
-    height: 50px;
-    border-radius: 8px;
-    border: 1px solid rgb(117, 117, 117);
-    padding: 10px;
-    word-wrap: none;
+.wallet-dots {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.wallet-item-dest {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.gerenciar-viagens-btn:hover {
-    background-color: rgb(117, 117, 117);
-    color: white;
+.wallet-item-price {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
 }
 
-.viagens-blocks {
-    height: 329px;
-    overflow-y: scroll;
+.wallet-item-meta {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.wallet-item-status {
+    margin-block-start: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--status-success-text);
+}
+
+/* Column 2: 2x2 KPI Grid Card */
+.kpi-quad-card {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.kpi-quad-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
-    gap: 16px;
-    padding: 16px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 14px;
+    block-size: 100%;
 }
 
-.viagens-blocks a{
-    height: fit-content;
-    text-decoration: none;
-    color: black;
+/* Column 3: Bar Chart Card (Finexy Profit & Loss Style) */
+.analytics-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
 }
 
-.block {
-    background-color: #ebebeb;
-    height: fit-content;
-    border-radius: 8px;
+.chart-box {
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-inner);
     padding: 16px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, .5);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.chart-box-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.chart-box-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.chart-legend {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.legend-dot {
+    display: inline-block;
+    inline-size: 8px;
+    block-size: 8px;
+    border-radius: 3px;
+}
+
+.legend-dot.lime {
+    background-color: var(--brand-lime);
+}
+
+.legend-dot.dark {
+    background-color: var(--brand-dark);
+}
+
+.finexy-bar-chart {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 10px;
+    align-items: end;
+    min-block-size: 210px;
+}
+
+.chart-yaxis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    block-size: 185px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    padding-block-end: 22px;
+}
+
+.chart-columns {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+    align-items: end;
+    block-size: 100%;
+}
+
+.chart-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    block-size: 100%;
+    justify-content: flex-end;
+}
+
+.bar-stack {
+    inline-size: 100%;
+    max-inline-size: 30px;
+    block-size: 165px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 3px;
+}
+
+.bar-segment {
+    inline-size: 100%;
+    border-radius: 7px;
+    transition: height 350ms ease;
+}
+
+.bar-segment.lime {
+    background: repeating-linear-gradient(
+        -45deg,
+        #9EF01A,
+        #9EF01A 5px,
+        #8CE00B 5px,
+        #8CE00B 10px
+    );
+}
+
+.bar-segment.dark {
+    background-color: var(--brand-dark);
+}
+
+.chart-col-label {
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-inline-size: 100%;
+}
+
+/* ==========================================================================
+   Lower 2-Column Bento Grid (Left Stack + Right Wide Table)
+   ========================================================================== */
+.dashboard-bottom-grid {
+    display: grid;
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.bottom-left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-inline-size: 0;
+}
+
+/* Monthly Spending Limit style Progress Card */
+.finexy-progress-track {
+    inline-size: 100%;
+    block-size: 16px;
+    border-radius: var(--radius-pill);
+    background: repeating-linear-gradient(
+        -45deg,
+        #EFEFEF,
+        #EFEFEF 4px,
+        #E4E6E9 4px,
+        #E4E6E9 8px
+    );
+    overflow: hidden;
+    margin-block: 10px 12px;
+}
+
+.finexy-progress-fill {
+    block-size: 100%;
+    border-radius: var(--radius-pill);
+    background: var(--brand-emerald-gradient);
+    transition: width 350ms ease;
+}
+
+.finexy-progress-labels {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.finexy-progress-labels strong {
+    color: var(--text-primary);
+}
+
+/* Lembretes Card ("My Cards" visual treatment) */
+.caixa-de-lembretes {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.lembretes-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.lembretes-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lembretes-title-wrap h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.lembretes-count-pill {
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.lembrete-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.lembrete-form textarea {
+    inline-size: 100%;
+    block-size: 74px;
+    resize: none;
+    background-color: var(--bg-subtle);
+    font-size: 13px;
+}
+
+.lembrete-form textarea:focus {
+    background-color: var(--bg-surface);
+}
+
+.lembrete-form .adicionar-lembrete {
+    inline-size: 100%;
+}
+
+.lembretes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    max-block-size: 210px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.lembretes-list .lembrete {
+    background: var(--brand-card-dark-gradient);
+    color: #FFFFFF;
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    min-block-size: 105px;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+}
+
+.lembretes-list .lembrete:nth-child(even) {
+    background: var(--brand-emerald-gradient);
+}
+
+.lembrete-badge-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.lembrete-active-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.16);
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.lembretes-list .lembrete button {
+    inline-size: 26px;
+    block-size: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.14);
+    color: #FCA5A5;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    transition: background-color var(--transition-fast);
 }
 
-.block:hover {
-    background-color: #9b9b9b;
+.lembretes-list .lembrete button:hover {
+    background: rgba(239, 68, 68, 0.35);
+    color: #FFFFFF;
 }
 
-@media(max-width: 1200px) {
-    .content {
-        display: flex;
-        flex-direction: column;
+.lembretes-list .lembrete p {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.92);
+    word-break: break-word;
+}
+
+/* Right Wide Card: Passageiros ("Recent Activities" Table Card) */
+.passageiros {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.passageiros-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.passageiros-card-header h2 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.opcoes-passageiros {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.opcoes-passageiros .search-input-wrap {
+    min-inline-size: 220px;
+}
+
+.tabela-passageiros {
+    max-block-size: 380px;
+}
+
+.passenger-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.passenger-avatar {
+    inline-size: 30px;
+    block-size: 30px;
+    border-radius: 50%;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.passenger-cell .nome {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.text-secondary-cell {
+    color: var(--text-secondary);
+}
+
+.row-dots-btn {
+    inline-size: 32px;
+    block-size: 32px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.row-dots-btn:hover {
+    background-color: var(--bg-subtle);
+    color: var(--text-primary);
+}
+
+.status-select {
+    padding: 5px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border-subtle);
+}
+
+.status-select.status-ativo {
+    background-color: var(--status-success-bg);
+    color: var(--status-success-text);
+    border-color: var(--status-success-border);
+}
+
+.status-select.status-pendente {
+    background-color: var(--status-warning-bg);
+    color: var(--status-warning-text);
+    border-color: var(--status-warning-border);
+}
+
+.todos-passageiros {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-block-start: 4px;
+    flex-wrap: wrap;
+}
+
+.table-footer-count {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+}
+
+.empty-inline-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 18px;
+    border-radius: 12px;
+    background-color: var(--bg-surface);
+    border: 1px dashed var(--border-subtle);
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    grid-column: 1 / -1;
+}
+
+/* ==========================================================================
+   Responsive Adjustments for Dashboard Overview
+   ========================================================================== */
+@media (max-width: 1120px) {
+    .dashboard-top-grid {
+        grid-template-columns: 1fr 1fr;
     }
 
-    .passageiros {
-        width: auto;
-        height: 500px;
+    .analytics-card {
+        grid-column: 1 / -1;
     }
 
-    .viagens {
-        width: auto;
+    .dashboard-bottom-grid {
+        grid-template-columns: 1fr;
     }
 }
 
-@media(max-width: 700px) {
-
-
-    .caixa-de-lembretes {
-        display: none;
+@media (max-width: 768px) {
+    .dashboard-top-grid {
+        grid-template-columns: 1fr;
     }
 
-    .content {
-        display: flex;
-        flex-direction: column;
+    .kpi-quad-grid {
+        grid-template-columns: 1fr 1fr;
     }
 
-    .passageiros {
-        width: auto;
-        height: 500px;
+    .opcoes-passageiros {
+        inline-size: 100%;
     }
 
-    .viagens {
-        width: auto;
+    .opcoes-passageiros .search-input-wrap {
+        flex: 1;
+        min-inline-size: 160px;
     }
 }

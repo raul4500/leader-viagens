@@ -9,6 +9,8 @@ index_controller = Blueprint('index_controller', __name__)
 viagemRepository = ViagemRepository()
 passageiroRepository = PassageiroRepository()
 lembreteRepository = LembreteRepository()
+pagamentoRepository = PagamentoRepository()
+reservaRepository = ReservaRepository()
 
 
 @index_controller.route('/')
@@ -16,4 +18,14 @@ def index():
     viagens = viagemRepository.getAllViagens()
     passageiros = passageiroRepository.getAllPassageiros()
     lembretes = lembreteRepository.getAllLembretes()
-    return render_template('index.html', sidebar=sidebar, viagens=viagens, passageiros=passageiros, lembretes=lembretes)
+    pagamentos = pagamentoRepository.getAllPagamentos()
+    reservas = reservaRepository.getAllReservas()
+    return render_template(
+        'index.html',
+        sidebar=sidebar,
+        viagens=viagens,
+        passageiros=passageiros,
+        lembretes=lembretes,
+        pagamentos=pagamentos,
+        reservas=reservas
+    )

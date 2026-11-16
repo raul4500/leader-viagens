@@ -1,197 +1,252 @@
-h1 {
-  margin: 0px;
-  padding: 0px;
+/* ==========================================================================
+   Passageiros Page Layout & Components
+   ========================================================================== */
+
+.passageiros-page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
+.passageiros-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.passageiros-kpi-grid .kpi-card:not(.kpi-featured) {
+    background-color: var(--bg-surface);
+    box-shadow: var(--shadow-card);
+}
+
+/* Collapsible Registration Form Card */
+.cadastrar-passageiro {
+    display: none;
+    flex-direction: column;
+    gap: 18px;
+    border: 1px solid var(--border-subtle);
+}
+
+.cadastrar-passageiro.active {
+    display: flex;
+    animation: fadeSlideDown 220ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes fadeSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-grid-passageiro {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px 16px;
+    align-items: end;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-field.span-2 {
+    grid-column: span 2;
+}
+
+.form-field label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.form-field input,
+.form-field select {
+    inline-size: 100%;
+    background-color: var(--bg-subtle);
+}
+
+.form-field input:focus,
+.form-field select:focus {
+    background-color: var(--bg-surface);
+}
+
+.identificacao {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.form-submit-wrap button {
+    inline-size: 100%;
+    padding-block: 11px;
+}
+
+/* Directory Card & Multi-Column Filters */
 .passageiros {
-  height: fit-content;
-  width: auto;
-  padding: 16px;
-  margin: 0px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .pesquisar-passageiros {
-  width: auto;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 16px 0 16px 0;
+    display: grid;
+    grid-template-columns: 1.5fr repeat(4, 1fr);
+    gap: 10px;
 }
 
-.pesquisar-passageiros input {
-  width: 60%;
-  height: 30px;
-  border-radius: 8px;
-  border: 1px solid rgb(117, 117, 117);
-  padding: 10px;
+.passenger-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.pesquisar-passageiros button {
-  width: 30%;
-  height: 50px;
-  border-radius: 8px;
-  border: 1px solid rgb(117, 117, 117);
-  padding: 10px;
-  word-wrap: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.passenger-avatar {
+    inline-size: 32px;
+    block-size: 32px;
+    border-radius: 50%;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    font-size: 12.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
-.pesquisar-passageiros button.adicionar-passageiro {
-  cursor: pointer;
-  background-color: rgb(186, 255, 203);
-  color: rgb(0, 0, 0);
-  border: 1px solid green;
+.passenger-cell .nome {
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
-.pesquisar-passageiros button.adicionar-passageiro:hover {
-  background-color: rgb(38, 139, 64);
-  color: white;
+.row-dots-btn {
+    inline-size: 32px;
+    block-size: 32px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
 }
 
-.pesquisar-passageiros button.fechar-inputs {
-  cursor: pointer;
-  display: none;
-  background-color: rgba(255, 0, 0, 0.801);
-  color: rgb(255, 255, 255);
-  border: 1px solid rgb(110, 0, 0);
+.row-dots-btn:hover {
+    background-color: var(--bg-subtle);
+    color: var(--text-primary);
 }
 
-.pesquisar-passageiros button.fechar-inputs:hover {
-  background-color: rgb(255, 179, 179);
-  color: rgb(0, 0, 0);
+/* Container query for responsive stacked table on narrow viewports */
+@container (width < 640px) {
+    .tabela-passageiros table,
+    .tabela-passageiros thead,
+    .tabela-passageiros tbody,
+    .tabela-passageiros tr,
+    .tabela-passageiros th,
+    .tabela-passageiros td {
+        display: block;
+    }
+
+    .tabela-passageiros thead {
+        display: none;
+    }
+
+    .tabela-passageiros tbody tr {
+        margin: 10px;
+        padding: 12px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 12px;
+        background: var(--bg-surface);
+    }
+
+    .tabela-passageiros td {
+        padding: 6px 4px;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .tabela-passageiros table {
+        --label-2: "Passageiro";
+        --label-3: "RG";
+        --label-4: "Telefone";
+        --label-5: "Nascimento";
+        --label-6: "Status";
+        --label-7: "Registro";
+    }
+
+    .tabela-passageiros td:nth-child(3)::before {
+        content: var(--label-3) ": ";
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    .tabela-passageiros td:nth-child(4)::before {
+        content: var(--label-4) ": ";
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    .tabela-passageiros td:nth-child(5)::before {
+        content: var(--label-5) ": ";
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    .tabela-passageiros td:nth-child(6)::before {
+        content: var(--label-6) ": ";
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    .tabela-passageiros td:nth-child(7)::before {
+        content: var(--label-7) ": ";
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
 }
 
+@media (max-width: 1024px) {
+    .passageiros-kpi-grid {
+        grid-template-columns: 1fr 1fr;
+    }
 
-.pesquisar-passageiros button:hover {
-  background-color: rgb(117, 117, 117);
-  color: white;
+    .pesquisar-passageiros {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .form-grid-passageiro {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
-.cadastrar-passageiro{
-  height: 0;
-  border-radius: 8px;
-  background-color: rgba(225, 255, 225, 0.658);
-  margin-bottom: 16px;
-  padding: 0 12px 0 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow: hidden;
-  transition: 1s;
-  border: 1px solid rgb(160, 160, 160);
-}
+@media (max-width: 640px) {
+    .passageiros-kpi-grid {
+        grid-template-columns: 1fr;
+    }
 
-.cadastrar-passageiro .identificacao {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
+    .pesquisar-passageiros {
+        grid-template-columns: 1fr;
+    }
 
-.cadastrar-passageiro .identificacao .left, .right {
-  width: 50%;
-}
+    .form-grid-passageiro,
+    .identificacao {
+        grid-template-columns: 1fr;
+    }
 
-.cadastrar-passageiro .identificacao input {
-  width: calc(100% - 30px);
-}
-
-.cadastrar-passageiro.active{
-  height: 420px;
-  padding: 12px;
-  border: 1px solid rgb(39, 53, 25);
-}
-
-.cadastrar-passageiro input, textarea, select{
-  font-family: Arial, Helvetica, sans-serif;
-  border: 1px solid grey;
-  padding: 12px 8px 12px 8px;
-  border-radius: 8px;
-}
-
-.cadastrar-passageiro button {
-  padding: 16px;
-  cursor: pointer;
-  background-color: rgb(186, 255, 203);
-  color: rgb(0, 0, 0);
-  border: 1px solid green;
-  border-radius: 8px;
-}
-
-.cadastrar-passageiro button:hover{
-  background-color: rgb(38, 139, 64);
-  color: white;
-}
-
-.tabela-passageiros {
-  height: fit-content;
-  max-width: 100%;
-  white-space: nowrap;
-  padding: 0px;
-  overflow-x: scroll;
-}
-
-.tabela-passageiros table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid rgb(163, 163, 163);
-}
-
-.tabela-passageiros th {
-  border-bottom: 1px solid rgb(163, 163, 163);
-  font-weight: normal;
-  background-color: rgb(241, 241, 241);
-  padding: 10px 0px 10px 8px;
-  text-align: left;
-}
-
-.tabela-passageiros td {
-  border-bottom: 1px solid rgb(163, 163, 163);
-  padding: 10px 0px 10px 8px;
-  text-align: left;
-}
-
-.tabela-passageiros td button {
-  padding: 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  border: none;
-  background: transparent;
-}
-
-.tabela-passageiros td button:hover {
-  background-color: rgb(214, 214, 214);
-}
-
-.tabela-passageiros td .nome {
-  max-width: 250px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Estilo para o bloco de ações */
-.action-block {
-  position: absolute;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-}
-
-.action-block ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.action-block ul li {
-  margin: 4px 0;
-}
-
-.action-block ul li a {
-  text-decoration: none;
-  color: black;
+    .form-field.span-2 {
+        grid-column: span 1;
+    }
 }
